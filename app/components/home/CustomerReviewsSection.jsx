@@ -209,7 +209,7 @@ export default function CustomerReviewsSection() {
                                                 {/* Author Info */}
                                                 <div className="flex items-center gap-4 mt-auto">
                                                     {/* Avatar */}
-                                                    <div className="w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
+                                                    <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
                                                         <span className="text-white font-bold text-sm">
                                                             {review.avatar}
                                                         </span>
