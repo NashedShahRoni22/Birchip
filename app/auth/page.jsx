@@ -5,7 +5,7 @@ export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#F8EDEB] to-[#E0C3FC] px-4 py-20">
+    <section className="min-h-[60vh] lg:min-h-[90vh] flex items-center justify-center bg-gradient-to-br from-[#F8EDEB] to-[#E0C3FC] px-4 py-20">
       <div className="w-full max-w-md bg-bg backdrop-blur-lg p-8 rounded-2xl shadow-lg border border-white/30">
         {/* Tab Switch */}
         <div className="flex justify-center mb-8">

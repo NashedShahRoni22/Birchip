@@ -12,7 +12,7 @@ export default function Page() {
             </div>
 
             {/* Hero Section */}
-            <div className="relative mb-24 min-h-[90vh] w-full overflow-hidden">
+            <div className="relative mb-24 min-h-[60vh] lg:min-h-[90vh] w-full overflow-hidden">
                 {/* Background Image */}
                 <div className="absolute inset-0">
                     <Image
