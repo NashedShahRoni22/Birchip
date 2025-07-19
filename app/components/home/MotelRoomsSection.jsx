@@ -197,7 +197,7 @@ export default function MotelRoomsSection() {
       <div className="relative max-w-7xl mx-auto px-6">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 bg-secondary/60 backdrop-blur-sm px-4 py-2 rounded-full border border-line/20 mb-6">
+          <div className="inline-flex items-center gap-2  backdrop-blur-sm px-4 py-2 rounded-full border border-line/20 mb-6">
             <Bed className="w-4 h-4 text-primary" />
             <span className="text-sm font-medium text-muted">Comfortable Stays</span>
           </div>
@@ -251,7 +251,7 @@ export default function MotelRoomsSection() {
           {filteredRooms.map((room) => (
             <div
               key={room.id}
-              className={`group relative bg-secondary/80 backdrop-blur-xl rounded-2xl border shadow-lg transition-all duration-500 overflow-hidden ${room.available
+              className={`group relative backdrop-blur-xl rounded-2xl border shadow-lg transition-all duration-500 overflow-hidden ${room.available
                   ? 'border-line/20 hover:shadow-xl'
                   : 'border-line/10 opacity-75'
                 }`}

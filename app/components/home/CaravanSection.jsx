@@ -144,7 +144,7 @@ export default function CaravanSection() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                     {caravans.map((van) => (
-                        <div key={van.id} className="group bg-secondary/80 backdrop-blur-xl rounded-2xl border border-line/20 shadow-lg">
+                        <div key={van.id} className="group backdrop-blur-xl rounded-2xl border border-line/20 shadow-lg">
                             <div className="relative h-52 sm:h-56 bg-gradient-to-br from-accent/10 to-secondary/30 flex items-center justify-center overflow-hidden rounded-t-2xl">
                                 <Image src={CaravanImage} alt='Caravan Image' className='w-full h-full object-cover rounded-t-2xl group-hover:scale-110 transition-transform duration-500' />
                             </div>

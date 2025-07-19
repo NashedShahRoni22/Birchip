@@ -53,18 +53,18 @@ export default function Page() {
                 </div>
             </div>
 
-            <div className="relative max-w-7xl mx-auto z-10 py-20">
+            <div className="relative max-w-7xl mx-auto z-10 py-20 px-6">
                 {/* Services Grid */}
                 <div className="grid md:grid-cols-2 gap-8 mb-24">
                     {/* Motel & Caravan Booking */}
-                    <div className="bg-white/30 backdrop-blur-xl p-8 rounded-3xl border border-white/40 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                    <div className="bg-white/30 backdrop-blur-xl p-8 rounded-3xl border border-white/40 shadow hover:shadow-md transition-all duration-300 hover:-translate-y-1">
                         <div className="flex items-start mb-4">
                             <div className="bg-indigo-100/50 p-3 rounded-xl mr-4">
                                 <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                                 </svg>
                             </div>
-                            <h2 className="text-3xl font-semibold text-gray-800">Motel & Caravan Booking</h2>
+                            <h2 className="md:text-3xl text-xl font-semibold text-gray-800 text-balance">Motel & Caravan Booking</h2>
                         </div>
                         <p className="text-gray-600 mb-6 leading-relaxed">
                             Whether you're on a road trip or need a restful stop, our fully-furnished motel rooms and caravans offer the perfect stay. Quick booking, flexible options, and 24/7 support.
@@ -89,7 +89,7 @@ export default function Page() {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </div>
-                            <h2 className="text-3xl font-semibold text-gray-800">On-the-Go Food Ordering</h2>
+                            <h2 className="md:text-3xl text-2xl font-semibold text-gray-800">On-the-Go Food Ordering</h2>
                         </div>
                         <p className="text-gray-600 mb-6 leading-relaxed">
                             Fuel up with delicious meals while you travel. Order from our in-house kitchen with a range of options to satisfy your hunger at any time.
@@ -114,7 +114,7 @@ export default function Page() {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                                 </svg>
                             </div>
-                            <h2 className="text-3xl font-semibold text-gray-800">Gas Station Support</h2>
+                            <h2 className="md:text-3xl text-2xl font-semibold text-gray-800">Gas Station Support</h2>
                         </div>
                         <p className="text-gray-600 mb-6 leading-relaxed">
                             We provide easy access to fueling stations with transparent pricing. Pay directly via the app and avoid long queues.
@@ -139,7 +139,7 @@ export default function Page() {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16l2.879-2.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242zM21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </div>
-                            <h2 className="text-3xl font-semibold text-gray-800">Caravan Parking Areas</h2>
+                            <h2 className="md:text-3xl text-2xl font-semibold text-gray-800">Caravan Parking Areas</h2>
                         </div>
                         <p className="text-gray-600 mb-6 leading-relaxed">
                             Safe and spacious parking areas for your caravan. Easily locate, book, and manage your parking slot—all from your dashboard.

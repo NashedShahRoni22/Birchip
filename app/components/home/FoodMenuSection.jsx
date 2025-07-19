@@ -110,7 +110,7 @@ export default function FoodMenuSection() {
                 {foodMenu.map((food) => (
                     <div
                         key={food.id}
-                        className="group bg-secondary/80 backdrop-blur-xl rounded-2xl border border-line/20 shadow-lg transition-all duration-500 overflow-hidden"
+                        className="group backdrop-blur-xl rounded-2xl border border-line/20 shadow-lg transition-all duration-500 overflow-hidden"
                     >
                         {/* Availability Badge */}
                         <div className={`absolute top-3 right-3 z-10 px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs font-bold shadow-lg ${food.available

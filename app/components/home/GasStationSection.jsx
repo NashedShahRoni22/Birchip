@@ -105,7 +105,7 @@ const GasStationSection = () => {
           {fuelPrices.map((fuel) => (
             <div
               key={fuel.id}
-              className={`group relative bg-secondary/80 backdrop-blur-xl rounded-2xl border border-line/20 shadow transition-all duration-500 overflow-hidden ${
+              className={`group relative backdrop-blur-xl rounded-2xl border border-line/20 shadow transition-all duration-500 overflow-hidden ${
                 !fuel.available ? 'opacity-75' : ''
               }`}
             >

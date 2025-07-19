@@ -76,7 +76,7 @@ export default function ServicesSection() {
               className="group relative"
             >
               {/* Card */}
-              <div className="relative bg-secondary/80 backdrop-blur-xl rounded-2xl p-8 border border-line/20 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 h-full">
+              <div className="relative backdrop-blur-xl rounded-2xl p-8 border border-line/20 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 h-full">
                 {/* Gradient Background */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${service.gradient} rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
                 
