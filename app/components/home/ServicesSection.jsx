@@ -7,21 +7,21 @@ export default function ServicesSection() {
   const services = [
     {
       icon: Bed,
-      title: 'Motel & Caravan Booking',
+      title: 'Motel Booking',
       description: 'Book comfortable motel rooms and caravan spots with modern amenities. Perfect for travelers seeking quality accommodation.',
       features: ['24/7 Check-in', 'Free WiFi', 'Air Conditioning', 'Private Bathroom'],
       link: '/motel',
       buttonText: 'Book Room',
-      gradient: 'from-primary/20 to-accent/20'
+      gradient: 'from-[#B63D5E]/20 to-[#603C59]/20',
     },
     {
       icon: Truck,
-      title: 'Caravan Parking',
+      title: 'Caravan Booking',
       description: 'Secure and spacious caravan parking spots with electrical hookups and water access. Ideal for road trip adventures.',
       features: ['Power Hookups', 'Water Access', 'Dump Station', 'Security'],
       link: '/caravan',
       buttonText: 'Reserve Spot',
-      gradient: 'from-accent/20 to-success/20'
+      gradient: 'from-[#603C59]/20 to-[#95A996]/20',
     },
     {
       icon: DollarSign,
@@ -30,7 +30,7 @@ export default function ServicesSection() {
       features: ['Real-time Prices', 'Price Comparison', 'Fuel Calculator', 'Location Map'],
       link: '/gas',
       buttonText: 'View Prices',
-      gradient: 'from-info/20 to-primary/20'
+      gradient: 'from-[#95A996]/20 to-[#B63D5E]/20',
     },
     {
       icon: UtensilsCrossed,
@@ -39,22 +39,22 @@ export default function ServicesSection() {
       features: ['Online Menu', 'Room Service', 'Fresh Ingredients', 'Quick Delivery'],
       link: '/food',
       buttonText: 'Order Now',
-      gradient: 'from-button/20 to-error/20'
-    }
+      gradient: 'from-[#B63D5E]/20 to-[#F5E6CE]/20',
+    },
   ];
 
   return (
-    <section className="relative py-20 bg-bg overflow-hidden">
+    <section className="relative py-20 overflow-hidden">
       {/* Background Pattern */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(96,60,89,0.1),transparent_50%)]"></div>
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(123,166,147,0.1),transparent_50%)]"></div>
-      
+      {/* <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(96,60,89,0.1),transparent_50%)]"></div> */}
+      {/* <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(123,166,147,0.1),transparent_50%)]"></div> */}
+
       <div className="relative max-w-7xl mx-auto px-6">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 bg-secondary/60 backdrop-blur-sm px-4 py-2 rounded-full border border-line/20 mb-6">
+          <div className="inline-flex items-center gap-2 bg-secondary backdrop-blur-sm px-4 py-2 rounded-full border border-line/20 mb-6">
             <Star className="w-4 h-4 text-info" />
-            <span className="text-sm font-medium text-muted">Our Services</span>
+            <span className="text-sm font-medium text-primary">Our Services</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-text mb-4">
             Everything You Need in
@@ -63,7 +63,7 @@ export default function ServicesSection() {
             </span>
           </h2>
           <p className="text-xl text-muted max-w-3xl mx-auto">
-            From comfortable accommodation to delicious meals and fuel services, 
+            From comfortable accommodation to delicious meals and fuel services,
             we've got your travel needs covered.
           </p>
         </div>
@@ -76,10 +76,10 @@ export default function ServicesSection() {
               className="group relative"
             >
               {/* Card */}
-              <div className="relative backdrop-blur-xl rounded-2xl p-8 border border-line/20 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 h-full">
+              <div className="relative backdrop-blur-xl rounded-2xl p-8 border border-line/20 shadow hover:shadow-lg transition-all duration-500 transform hover:-translate-y-2 h-full">
                 {/* Gradient Background */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${service.gradient} rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
-                
+                {/* <div className={`absolute inset-0 bg-gradient-to-br ${service.gradient} rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div> */}
+
                 {/* Content */}
                 <div className="relative z-10">
                   {/* Icon */}
@@ -114,7 +114,7 @@ export default function ServicesSection() {
                   {/* Button */}
                   <Link
                     href={service.link}
-                    className="inline-flex items-center gap-2 bg-secondary/60 backdrop-blur-sm text-primary px-6 py-3 rounded-xl font-semibold hover:bg-secondary/80 hover:text-accent transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg border border-line/20 group/button"
+                    className="inline-flex items-center gap-2 bg-primary backdrop-blur-sm px-6 py-3 rounded-xl font-semibold hover:bg-button text-white transition-all duration-300 transform border border-line/20 group/button"
                   >
                     {service.buttonText}
                     <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover/button:translate-x-1" />
@@ -122,7 +122,7 @@ export default function ServicesSection() {
                 </div>
 
                 {/* Shine Effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-secondary/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 rounded-2xl"></div>
+                {/* <div className="absolute inset-0 bg-gradient-to-r from-transparent via-secondary/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 rounded-2xl"></div> */}
               </div>
             </div>
           ))}

@@ -197,7 +197,7 @@ export default function MotelRoomsSection() {
       <div className="relative max-w-7xl mx-auto px-6">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2  backdrop-blur-sm px-4 py-2 rounded-full border border-line/20 mb-6">
+          <div className="inline-flex items-center gap-2 bg-white backdrop-blur-sm px-4 py-2 rounded-full border border-line/20 mb-6">
             <Bed className="w-4 h-4 text-primary" />
             <span className="text-sm font-medium text-muted">Comfortable Stays</span>
           </div>
@@ -226,8 +226,8 @@ export default function MotelRoomsSection() {
                   key={type.id}
                   onClick={() => setSelectedFilter(type.id)}
                   className={`cursor-pointer relative px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ${selectedFilter === type.id
-                      ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                      : 'bg-secondary/60 backdrop-blur-sm text-muted border border-line/20 hover:bg-secondary/80 hover:border-primary/30'
+                      ? 'bg-primary text-white shadow shadow-primary/20'
+                      : 'bg-white backdrop-blur-sm text-primary border border-line/20 hover:border-primary/30'
                     }`}
                 >
                   {type.label}
@@ -251,20 +251,20 @@ export default function MotelRoomsSection() {
           {filteredRooms.map((room) => (
             <div
               key={room.id}
-              className={`group relative backdrop-blur-xl rounded-2xl border shadow-lg transition-all duration-500 overflow-hidden ${room.available
-                  ? 'border-line/20 hover:shadow-xl'
+              className={`group relative bg-white backdrop-blur-xl rounded-2xl border shadow transition-all duration-500 overflow-hidden ${room.available
+                  ? 'border-line/20'
                   : 'border-line/10 opacity-75'
                 }`}
             >
               {/* Popular Badge */}
               {room.popular && (
-                <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-10 bg-primary text-white px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs font-bold shadow-lg">
+                <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-10 bg-primary text-white px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs font-bold shadow">
                   POPULAR
                 </div>
               )}
 
               {/* Availability Badge */}
-              <div className={`absolute top-3 right-3 sm:top-4 sm:right-4 z-10 px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs font-bold shadow-lg ${room.available
+              <div className={`absolute top-3 right-3 sm:top-4 sm:right-4 z-10 px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs font-bold shadow ${room.available
                   ? 'bg-success text-white border border-success/30'
                   : 'bg-red-500 text-white border border-red-500/30'
                 }`}>

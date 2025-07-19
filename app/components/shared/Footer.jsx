@@ -71,7 +71,7 @@ export default function Footer() {
                     <Link
                       key={social.name}
                       href={social.href}
-                      className={`p-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/20 text-white/80 hover:text-white transition-all duration-300 hover:bg-white/30 hover:scale-110 hover:shadow-lg`}
+                      className={`p-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/20 text-white/80 hover:text-white transition-all duration-300 hover:bg-white/30 hover:scale-110 hover:shadow`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >

@@ -126,7 +126,7 @@ export default function CaravanSection() {
     };
 
     return (
-        <section className="py-20 bg-bg">
+        <section className="py-20">
             <div className="max-w-7xl mx-auto px-6">
                 <div className="text-center mb-16">
                     <div className="inline-flex items-center gap-2 bg-secondary/60 backdrop-blur-sm px-4 py-2 rounded-full border border-line/20 mb-6">
@@ -144,7 +144,7 @@ export default function CaravanSection() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                     {caravans.map((van) => (
-                        <div key={van.id} className="group backdrop-blur-xl rounded-2xl border border-line/20 shadow-lg">
+                        <div key={van.id} className="group backdrop-blur-xl rounded-2xl border border-line/20 shadow">
                             <div className="relative h-52 sm:h-56 bg-gradient-to-br from-accent/10 to-secondary/30 flex items-center justify-center overflow-hidden rounded-t-2xl">
                                 <Image src={CaravanImage} alt='Caravan Image' className='w-full h-full object-cover rounded-t-2xl group-hover:scale-110 transition-transform duration-500' />
                             </div>

@@ -29,14 +29,14 @@ export default function Page() {
                     {/* Text Content */}
                     <div className="relative z-10 flex flex-col justify-end h-full px-6 pb-24 md:pb-32 lg:pb-40">
                         <div className="max-w-4xl mx-auto text-center space-y-6">
-                            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-button drop-shadow-lg">
+                            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-button drop-shadow">
                                 Birchip Motel & Caravan Park
                             </h1>
                             <p className="text-xl md:text-2xl text-white/90 leading-relaxed max-w-2xl mx-auto drop-shadow-md">
                                 Welcome to your all-in-one travel companion. We provide essential services that make your journey smoother—from motel stays to food, parking, and fuel.
                             </p>
                             <div className="pt-6">
-                                <Link href={"/motel"} className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary to-button hover:from-button hover:to-primary text-white font-semibold rounded-full text-lg shadow-xl hover:shadow-2xl transition-all duration-300 group">
+                                <Link href={"/motel"} className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary to-button hover:from-button hover:to-primary text-white font-semibold rounded-full text-lg shadow-lg hover:shadow-2xl transition-all duration-300 group">
                                     Explore Our Services
                                     <svg className="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
@@ -57,7 +57,7 @@ export default function Page() {
                 {/* Services Grid */}
                 <div className="grid md:grid-cols-2 gap-8 mb-24">
                     {/* Motel & Caravan Booking */}
-                    <div className="bg-white/30 backdrop-blur-xl p-8 rounded-3xl border border-white/40 shadow hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+                    <div className="bg-white backdrop-blur-xl p-8 rounded-2xl border border-white/40 transition-all duration-300 hover:-translate-y-1">
                         <div className="flex items-start mb-4">
                             <div className="bg-indigo-100/50 p-3 rounded-xl mr-4">
                                 <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -82,7 +82,7 @@ export default function Page() {
                     </div>
 
                     {/* Food Ordering */}
-                    <div className="bg-white/30 backdrop-blur-xl p-8 rounded-3xl border border-white/40 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                    <div className="bg-white backdrop-blur-xl p-8 rounded-2xl border border-white/40 transition-all duration-300 hover:-translate-y-1">
                         <div className="flex items-start mb-4">
                             <div className="bg-teal-100/50 p-3 rounded-xl mr-4">
                                 <svg className="w-8 h-8 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -107,7 +107,7 @@ export default function Page() {
                     </div>
 
                     {/* Gas Station Service */}
-                    <div className="bg-white/30 backdrop-blur-xl p-8 rounded-3xl border border-white/40 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                    <div className="bg-white backdrop-blur-xl p-8 rounded-2xl border border-white/40 transition-all duration-300 hover:-translate-y-1">
                         <div className="flex items-start mb-4">
                             <div className="bg-amber-100/50 p-3 rounded-xl mr-4">
                                 <svg className="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -132,7 +132,7 @@ export default function Page() {
                     </div>
 
                     {/* Caravan Parking */}
-                    <div className="bg-white/30 backdrop-blur-xl p-8 rounded-3xl border border-white/40 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                    <div className="bg-white backdrop-blur-xl p-8 rounded-2xl border border-white/40 transition-all duration-300 hover:-translate-y-1">
                         <div className="flex items-start mb-4">
                             <div className="bg-purple-100/50 p-3 rounded-xl mr-4">
                                 <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -158,7 +158,7 @@ export default function Page() {
                 </div>
 
                 {/* Stats Section */}
-                <div className="bg-white/30 backdrop-blur-xl rounded-3xl border border-white/40 p-12 shadow-xl mb-24">
+                <div className="bg-white backdrop-blur-xl rounded-2xl border border-white/40 p-12 mb-24">
                     <div className="grid md:grid-cols-4 gap-8 text-center">
                         {[
                             { number: "10K+", label: "Happy Travelers" },
@@ -182,7 +182,7 @@ export default function Page() {
                     <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
                         Join thousands of travelers who trust us for their accommodation, dining, and fueling needs on the road.
                     </p>
-                    <button className="cursor-pointer bg-gradient-to-r from-primary to-button hover:from-button hover:to-primary text-white font-semibold py-3 px-8 rounded-full text-lg shadow-lg hover:shadow-xl transition-all duration-300">
+                    <button className="cursor-pointer bg-gradient-to-r from-primary to-button hover:from-button hover:to-primary text-white font-semibold py-3 px-8 rounded-full text-lg shadow hover:shadow-lg transition-all duration-300">
                         Get Started Now
                     </button>
                 </div>

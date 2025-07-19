@@ -124,17 +124,17 @@ export default function CustomerReviewsSection() {
                             onClick={prevSlide}
                             onMouseEnter={() => setIsAutoPlaying(false)}
                             onMouseLeave={() => setIsAutoPlaying(true)}
-                            className="cursor-pointer w-12 h-12 bg-secondary/80 backdrop-blur-sm rounded-full flex items-center justify-center border border-line/20 hover:bg-secondary/90 hover:border-primary/30 transition-all duration-300 transform hover:scale-110 shadow-lg -translate-x-6"
+                            className="cursor-pointer w-12 h-12 bg-white backdrop-blur-sm rounded-full flex items-center justify-center border border-line/20 hover:bg-primary hover:text-white hover:border-primary/30 transition-all duration-300 transform hover:scale-110 shadow -translate-x-6"
                         >
-                            <ChevronLeft className="w-6 h-6 text-primary" />
+                            <ChevronLeft className="w-6 h-6" />
                         </button>
                         <button
                             onClick={nextSlide}
                             onMouseEnter={() => setIsAutoPlaying(false)}
                             onMouseLeave={() => setIsAutoPlaying(true)}
-                            className="cursor-pointer w-12 h-12 bg-secondary/80 backdrop-blur-sm rounded-full flex items-center justify-center border border-line/20 hover:bg-secondary/90 hover:border-primary/30 transition-all duration-300 transform hover:scale-110 shadow-lg translate-x-6"
+                            className="cursor-pointer w-12 h-12 bg-white backdrop-blur-sm rounded-full flex items-center justify-center border border-line/20 hover:bg-primary hover:text-white hover:border-primary/30 transition-all duration-300 transform hover:scale-110 shadow translate-x-6"
                         >
-                            <ChevronRight className="w-6 h-6 text-primary" />
+                            <ChevronRight className="w-6 h-6" />
                         </button>
                     </div>
 
@@ -176,7 +176,7 @@ export default function CustomerReviewsSection() {
                                     {/* Wrapper to ensure equal height */}
                                     <div className="h-full flex">
                                         {/* Review Card with fixed height */}
-                                        <div className="relative bg-secondary/80 backdrop-blur-xl rounded-2xl p-8 border border-line/20 w-full flex flex-col h-[480px]">
+                                        <div className="relative bg-white backdrop-blur-xl rounded-2xl p-8 border border-line/20 w-full flex flex-col h-[480px]">
                                             {/* Gradient Background */}
                                             <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10 rounded-2xl opacity-20"></div>
 

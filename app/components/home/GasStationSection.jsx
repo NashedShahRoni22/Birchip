@@ -75,7 +75,7 @@ const GasStationSection = () => {
   };
 
   return (
-    <section className="py-20 px-6 bg-bg">
+    <section className="py-20 px-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
@@ -162,17 +162,12 @@ const GasStationSection = () => {
                   </span>
                 </div>
               </div>
-
-              {/* Hover Effect */}
-              {fuel.available && (
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-primary/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-              )}
             </div>
           ))}
         </div>
 
         {/* Detailed Price Table */}
-        <div className="bg-secondary/80 backdrop-blur-xl rounded-2xl border border-line/20 shadow-lg overflow-hidden">
+        <div className=" backdrop-blur-xl rounded-2xl border border-line/20 shadow overflow-hidden">
           <div className="p-6 border-b border-line/20">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">

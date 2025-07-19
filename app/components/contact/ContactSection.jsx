@@ -3,7 +3,7 @@ export default function ContactPage() {
     <section className="relative py-20 px-6 bg-secondary/30 backdrop-blur-md">
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center">
         {/* Glassmorphic Contact Form */}
-        <div className="bg-white/60 backdrop-blur-lg rounded-2xl border border-line p-8 md:p-10 shadow-xl">
+        <div className="bg-white/60 backdrop-blur-lg rounded-2xl border border-line p-8 md:p-10 shadow-lg">
           <div className="mb-8 text-center">
             <h2 className="text-4xl font-bold text-primary mb-2">Contact Birchip</h2>
             <p className="text-muted text-lg">

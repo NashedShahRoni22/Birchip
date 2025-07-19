@@ -110,10 +110,10 @@ export default function FoodMenuSection() {
                 {foodMenu.map((food) => (
                     <div
                         key={food.id}
-                        className="group backdrop-blur-xl rounded-2xl border border-line/20 shadow-lg transition-all duration-500 overflow-hidden"
+                        className="group bg-white backdrop-blur-xl rounded-2xl border border-line/20 shadow transition-all duration-500 overflow-hidden"
                     >
                         {/* Availability Badge */}
-                        <div className={`absolute top-3 right-3 z-10 px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs font-bold shadow-lg ${food.available
+                        <div className={`absolute top-3 right-3 z-10 px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs font-bold shadow ${food.available
                             ? 'bg-green-500 text-white border border-green-500/30'
                             : 'bg-red-500 text-white border border-red-500/30'
                             }`}>
@@ -145,7 +145,7 @@ export default function FoodMenuSection() {
                             <button
                                 disabled={!food.available}
                                 className={`w-full px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 mt-3 ${food.available
-                                    ? 'bg-primary text-white hover:bg-button hover:shadow-lg active:scale-95 cursor-pointer'
+                                    ? 'bg-primary text-white hover:bg-button hover:shadow active:scale-95 cursor-pointer'
                                     : 'bg-gray-200 text-gray-500 cursor-not-allowed'
                                     }`}
                             >

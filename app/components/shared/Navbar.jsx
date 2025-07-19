@@ -31,10 +31,10 @@ export default function Navbar() {
   return (
     <nav className={`fixed top-0 z-50 w-full transition-all duration-300 ${pathname === '/'
         ? (scrolled
-          ? 'bg-black/30 backdrop-blur-xl shadow-lg border-b border-white/20'
+          ? 'bg-black/30 backdrop-blur-xl shadow border-b border-white/20'
           : 'bg-transparent'
         )
-        : 'sticky bg-black/80 backdrop-blur-xl shadow-lg border-b border-white/20'
+        : 'sticky bg-black/80 backdrop-blur-xl shadow border-b border-white/20'
       }`}>
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex justify-between items-center">
@@ -65,7 +65,7 @@ export default function Navbar() {
 
             <Link
               href="/auth"
-              className="ml-4 bg-white/20 backdrop-blur-sm text-white px-6 py-2.5 rounded-full hover:bg-button transition-all duration-300 transform shadow-lg hover:shadow-xl border border-white/20"
+              className="ml-4 bg-white/20 backdrop-blur-sm text-white px-6 py-2.5 rounded-full hover:bg-button transition-all duration-300 transform shadow hover:shadow-lg border border-white/20"
             >
               Login
             </Link>
@@ -109,7 +109,7 @@ export default function Navbar() {
           <Link
             href="/auth"
             onClick={() => setMobileMenuOpen(false)}
-            className="block mt-4 bg-white/20 backdrop-blur-sm text-white text-center px-6 py-3 rounded-full hover:bg-button transition-all duration-300 transform shadow-lg border border-white/20"
+            className="block mt-4 bg-white/20 backdrop-blur-sm text-white text-center px-6 py-3 rounded-full hover:bg-button transition-all duration-300 transform shadow border border-white/20"
           >
             Login
           </Link>

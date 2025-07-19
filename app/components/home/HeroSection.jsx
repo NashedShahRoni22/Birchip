@@ -135,7 +135,7 @@ export default function HeroSection() {
 
                             {/* Button */}
                             <div className="md:col-span-4">
-                                <button className="w-full mt-4 bg-button text-white py-3 px-4 rounded-xl font-semibold hover:bg-button/80 transition-all duration-300 transform shadow-lg cursor-pointer">
+                                <button className="w-full mt-4 bg-button text-white py-3 px-4 rounded-xl font-semibold hover:bg-button/80 transition-all duration-300 transform shadow cursor-pointer">
                                     Search
                                 </button>
                             </div>
