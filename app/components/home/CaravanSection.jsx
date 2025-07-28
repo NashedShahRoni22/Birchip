@@ -3,6 +3,7 @@
 import { Caravan, Users, MapPin, Star, Wind, Tv, Coffee, Car, Bath } from 'lucide-react';
 import CaravanImage from "@/public/cardImage/caravan.jpg";
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function CaravanSection() {
     const caravans = [
@@ -179,9 +180,9 @@ export default function CaravanSection() {
                                         <div className="text-xl sm:text-2xl font-bold text-primary">${van.price}</div>
                                         <div className="text-xs sm:text-sm text-muted">/night</div>
                                     </div>
-                                    <button className="cursor-pointer px-4 py-2 sm:px-6 sm:py-3 rounded-xl bg-primary text-white text-xs sm:text-sm font-bold hover:bg-button transition-all">
+                                    <Link href={"/caravan-details"} className="cursor-pointer px-4 py-2 sm:px-6 sm:py-3 rounded-xl bg-primary text-white text-xs sm:text-sm font-bold hover:bg-button transition-all">
                                         Book Now
-                                    </button>
+                                    </Link>
                                 </div>
                             </div>
                         </div>

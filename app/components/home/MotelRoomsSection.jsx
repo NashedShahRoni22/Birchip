@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import RoomImage from "@/public/cardImage/motel.jpg";
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function MotelRoomsSection() {
   const [selectedFilter, setSelectedFilter] = useState('all');
@@ -226,14 +227,14 @@ export default function MotelRoomsSection() {
                   key={type.id}
                   onClick={() => setSelectedFilter(type.id)}
                   className={`cursor-pointer relative px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ${selectedFilter === type.id
-                      ? 'bg-primary text-white shadow shadow-primary/20'
-                      : 'bg-white backdrop-blur-sm text-primary border border-line/20 hover:border-primary/30'
+                    ? 'bg-primary text-white shadow shadow-primary/20'
+                    : 'bg-white backdrop-blur-sm text-primary border border-line/20 hover:border-primary/30'
                     }`}
                 >
                   {type.label}
                   <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${selectedFilter === type.id
-                      ? 'bg-white/20 text-white'
-                      : 'bg-primary/10 text-primary'
+                    ? 'bg-white/20 text-white'
+                    : 'bg-primary/10 text-primary'
                     }`}>
                     {type.count}
                   </span>
@@ -252,8 +253,8 @@ export default function MotelRoomsSection() {
             <div
               key={room.id}
               className={`group relative bg-white backdrop-blur-xl rounded-2xl border shadow transition-all duration-500 overflow-hidden ${room.available
-                  ? 'border-line/20'
-                  : 'border-line/10 opacity-75'
+                ? 'border-line/20'
+                : 'border-line/10 opacity-75'
                 }`}
             >
               {/* Popular Badge */}
@@ -265,8 +266,8 @@ export default function MotelRoomsSection() {
 
               {/* Availability Badge */}
               <div className={`absolute top-3 right-3 sm:top-4 sm:right-4 z-10 px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs font-bold shadow ${room.available
-                  ? 'bg-success text-white border border-success/30'
-                  : 'bg-red-500 text-white border border-red-500/30'
+                ? 'bg-success text-white border border-success/30'
+                : 'bg-red-500 text-white border border-red-500/30'
                 }`}>
                 {room.available ? 'Available' : 'Booked'}
               </div>
@@ -321,15 +322,16 @@ export default function MotelRoomsSection() {
                     <div className="text-xs sm:text-sm text-muted">/night</div>
                   </div>
 
-                  <button
+                  <Link
+                    href={"/room-details"}
                     disabled={!room.available}
                     className={`px-4 py-2 sm:px-6 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 ${room.available
-                        ? 'bg-primary text-white cursor-pointer hover:bg-button'
-                        : 'bg-line/20 text-muted cursor-not-allowed'
+                      ? 'bg-primary text-white cursor-pointer hover:bg-button'
+                      : 'bg-line/20 text-muted cursor-not-allowed'
                       }`}
                   >
                     {room.available ? 'Book Now' : 'Unavailable'}
-                  </button>
+                  </Link>
                 </div>
               </div>
 
