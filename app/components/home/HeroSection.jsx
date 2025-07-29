@@ -233,6 +233,7 @@ function DateRangePickerDropdown() {
                             rangeColors={["#7BA693"]}
                             months={1}
                             direction="vertical"
+                            minDate={new Date()}
                             showMonthAndYearPickers={false}
                         />
                     </div>

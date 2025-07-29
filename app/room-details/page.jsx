@@ -191,12 +191,12 @@ export default function RoomDetailsPage() {
             {/* Room Details */}
             <div className="bg-white rounded-2xl p-6 shadow-sm">
               <div className="mb-6">
-                <div className="flex items-start justify-between mb-4">
+                <div className="flex flex-col md:flex-row md:items-start gap-4 justify-between mb-4">
                   <div>
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                    <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
                       {roomData.name}
                     </h1>
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                    <div className="flex flex-col md:flex-row md:items-center gap-4 text-sm text-gray-600">
                       <div className="flex items-center gap-1">
                         <MapPin className="w-4 h-4" />
                         {roomData.location}
@@ -222,7 +222,7 @@ export default function RoomDetailsPage() {
                 </div>
 
                 {/* Room Specs */}
-                <div className="grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded-xl">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4 bg-gray-50 rounded-xl">
                   <div className="text-center">
                     <Bed className="w-6 h-6 text-gray-600 mx-auto mb-2" />
                     <p className="text-sm font-medium text-gray-900">{roomData.beds}</p>
