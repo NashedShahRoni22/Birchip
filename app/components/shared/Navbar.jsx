@@ -21,6 +21,7 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
+    { name: 'Home', href: '/' },
     { name: 'About', href: '/about' },
     { name: 'Motel', href: '/motel' },
     { name: 'Caravan', href: '/caravan' },

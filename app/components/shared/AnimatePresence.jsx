@@ -22,6 +22,9 @@ export function BookingModal({
   ]);
   const [guests, setGuests] = useState({ adults: 1, children: 0 });
   const [specialRequests, setSpecialRequests] = useState('');
+  const [drivingLicenseNumber, setDrivingLicenseNumber] = useState('');
+  const [licenseState, setLicenseState] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState('');
 
   useEffect(() => {
     if (isOpen) {
@@ -45,10 +48,26 @@ export function BookingModal({
       itemType,
       dates: dateRange[0],
       guests,
-      specialRequests
+      specialRequests,
+      drivingLicenseNumber,
+      licenseState,
+      dateOfBirth
     });
     onClose();
   };
+
+  // Australian states and territories for the dropdown
+  const australianStates = [
+    { code: '', name: 'Select State/Territory' },
+    { code: 'NSW', name: 'New South Wales' },
+    { code: 'VIC', name: 'Victoria' },
+    { code: 'QLD', name: 'Queensland' },
+    { code: 'WA', name: 'Western Australia' },
+    { code: 'SA', name: 'South Australia' },
+    { code: 'TAS', name: 'Tasmania' },
+    { code: 'ACT', name: 'Australian Capital Territory' },
+    { code: 'NT', name: 'Northern Territory' }
+  ];
 
   return (
     <AnimatePresence>
@@ -73,7 +92,7 @@ export function BookingModal({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.95 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="relative rounded-2xl shadow-xl w-full max-w-md overflow-hidden"
+              className="relative rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="bg-primary p-4 text-white">
@@ -91,7 +110,7 @@ export function BookingModal({
                 <p className="text-sm opacity-90 mt-1">ID: {itemId}</p>
               </div>
 
-              <form onSubmit={handleSubmit} className="p-6 space-y-6 bg-white">
+              <form onSubmit={handleSubmit} className="p-6 space-y-6 bg-white max-h-[80vh] overflow-y-auto">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Dates
@@ -165,6 +184,59 @@ export function BookingModal({
                         </button>
                       </div>
                     </div>
+                  </div>
+                </div>
+
+                {/* New fields section */}
+                <div className="border-t pt-6 space-y-4">
+                  <h3 className="text-lg font-medium text-gray-900">Personal Information</h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Driving License Number *
+                      </label>
+                      <input
+                        type="text"
+                        value={drivingLicenseNumber}
+                        onChange={(e) => setDrivingLicenseNumber(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none"
+                        placeholder="Enter license number"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        License State *
+                      </label>
+                      <select
+                        value={licenseState}
+                        onChange={(e) => setLicenseState(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none"
+                        required
+                      >
+                        {australianStates.map((state) => (
+                          <option key={state.code} value={state.code}>
+                            {state.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Date of Birth *
+                    </label>
+                    <input
+                      type="date"
+                      value={dateOfBirth}
+                      onChange={(e) => setDateOfBirth(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none"
+                      max={new Date().toISOString().split('T')[0]} // Prevent future dates
+                      required
+                    />
                   </div>
                 </div>
 

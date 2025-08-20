@@ -35,6 +35,7 @@ export default function Footer() {
   ];
 
   const quickLinks = [
+    { name: 'Home', href: '/' },
     { name: 'About Us', href: '/about' },
     { name: 'Motel Rooms', href: '/motel' },
     { name: 'Caravan Parks', href: '/caravan' },

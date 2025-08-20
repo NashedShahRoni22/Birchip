@@ -1,128 +1,154 @@
 'use client';
 
 import Link from 'next/link';
-import { Bed, Truck, DollarSign, UtensilsCrossed, ArrowRight, Star } from 'lucide-react';
+import { Bed, Truck, Car, DollarSign, UtensilsCrossed, ArrowRight, Star, MapPin } from 'lucide-react';
 
 export default function ServicesSection() {
   const services = [
     {
       icon: Bed,
       title: 'Motel Booking',
-      description: 'Book comfortable motel rooms and caravan spots with modern amenities. Perfect for travelers seeking quality accommodation.',
+      description: 'Book comfortable motel rooms with modern amenities and exceptional service. Perfect for travelers seeking quality accommodation.',
       features: ['24/7 Check-in', 'Free WiFi', 'Air Conditioning', 'Private Bathroom'],
       link: '/motel',
       buttonText: 'Book Room',
-      gradient: 'from-[#B63D5E]/20 to-[#603C59]/20',
+      gradient: 'from-[#B63D5E]/10 to-[#603C59]/10',
+      accentColor: 'text-[#B63D5E]',
+      iconBg: 'bg-[#B63D5E]/10',
+      iconHover: 'group-hover:bg-[#B63D5E]/20',
+    },
+    {
+      icon: Car,
+      title: 'Caravan Booking',
+      description: 'Rent fully-equipped caravans for your road trip adventure. Modern facilities and comfortable interiors for memorable journeys.',
+      features: ['Fully Equipped', 'Kitchen & Bathroom', 'Sleeping Arrangements', 'GPS Navigation'],
+      link: '/caravan',
+      buttonText: 'Rent Caravan',
+      gradient: 'from-[#603C59]/10 to-[#95A996]/10',
+      accentColor: 'text-[#603C59]',
+      iconBg: 'bg-[#603C59]/10',
+      iconHover: 'group-hover:bg-[#603C59]/20',
     },
     {
       icon: Truck,
-      title: 'Caravan Booking',
-      description: 'Secure and spacious caravan parking spots with electrical hookups and water access. Ideal for road trip adventures.',
-      features: ['Power Hookups', 'Water Access', 'Dump Station', 'Security'],
-      link: '/caravan',
+      title: 'Caravan Parking',
+      description: 'Secure and spacious caravan parking spots with electrical hookups and water access. Ideal for extended stays.',
+      features: ['Power Hookups', 'Water Access', 'Dump Station', '24/7 Security'],
+      link: '/caravan-parking',
       buttonText: 'Reserve Spot',
-      gradient: 'from-[#603C59]/20 to-[#95A996]/20',
+      gradient: 'from-[#95A996]/10 to-[#F5E6CE]/10',
+      accentColor: 'text-[#95A996]',
+      iconBg: 'bg-[#95A996]/10',
+      iconHover: 'group-hover:bg-[#95A996]/20',
     },
     {
       icon: DollarSign,
       title: 'Gas Station Prices',
-      description: 'Check real-time fuel prices and save money on your journey. Compare prices and find the best deals.',
-      features: ['Real-time Prices', 'Price Comparison', 'Fuel Calculator', 'Location Map'],
-      link: '/gas',
+      description: 'Check real-time fuel prices and save money on your journey. Compare prices across different stations and find the best deals.',
+      features: ['Real-time Prices', 'Price Comparison', 'Fuel Calculator', 'Station Locator'],
+      link: '/gas-prices',
       buttonText: 'View Prices',
-      gradient: 'from-[#95A996]/20 to-[#B63D5E]/20',
+      gradient: 'from-[#F5E6CE]/10 to-[#B63D5E]/10',
+      accentColor: 'text-[#F5A623]',
+      iconBg: 'bg-[#F5A623]/10',
+      iconHover: 'group-hover:bg-[#F5A623]/20',
     },
     {
       icon: UtensilsCrossed,
       title: 'Food Ordering',
-      description: 'Order delicious meals from our restaurant. Fresh ingredients and authentic flavors delivered to your room.',
+      description: 'Order delicious meals from our restaurant menu. Fresh ingredients and authentic flavors delivered directly to your room.',
       features: ['Online Menu', 'Room Service', 'Fresh Ingredients', 'Quick Delivery'],
-      link: '/food',
-      buttonText: 'Order Now',
-      gradient: 'from-[#B63D5E]/20 to-[#F5E6CE]/20',
+      link: '/food-ordering',
+      buttonText: 'Order Food',
+      gradient: 'from-[#B63D5E]/10 to-[#603C59]/10',
+      accentColor: 'text-[#B63D5E]',
+      iconBg: 'bg-[#B63D5E]/10',
+      iconHover: 'group-hover:bg-[#B63D5E]/20',
     },
   ];
 
   return (
-    <section className="relative py-20 overflow-hidden">
-      {/* Background Pattern */}
-      {/* <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(96,60,89,0.1),transparent_50%)]"></div> */}
-      {/* <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(123,166,147,0.1),transparent_50%)]"></div> */}
+    <section className="relative py-20 overflow-hidden bg-gradient-to-br from-gray-50 to-white">
+      {/* Enhanced Background Pattern */}
+      <div className="absolute inset-0">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-br from-[#B63D5E]/5 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-to-tl from-[#95A996]/5 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-[#603C59]/3 to-[#F5E6CE]/3 rounded-full blur-3xl"></div>
+      </div>
 
       <div className="relative max-w-7xl mx-auto px-6">
-        {/* Section Header */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 bg-secondary backdrop-blur-sm px-4 py-2 rounded-full border border-line/20 mb-6">
-            <Star className="w-4 h-4 text-info" />
-            <span className="text-sm font-medium text-primary">Our Services</span>
+        {/* Enhanced Section Header */}
+        <div className="text-center mb-20">
+          
+          <div className="inline-flex items-center gap-2 bg-white backdrop-blur-sm px-4 py-2 rounded-full border border-line/20 mb-6">
+            <Star className="w-4 h-4 text-primary" />
+            <span className="text-sm font-medium text-muted">Our Premium Services</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-text mb-4">
+
+          <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
             Everything You Need in
-            <span className="block text-primary">
+            <span className="block bg-gradient-to-r from-[#B63D5E] to-[#603C59] bg-clip-text text-transparent">
               One Place
             </span>
           </h2>
-          <p className="text-xl text-muted max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
             From comfortable accommodation to delicious meals and fuel services,
-            we've got your travel needs covered.
+            we've got your complete travel experience covered with premium quality and exceptional service.
           </p>
         </div>
 
-        {/* Services Grid */}
+        {/* Enhanced Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {services.map((service, index) => (
             <div
               key={index}
               className="group relative"
             >
-              {/* Card */}
-              <div className="relative backdrop-blur-xl rounded-2xl p-8 border border-line/20 shadow hover:shadow-lg transition-all duration-500 transform hover:-translate-y-2 h-full">
-                {/* Gradient Background */}
-                {/* <div className={`absolute inset-0 bg-gradient-to-br ${service.gradient} rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div> */}
+              {/* Minimal Card */}
+              <div className="relative bg-white/90 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/30 shadow-sm hover:shadow-md transition-all duration-300 h-full">
+                {/* Subtle Gradient Background */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${service.gradient} rounded-2xl opacity-0 group-hover:opacity-50 transition-opacity duration-300`}></div>
 
                 {/* Content */}
                 <div className="relative z-10">
-                  {/* Icon */}
+                  {/* Clean Icon */}
                   <div className="mb-6">
-                    <div className="w-16 h-16 bg-secondary/60 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-line/20 group-hover:bg-secondary/80 transition-all duration-300">
-                      <service.icon className="w-8 h-8 text-primary group-hover:text-accent transition-colors duration-300" />
+                    <div className={`w-16 h-16 ${service.iconBg} rounded-xl flex items-center justify-center transition-colors duration-300`}>
+                      <service.icon className={`w-8 h-8 ${service.accentColor} transition-colors duration-300`} />
                     </div>
                   </div>
 
-                  {/* Title */}
-                  <h3 className="text-xl font-bold text-text mb-3 group-hover:text-primary transition-colors duration-300">
+                  {/* Clean Title */}
+                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#603C59] transition-colors duration-300">
                     {service.title}
                   </h3>
 
-                  {/* Description */}
-                  <p className="text-muted mb-6 leading-relaxed">
+                  {/* Clean Description */}
+                  <p className="text-gray-600 mb-6 leading-relaxed">
                     {service.description}
                   </p>
 
-                  {/* Features */}
+                  {/* Clean Features List */}
                   <div className="mb-8">
                     <ul className="space-y-2">
                       {service.features.map((feature, featureIndex) => (
-                        <li key={featureIndex} className="flex items-center text-sm text-muted">
-                          <div className="w-1.5 h-1.5 bg-accent rounded-full mr-3"></div>
-                          {feature}
+                        <li key={featureIndex} className="flex items-center text-sm text-gray-600">
+                          <div className={`w-1.5 h-1.5 bg-primary rounded-full mr-3`}></div>
+                          <span>{feature}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  {/* Button */}
+                  {/* Clean Button */}
                   <Link
                     href={service.link}
-                    className="inline-flex items-center gap-2 bg-primary backdrop-blur-sm px-6 py-3 rounded-xl font-semibold hover:bg-button text-white transition-all duration-300 transform border border-line/20 group/button"
+                    className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B63D5E] to-[#603C59] px-6 py-3 rounded-xl font-semibold text-white transition-colors duration-300 hover:from-[#603C59] hover:to-[#B63D5E] group/button"
                   >
-                    {service.buttonText}
+                    <span>{service.buttonText}</span>
                     <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover/button:translate-x-1" />
                   </Link>
                 </div>
-
-                {/* Shine Effect */}
-                {/* <div className="absolute inset-0 bg-gradient-to-r from-transparent via-secondary/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 rounded-2xl"></div> */}
               </div>
             </div>
           ))}

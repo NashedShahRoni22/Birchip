@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import {
     Sandwich,
     Drumstick,
@@ -14,6 +15,7 @@ import {
 
 import FoodImage from "@/public/cardImage/food.jpg";
 import Image from 'next/image';
+import FoodOrderModal from '../shared/FoodOrderModal';
 
 const foodMenu = [
     {
@@ -90,6 +92,19 @@ const renderStars = (rating) => {
 };
 
 export default function FoodMenuSection() {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedFood, setSelectedFood] = useState(null);
+
+    const handleOrderClick = (food) => {
+        setSelectedFood(food);
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setSelectedFood(null);
+    };
+
     return (
         <section className="py-20 px-6 bg-bg">
             <div className="text-center mb-16">
@@ -137,12 +152,13 @@ export default function FoodMenuSection() {
                                 {food.name}
                             </h3>
 
-                            {/* Rating/Description could go here */}
+                            {/* Rating */}
                             <div className="flex items-center gap-2 sm:gap-3">
                                 {renderStars(4.5)}
                             </div>
 
                             <button
+                                onClick={() => handleOrderClick(food)}
                                 disabled={!food.available}
                                 className={`w-full px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 mt-3 ${food.available
                                     ? 'bg-primary text-white hover:bg-button hover:shadow active:scale-95 cursor-pointer'
@@ -160,6 +176,13 @@ export default function FoodMenuSection() {
                     </div>
                 ))}
             </div>
+
+            {/* Order Modal */}
+            <FoodOrderModal
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+                selectedFood={selectedFood}
+            />
         </section>
     );
 }
