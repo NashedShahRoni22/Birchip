@@ -1,15 +1,94 @@
 "use client";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { usePostApi } from "@/hooks/usePostApi";
 
 // Right Side Component - Clean White Design
 export default function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPass: "",
+  });
+
+  const {
+    mutate: loginMutation,
+    isPending,
+    error,
+  } = usePostApi("/login", {
+    onSuccess: (data) => {
+      console.log("Login successful:", data);
+
+      // Store token and user data
+      localStorage.setItem("auth_token", data.token);
+      localStorage.setItem("user_data", JSON.stringify(data));
+
+      // Redirect to dashboard
+      router.push("/dashboard");
+    },
+    onError: (error) => {
+      console.error("Login failed:", error);
+    },
+  });
+
+  const {
+    mutate: registerMutation,
+    isPending: isRegisterPending,
+    error: registerError,
+  } = usePostApi("/register", {
+    onSuccess: (data) => {
+      console.log("Registration successful:", data);
+
+      // Store token and user data
+      localStorage.setItem("auth_token", data.token);
+      localStorage.setItem("user_data", JSON.stringify(data));
+    },
+    onError: (error) => {
+      console.error("Registration failed:", error);
+    },
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleLoginSubmit = (e) => {
+    e.preventDefault();
+
+    const loginData = {
+      email: formData.email,
+      password: formData.password,
+    };
+
+    loginMutation(loginData);
+  };
+
+  const handleRegisterSubmit = (e) => {
+    e.preventDefault();
+
+    // Optionally validate before submit
+    if (formData.password !== formData.confirmPass) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    const registerData = {
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      password_confirmation: formData.confirmPass, // Laravel expects this
+    };
+
+    registerMutation(registerData);
+  };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, x: 50 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.8 }}
@@ -20,7 +99,7 @@ export default function AuthForm() {
         <motion.div
           animate={{
             y: [0, -15, 0],
-            rotate: [0, 180, 360]
+            rotate: [0, 180, 360],
           }}
           transition={{
             duration: 8,
@@ -29,11 +108,11 @@ export default function AuthForm() {
           }}
           className="absolute top-20 right-10 w-4 h-4 rounded-full bg-[#B63D5E]/30"
         />
-        
+
         <motion.div
           animate={{
             x: [0, 20, 0],
-            scale: [1, 1.2, 1]
+            scale: [1, 1.2, 1],
           }}
           transition={{
             duration: 6,
@@ -50,16 +129,14 @@ export default function AuthForm() {
           transition={{ delay: 0.2, duration: 0.6 }}
           className="text-center mb-10"
         >
-          <motion.h2 
-            className="text-3xl font-bold text-gray-900 mb-2"
-          >
+          <motion.h2 className="text-3xl font-bold text-gray-900 mb-2">
             {isLogin ? "Welcome Back" : "Create Account"}
           </motion.h2>
           <p className="text-gray-600">
             {isLogin ? "Sign in to your account" : "Join our community today"}
           </p>
         </motion.div>
-        
+
         {/* Tab Switch with Modern Design */}
         <div className="flex justify-center mb-8 bg-gray-100 rounded-2xl p-2">
           <motion.button
@@ -90,36 +167,47 @@ export default function AuthForm() {
 
         {/* Form */}
         {isLogin ? (
-          <motion.form 
+          <motion.form
             key="login"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="space-y-6"
+            onSubmit={handleLoginSubmit}
           >
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Email Address
+              </label>
               <motion.input
-                whileFocus={{ 
+                whileFocus={{
                   scale: 1.02,
-                  boxShadow: "0 0 0 3px rgba(182, 61, 94, 0.1)"
+                  boxShadow: "0 0 0 3px rgba(182, 61, 94, 0.1)",
                 }}
                 type="email"
                 className="w-full px-4 py-4 rounded-xl border-2 border-gray-200 text-gray-900 outline-none focus:border-[#B63D5E] transition-all duration-300"
                 placeholder="you@example.com"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Password
+              </label>
               <div className="relative">
                 <motion.input
-                  whileFocus={{ 
+                  whileFocus={{
                     scale: 1.02,
-                    boxShadow: "0 0 0 3px rgba(182, 61, 94, 0.1)"
+                    boxShadow: "0 0 0 3px rgba(182, 61, 94, 0.1)",
                   }}
                   type={showPassword ? "text" : "password"}
                   className="w-full px-4 py-4 pr-12 rounded-xl border-2 border-gray-200 text-gray-900 outline-none focus:border-[#B63D5E] transition-all duration-300"
                   placeholder="••••••••"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
                 />
                 <button
                   type="button"
@@ -127,25 +215,56 @@ export default function AuthForm() {
                   className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-[#B63D5E] transition-colors cursor-pointer"
                 >
                   {showPassword ? (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"
+                      />
                     </svg>
                   ) : (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                      />
                     </svg>
                   )}
                 </button>
               </div>
             </div>
-            
+
             <div className="flex items-center justify-between">
               <label className="flex items-center">
-                <input type="checkbox" className="w-4 h-4 text-[#B63D5E] rounded border-gray-300 focus:ring-[#B63D5E]" />
+                <input
+                  type="checkbox"
+                  className="w-4 h-4 text-[#B63D5E] rounded border-gray-300 focus:ring-[#B63D5E]"
+                />
                 <span className="ml-2 text-sm text-gray-600">Remember me</span>
               </label>
-              <a href="#" className="text-sm text-[#B63D5E] hover:text-[#a83754] transition-colors">
+              <a
+                href="#"
+                className="text-sm text-[#B63D5E] hover:text-[#a83754] transition-colors"
+              >
                 Forgot password?
               </a>
             </div>
@@ -159,48 +278,64 @@ export default function AuthForm() {
             </motion.button>
           </motion.form>
         ) : (
-          <motion.form 
+          <motion.form
             key="register"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="space-y-6"
+            onSubmit={handleRegisterSubmit}
           >
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Full Name
+              </label>
               <motion.input
-                whileFocus={{ 
+                whileFocus={{
                   scale: 1.02,
-                  boxShadow: "0 0 0 3px rgba(182, 61, 94, 0.1)"
+                  boxShadow: "0 0 0 3px rgba(182, 61, 94, 0.1)",
                 }}
                 type="text"
                 className="w-full px-4 py-4 rounded-xl border-2 border-gray-200 text-gray-900 outline-none focus:border-[#B63D5E] transition-all duration-300"
                 placeholder="John Doe"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Email Address
+              </label>
               <motion.input
-                whileFocus={{ 
+                whileFocus={{
                   scale: 1.02,
-                  boxShadow: "0 0 0 3px rgba(182, 61, 94, 0.1)"
+                  boxShadow: "0 0 0 3px rgba(182, 61, 94, 0.1)",
                 }}
                 type="email"
                 className="w-full px-4 py-4 rounded-xl border-2 border-gray-200 text-gray-900 outline-none focus:border-[#B63D5E] transition-all duration-300"
                 placeholder="you@example.com"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Password
+              </label>
               <div className="relative">
                 <motion.input
-                  whileFocus={{ 
+                  whileFocus={{
                     scale: 1.02,
-                    boxShadow: "0 0 0 3px rgba(182, 61, 94, 0.1)"
+                    boxShadow: "0 0 0 3px rgba(182, 61, 94, 0.1)",
                   }}
                   type={showPassword ? "text" : "password"}
                   className="w-full px-4 py-4 pr-12 rounded-xl border-2 border-gray-200 text-gray-900 outline-none focus:border-[#B63D5E] transition-all duration-300"
                   placeholder="••••••••"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
                 />
                 <button
                   type="button"
@@ -208,29 +343,59 @@ export default function AuthForm() {
                   className="cursor-pointer absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-[#B63D5E] transition-colors"
                 >
                   {showPassword ? (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"
+                      />
                     </svg>
                   ) : (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                      />
                     </svg>
                   )}
                 </button>
               </div>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Confirm Password</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Confirm Password
+              </label>
               <div className="relative">
                 <motion.input
-                  whileFocus={{ 
+                  whileFocus={{
                     scale: 1.02,
-                    boxShadow: "0 0 0 3px rgba(182, 61, 94, 0.1)"
+                    boxShadow: "0 0 0 3px rgba(182, 61, 94, 0.1)",
                   }}
                   type={showConfirmPassword ? "text" : "password"}
                   className="w-full px-4 py-4 pr-12 rounded-xl border-2 border-gray-200 text-gray-900 outline-none focus:border-[#B63D5E] transition-all duration-300"
                   placeholder="••••••••"
+                  name="confirmPass"
+                  value={formData.confirmPass}
+                  onChange={handleChange}
                 />
                 <button
                   type="button"
@@ -238,23 +403,54 @@ export default function AuthForm() {
                   className="cursor-pointer absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-[#B63D5E] transition-colors"
                 >
                   {showConfirmPassword ? (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"
+                      />
                     </svg>
                   ) : (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                      />
                     </svg>
                   )}
                 </button>
               </div>
             </div>
-            
+
             <div className="flex items-center">
-              <input type="checkbox" className="w-4 h-4 text-[#B63D5E] rounded border-gray-300 focus:ring-[#B63D5E]" />
+              <input
+                type="checkbox"
+                className="w-4 h-4 text-[#B63D5E] rounded border-gray-300 focus:ring-[#B63D5E]"
+              />
               <span className="ml-2 text-sm text-gray-600">
-                I agree to the <a href="#" className="text-[#B63D5E] hover:text-[#a83754]">Terms & Conditions</a>
+                I agree to the{" "}
+                <a href="#" className="text-[#B63D5E] hover:text-[#a83754]">
+                  Terms & Conditions
+                </a>
               </span>
             </div>
 

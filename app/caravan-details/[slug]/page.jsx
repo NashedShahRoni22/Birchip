@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import { useState } from 'react';
+import Image from "next/image";
+import React, { useState } from "react";
 import {
   Star,
   Users,
@@ -20,79 +20,75 @@ import {
   Heart,
   Share2,
   CheckCircle,
-  Camera
-} from 'lucide-react';
-import RoomImage from "@/public/cardImage/motel.jpg";
-import { BookingModal } from '../components/shared/AnimatePresence';
+  Camera,
+} from "lucide-react";
+import CaravanImage from "@/public/cardImage/caravan.jpg";
+import { BookingModal } from "../../components/shared/AnimatePresence";
+import useGetApi from "@/hooks/useGetApi";
+import { calculateDiscount } from "@/utils/calculateDiscount";
 
 // Enhanced room data with description
-const roomData = {
+const caravanData = {
   id: 1,
-  name: 'Standard Queen Room',
-  type: 'standard',
-  price: 120,
-  originalPrice: 150,
-  rating: 4.5,
-  reviews: 28,
+  name: "Compact Caravan",
+  type: "caravan",
+  price: 90,
+  originalPrice: 110,
+  rating: 4.3,
+  reviews: 15,
   capacity: 2,
-  beds: '1 Queen Bed',
-  size: '25 m²',
-  description: `Experience comfort and convenience in our thoughtfully designed Standard Queen Room, perfect for couples or solo travelers seeking a peaceful retreat. This beautifully appointed accommodation combines modern amenities with classic hospitality to ensure your stay is both memorable and relaxing.
-
-The centerpiece of this inviting space is a luxurious queen-sized bed featuring premium linens, plush pillows, and a supportive mattress that guarantees a restful night's sleep. The room's contemporary design incorporates warm, neutral tones with tasteful furnishings that create a welcoming atmosphere from the moment you step inside.
-
-Our Standard Queen Room spans 25 square meters of thoughtfully utilized space, offering ample room to unwind without feeling cramped. Large windows flood the room with natural light during the day, while blackout curtains ensure complete privacy and darkness for those who prefer to sleep in.
-
-The private bathroom is a sanctuary of cleanliness and functionality, featuring modern fixtures, a spacious shower with excellent water pressure, fresh towels, and complimentary toiletries. The well-lit vanity area provides perfect lighting for your morning routine.
-
-Stay connected with complimentary high-speed WiFi throughout your visit, whether you're catching up on work, streaming your favorite shows, or sharing memories with friends and family. The smart TV offers access to popular streaming services and local channels for your entertainment.
-`,
-  features: ['Free WiFi', 'Air Conditioning', 'TV', 'Private Bathroom', 'Coffee Maker'],
+  beds: "1 Double Bed",
+  size: "18 m²",
+  description: "300+ word comprehensive description...",
+  features: ["AC", "Smart TV", "Mini Kitchen"],
   amenities: [
-    { icon: Wifi, label: 'Free WiFi' },
-    { icon: Wind, label: 'AC' },
-    { icon: Tv, label: 'Smart TV' },
-    { icon: Coffee, label: 'Coffee' },
-    { icon: Bath, label: 'Private Bath' },
-    { icon: Car, label: 'Parking' }
+    { icon: Wind, label: "AC" },
+    { icon: Tv, label: "Smart TV" },
+    { icon: Coffee, label: "Mini Kitchen" },
+    { icon: Car, label: "Parking" },
+    { icon: Maximize, label: "Outdoor Space" },
+    { icon: Bath, label: "Shared Facilities" },
   ],
   available: true,
   popular: false,
-  images: [RoomImage, RoomImage, RoomImage, RoomImage], // Multiple images for gallery
-  checkIn: '3:00 PM',
-  checkOut: '11:00 AM',
-  location: 'Main Building, 2nd Floor'
+  images: [CaravanImage, CaravanImage, CaravanImage, CaravanImage],
+  checkIn: "2:00 PM",
+  checkOut: "11:00 AM",
+  location: "Caravan Park Area",
 };
 
-export default function RoomDetailsPage() {
+export default function CaravanDetailsPage({ params }) {
+  const { slug } = React.use(params);
+  const { data: caravanDetails } = useGetApi(`/caravans/${slug}`);
+
   const [isBookingOpen, setIsBookingOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState({ id: '', type: '' });
-  
+  const [selectedItem, setSelectedItem] = useState({ id: "", type: "" });
+
   // When clicking a card:
   const handleCardClick = () => {
-  setSelectedItem({ 
-    id: roomData.id.toString(), 
-    type: 'room' // or 'caravan' or 'food' depending on what you're booking
-  });
-  setIsBookingOpen(true);
-}
+    setSelectedItem({
+      id: caravanData.id.toString(),
+      type: "caravan", // or 'caravan' or 'food' depending on what you're booking
+    });
+    setIsBookingOpen(true);
+  };
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
 
   const handlePreviousImage = () => {
     setCurrentImageIndex((prev) =>
-      prev === 0 ? roomData.images.length - 1 : prev - 1
+      prev === 0 ? caravanData.images.length - 1 : prev - 1
     );
   };
 
   const handleNextImage = () => {
     setCurrentImageIndex((prev) =>
-      prev === roomData.images.length - 1 ? 0 : prev + 1
+      prev === caravanData.images.length - 1 ? 0 : prev + 1
     );
   };
 
-  const truncatedDescription = roomData.description.slice(0, 300) + '...';
+  const truncatedDescription = caravanData.description.slice(0, 300) + "...";
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -102,17 +98,18 @@ export default function RoomDetailsPage() {
           <div className="flex items-center justify-between py-4">
             <button className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors cursor-pointer">
               <ChevronLeft className="w-5 h-5" />
-              <span className="font-medium">Back to rooms</span>
+              <span className="font-medium">Back to caravans</span>
             </button>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setIsLiked(!isLiked)}
-                className={`p-2 rounded-full border transition-all cursor-pointer ${isLiked
-                  ? 'bg-red-50 border-red-200 text-red-600'
-                  : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
-                  }`}
+                className={`p-2 rounded-full border transition-all cursor-pointer ${
+                  isLiked
+                    ? "bg-red-50 border-red-200 text-red-600"
+                    : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
+                }`}
               >
-                <Heart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
+                <Heart className={`w-5 h-5 ${isLiked ? "fill-current" : ""}`} />
               </button>
               <button className="p-2 rounded-full border bg-white border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer">
                 <Share2 className="w-5 h-5" />
@@ -131,15 +128,15 @@ export default function RoomDetailsPage() {
             <div className="relative">
               <div className="relative h-96 rounded-2xl overflow-hidden">
                 <Image
-                  src={roomData.images[currentImageIndex]}
-                  alt={`${roomData.name} - Image ${currentImageIndex + 1}`}
+                  src={caravanData.images[currentImageIndex]}
+                  alt={`${caravanData.name} - Image ${currentImageIndex + 1}`}
                   fill
                   className="object-cover"
                   priority
                 />
 
                 {/* Image Navigation */}
-                {roomData.images.length > 1 && (
+                {caravanData.images.length > 1 && (
                   <>
                     <button
                       onClick={handlePreviousImage}
@@ -159,21 +156,22 @@ export default function RoomDetailsPage() {
                 {/* Image Counter */}
                 <div className="absolute bottom-4 right-4 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm flex items-center gap-2">
                   <Camera className="w-4 h-4" />
-                  {currentImageIndex + 1} / {roomData.images.length}
+                  {currentImageIndex + 1} / {caravanData.images.length}
                 </div>
               </div>
 
               {/* Thumbnail Gallery */}
-              {roomData.images.length > 1 && (
+              {caravanData.images.length > 1 && (
                 <div className="flex gap-2 mt-4 overflow-x-auto pb-2">
-                  {roomData.images.map((image, index) => (
+                  {caravanData.images.map((image, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
-                      className={`flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${index === currentImageIndex
-                        ? 'border-primary'
-                        : 'border-gray-200 hover:border-gray-300'
-                        }`}
+                      className={`flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${
+                        index === currentImageIndex
+                          ? "border-primary"
+                          : "border-gray-200 hover:border-gray-300"
+                      }`}
                     >
                       <Image
                         src={image}
@@ -191,29 +189,33 @@ export default function RoomDetailsPage() {
             {/* Room Details */}
             <div className="bg-white rounded-2xl p-6 shadow-sm">
               <div className="mb-6">
-                <div className="flex flex-col md:flex-row md:items-start gap-4 justify-between mb-4">
+                <div className="flex flex-col md:flex-row md:items-start justify-between mb-4">
                   <div>
                     <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
-                      {roomData.name}
+                      {caravanDetails?.data?.title}
                     </h1>
                     <div className="flex flex-col md:flex-row md:items-center gap-4 text-sm text-gray-600">
                       <div className="flex items-center gap-1">
                         <MapPin className="w-4 h-4" />
-                        {roomData.location}
+                        {caravanDetails?.data?.address}
                       </div>
                       <div className="flex items-center gap-1">
                         <Users className="w-4 h-4" />
-                        Up to {roomData.capacity} guests
+                        Up to {caravanDetails?.data?.capacity} guests
                       </div>
                     </div>
                   </div>
                   <div className="text-right">
                     <div className="flex items-center gap-2 mb-1">
                       <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                      <span className="font-semibold text-gray-900">{roomData.rating}</span>
-                      <span className="text-gray-600">({roomData.reviews} reviews)</span>
+                      <span className="font-semibold text-gray-900">
+                        {caravanData.rating}
+                      </span>
+                      <span className="text-gray-600">
+                        ({caravanData.reviews} reviews)
+                      </span>
                     </div>
-                    {roomData.popular && (
+                    {caravanData.popular && (
                       <span className="inline-block bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-full font-medium">
                         Popular Choice
                       </span>
@@ -225,17 +227,23 @@ export default function RoomDetailsPage() {
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4 bg-gray-50 rounded-xl">
                   <div className="text-center">
                     <Bed className="w-6 h-6 text-gray-600 mx-auto mb-2" />
-                    <p className="text-sm font-medium text-gray-900">{roomData.beds}</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {caravanDetails?.data?.bed_size}
+                    </p>
                     <p className="text-xs text-gray-600">Bed Configuration</p>
                   </div>
                   <div className="text-center">
                     <Maximize className="w-6 h-6 text-gray-600 mx-auto mb-2" />
-                    <p className="text-sm font-medium text-gray-900">{roomData.size}</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {caravanDetails?.data?.room_size}
+                    </p>
                     <p className="text-xs text-gray-600">Room Size</p>
                   </div>
                   <div className="text-center">
                     <Users className="w-6 h-6 text-gray-600 mx-auto mb-2" />
-                    <p className="text-sm font-medium text-gray-900">{roomData.capacity} Guests</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {caravanDetails?.data?.capacity} Guests
+                    </p>
                     <p className="text-xs text-gray-600">Max Capacity</p>
                   </div>
                 </div>
@@ -243,12 +251,19 @@ export default function RoomDetailsPage() {
 
               {/* Amenities */}
               <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Room Amenities</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  Room Amenities
+                </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                  {roomData.amenities.map((amenity, index) => (
-                    <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                  {caravanData.amenities.map((amenity, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl"
+                    >
                       <amenity.icon className="w-5 h-5 text-gray-600" />
-                      <span className="text-sm font-medium text-gray-900">{amenity.label}</span>
+                      <span className="text-sm font-medium text-gray-900">
+                        {amenity.label}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -256,17 +271,33 @@ export default function RoomDetailsPage() {
 
               {/* Description */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">About This Room</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  About This Room
+                </h3>
+
+                <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                  {caravanDetails?.data?.short_description}
+                </p>
+
                 <div className="prose prose-gray max-w-none">
-                  <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-                    {showFullDescription ? roomData.description : truncatedDescription}
-                  </p>
-                  <button
-                    onClick={() => setShowFullDescription(!showFullDescription)}
-                    className="text-primary hover:text-button font-medium mt-2 cursor-pointer"
-                  >
-                    {showFullDescription ? 'Show Less' : 'Read More'}
-                  </button>
+                  {showFullDescription && (
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: caravanDetails?.data?.description,
+                      }}
+                      className="mt-4"
+                    ></div>
+                  )}
+                  {caravanDetails?.data?.description && (
+                    <button
+                      onClick={() =>
+                        setShowFullDescription(!showFullDescription)
+                      }
+                      className="text-primary hover:text-button font-medium mt-2 cursor-pointer"
+                    >
+                      {showFullDescription ? "Show Less" : "Read More"}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -278,13 +309,18 @@ export default function RoomDetailsPage() {
               <div className="bg-white rounded-2xl p-6 shadow-lg">
                 <div className="mb-6">
                   <div className="flex items-baseline gap-2 mb-2">
-                    <span className="text-3xl font-bold text-gray-900">${roomData.price}</span>
+                    <span className="text-3xl font-bold text-gray-900">
+                      $
+                      {calculateDiscount(
+                        caravanDetails?.data?.discount_type,
+                        caravanDetails?.data?.price,
+                        caravanDetails?.data?.discount
+                      )}
+                    </span>
                     <span className="text-lg text-gray-600">/ night</span>
-                    {roomData.originalPrice > roomData.price && (
-                      <span className="text-sm text-gray-500 line-through ml-2">
-                        ${roomData.originalPrice}
-                      </span>
-                    )}
+                    <span className="text-sm text-gray-500 line-through ml-2">
+                      ${caravanDetails?.data?.price}
+                    </span>
                   </div>
                   <div className="flex items-center gap-1 text-sm text-green-600">
                     <CheckCircle className="w-4 h-4" />
@@ -297,22 +333,33 @@ export default function RoomDetailsPage() {
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       <Clock className="w-4 h-4 text-gray-600" />
-                      <span className="text-sm font-medium text-gray-900">Check-in</span>
+                      <span className="text-sm font-medium text-gray-900">
+                        Check-in
+                      </span>
                     </div>
-                    <p className="text-sm text-gray-600">{roomData.checkIn}</p>
+                    <p className="text-sm text-gray-600">
+                      {caravanData.checkIn}
+                    </p>
                   </div>
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       <Clock className="w-4 h-4 text-gray-600" />
-                      <span className="text-sm font-medium text-gray-900">Check-out</span>
+                      <span className="text-sm font-medium text-gray-900">
+                        Check-out
+                      </span>
                     </div>
-                    <p className="text-sm text-gray-600">{roomData.checkOut}</p>
+                    <p className="text-sm text-gray-600">
+                      {caravanData.checkOut}
+                    </p>
                   </div>
                 </div>
 
                 {/* Booking Form */}
                 <div className="space-y-4">
-                  <button onClick={handleCardClick} className="w-full bg-primary text-white py-3 px-4 rounded-xl font-semibold hover:bg-button transition-colors cursor-pointer">
+                  <button
+                    onClick={handleCardClick}
+                    className="w-full bg-primary text-white py-3 px-4 rounded-xl font-semibold hover:bg-button transition-colors cursor-pointer"
+                  >
                     Reserve Now
                   </button>
                   <button className="w-full border border-gray-300 text-gray-700 py-3 px-4 rounded-xl font-semibold hover:bg-gray-50 transition-colors cursor-pointer">
