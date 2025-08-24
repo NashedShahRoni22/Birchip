@@ -5,8 +5,12 @@ import { motion } from "framer-motion";
 import { Eye, EyeOff, LoaderCircle } from "lucide-react";
 import { usePostApi } from "@/hooks/usePostApi";
 import toast from "react-hot-toast";
+import useAuth from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 export default function SignupForm() {
+  const router = useRouter();
+  const { setAuthInfo } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -51,6 +55,11 @@ export default function SignupForm() {
     mutate(signupData, {
       onSuccess: (data) => {
         toast.success(data?.message);
+        setAuthInfo(data?.data);
+        if (data?.status) {
+          sessionStorage.setItem("authInfo", JSON.stringify(data?.data));
+        }
+        router.replace("/");
         setFormData({
           name: "",
           email: "",

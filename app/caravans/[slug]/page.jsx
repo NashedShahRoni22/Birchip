@@ -26,6 +26,8 @@ import CaravanImage from "@/public/cardImage/caravan.jpg";
 import { BookingModal } from "../../components/shared/AnimatePresence";
 import useGetApi from "@/hooks/useGetApi";
 import { calculateDiscount } from "@/utils/calculateDiscount";
+import useAuth from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 // Enhanced room data with description
 const caravanData = {
@@ -59,19 +61,12 @@ const caravanData = {
 
 export default function CaravanDetailsPage({ params }) {
   const { slug } = React.use(params);
+  const router = useRouter();
   const { data: caravanDetails } = useGetApi(`/caravans/${slug}`);
+  const { authInfo } = useAuth();
 
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState({ id: "", type: "" });
-
-  // When clicking a card:
-  const handleCardClick = () => {
-    setSelectedItem({
-      id: caravanData.id.toString(),
-      type: "caravan", // or 'caravan' or 'food' depending on what you're booking
-    });
-    setIsBookingOpen(true);
-  };
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
@@ -88,7 +83,18 @@ export default function CaravanDetailsPage({ params }) {
     );
   };
 
-  const truncatedDescription = caravanData.description.slice(0, 300) + "...";
+  // handle caravan reserve
+  const handleReserve = () => {
+    if (!authInfo) {
+      return router.push("/auth");
+    }
+
+    setSelectedItem({
+      id: caravanData.id.toString(),
+      type: "caravan", // or 'caravan' or 'food' depending on what you're booking
+    });
+    setIsBookingOpen(true);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -357,7 +363,7 @@ export default function CaravanDetailsPage({ params }) {
                 {/* Booking Form */}
                 <div className="space-y-4">
                   <button
-                    onClick={handleCardClick}
+                    onClick={handleReserve}
                     className="w-full bg-primary text-white py-3 px-4 rounded-xl font-semibold hover:bg-button transition-colors cursor-pointer"
                   >
                     Reserve Now

@@ -100,7 +100,7 @@ export default function MotelCard({ motelData }) {
           </div>
 
           <Link
-            href={`/room-details/${motelData?.slug}`}
+            href={`/motels/${motelData?.slug}`}
             disabled={!motelData?.status}
             className={`px-4 py-2 sm:px-6 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 ${
               motelData?.status

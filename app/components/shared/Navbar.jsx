@@ -2,13 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Calendar, LogOut, Menu, User, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import logo1 from "../../../public/images/logo/logo-1.svg";
 import logo2 from "../../../public/images/logo/logo-2.svg";
 import Image from "next/image";
+import useAuth from "@/hooks/useAuth";
+import NavUserProfileDropdown from "@/component/shared/NavUserProfileDropdown";
 
 export default function Navbar() {
+  const { authInfo } = useAuth();
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -89,12 +92,16 @@ export default function Navbar() {
               </Link>
             ))}
 
-            <Link
-              href="/auth"
-              className="ml-4 bg-white/20 backdrop-blur-sm text-white px-6 py-2.5 rounded-full hover:bg-button transition-all duration-300 transform shadow hover:shadow-lg border border-white/20"
-            >
-              Login
-            </Link>
+            {authInfo?.name ? (
+              <NavUserProfileDropdown authInfo={authInfo} />
+            ) : (
+              <Link
+                href="/auth"
+                className="ml-4 bg-white/20 backdrop-blur-sm text-white px-6 py-2.5 rounded-full hover:bg-button transition-all duration-300 transform shadow hover:shadow-lg border border-white/20"
+              >
+                Login
+              </Link>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -131,6 +138,59 @@ export default function Navbar() {
         }`}
       >
         <div className="bg-black/30 backdrop-blur-xl border-t border-white/20 px-6 py-4 space-y-4">
+          {authInfo && (
+            <div className="mb-4 pb-4 border-b border-white/20">
+              {/* User Info Display */}
+              <div className="flex items-center space-x-3 mb-4 px-2">
+                <div className="w-12 h-12 bg-gradient-to-br from-[#903F5C] to-[#7A3450] rounded-full flex items-center justify-center text-white font-semibold">
+                  {authInfo.name
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")
+                    .toUpperCase()}
+                </div>
+                <div className="flex-1">
+                  <p className="text-white font-medium text-sm">
+                    {authInfo.name}
+                  </p>
+                  <p className="text-white/70 text-xs">{authInfo.email}</p>
+                </div>
+              </div>
+
+              {/* User Actions */}
+              <div className="space-y-2">
+                <Link
+                  href="/profile"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center space-x-3 py-3 text-white/80 hover:text-white hover:pl-4 transition-all duration-300"
+                >
+                  <User size={20} />
+                  <span>My Profile</span>
+                </Link>
+
+                <Link
+                  href="/bookings"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center space-x-3 py-3 text-white/80 hover:text-white hover:pl-4 transition-all duration-300"
+                >
+                  <Calendar size={20} />
+                  <span>My Bookings</span>
+                </Link>
+
+                <button
+                  onClick={() => {
+                    // Add logout logic here
+                    setMobileMenuOpen(false);
+                  }}
+                  className="flex items-center space-x-3 py-3 text-red-400 hover:text-red-300 hover:pl-4 transition-all duration-300 w-full"
+                >
+                  <LogOut size={20} />
+                  <span>Logout</span>
+                </button>
+              </div>
+            </div>
+          )}
+
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -146,13 +206,15 @@ export default function Navbar() {
             </Link>
           ))}
 
-          <Link
-            href="/auth"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block mt-4 bg-white/20 backdrop-blur-sm text-white text-center px-6 py-3 rounded-full hover:bg-button transition-all duration-300 transform shadow border border-white/20"
-          >
-            Login
-          </Link>
+          {!authInfo && (
+            <Link
+              href="/auth"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block mt-4 bg-white/20 backdrop-blur-sm text-white text-center px-6 py-3 rounded-full hover:bg-button transition-all duration-300 transform shadow border border-white/20"
+            >
+              Login
+            </Link>
+          )}
         </div>
       </div>
     </nav>

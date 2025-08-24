@@ -2,6 +2,9 @@ import TanstackProvider from "@/providers/TanstackProvider";
 import Footer from "./components/shared/Footer";
 import Navbar from "./components/shared/Navbar";
 import "./globals.css";
+import { Toaster } from "react-hot-toast";
+import CustomToaster from "@/component/shared/CustomToaster";
+import AuthProvider from "@/providers/AuthProvider";
 
 export const metadata = {
   title: "Birchip",
@@ -13,9 +16,12 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <TanstackProvider>
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
+          <AuthProvider>
+            <Navbar />
+            <main>{children}</main>
+            <Footer />
+            <CustomToaster />
+          </AuthProvider>
         </TanstackProvider>
       </body>
     </html>

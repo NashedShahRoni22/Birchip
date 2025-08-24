@@ -100,7 +100,7 @@ export default function CaravanCard({ caravanData }) {
           </div>
 
           <Link
-            href={`/caravan-details/${caravanData?.slug}`}
+            href={`/caravans/${caravanData?.slug}`}
             disabled={!caravanData?.status}
             className={`px-4 py-2 sm:px-6 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 ${
               caravanData?.status

@@ -5,8 +5,12 @@ import { motion } from "framer-motion";
 import { Eye, EyeOff, LoaderCircle } from "lucide-react";
 import { usePostApi } from "@/hooks/usePostApi";
 import toast from "react-hot-toast";
+import useAuth from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
+  const router = useRouter();
+  const { setAuthInfo } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -21,11 +25,12 @@ export default function LoginForm() {
 
   // handle input and checkbox change
   const handleChange = (e) => {
-    const { name, value, type } = e.target;
-    if (type === "checkbox") {
-      setFormData((prev) => ({ ...prev, terms: !prev.terms }));
-    }
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   // handle login form submit
@@ -39,19 +44,26 @@ export default function LoginForm() {
 
     mutate(loginData, {
       onSuccess: (data) => {
-        toast.success(data?.message);
+        if (data?.status) {
+          toast.success(data?.message);
+          setAuthInfo(data?.data);
 
-        if (formData.remember) {
-          localStorage.setItem("authInfo", data?.data);
-        } else {
-          sessionStorage.setItem("authInfo", data?.data);
+          if (formData.remember) {
+            localStorage.setItem("authInfo", JSON.stringify(data?.data));
+            sessionStorage.removeItem("authInfo");
+          } else {
+            sessionStorage.setItem("authInfo", JSON.stringify(data?.data));
+            localStorage.removeItem("authInfo");
+          }
+
+          router.replace("/");
+
+          setFormData({
+            email: "",
+            password: "",
+            remember: false,
+          });
         }
-
-        setFormData({
-          email: "",
-          password: "",
-          remember: false,
-        });
       },
       onError: (error) => {
         console.error(error?.message || "Login failed!");
@@ -119,6 +131,9 @@ export default function LoginForm() {
         <label className="flex items-center">
           <input
             type="checkbox"
+            onChange={handleChange}
+            checked={formData.remember}
+            name="remember"
             className="w-4 h-4 text-[#B63D5E] rounded border-gray-300 focus:ring-[#B63D5E]"
           />
           <span className="ml-2 text-sm text-gray-600">Remember me</span>
