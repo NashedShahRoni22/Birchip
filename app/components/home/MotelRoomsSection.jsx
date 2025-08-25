@@ -19,7 +19,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getApi } from "@/lib/api";
 import useGetApi from "@/hooks/useGetApi";
-import MotelCard from "@/component/cards/MotelCard";
+import MotelCaravanCard from "@/component/cards/MotelCaravanCard";
 
 export default function MotelRoomsSection() {
   const [selectedFilter, setSelectedFilter] = useState("all");
@@ -288,7 +288,7 @@ export default function MotelRoomsSection() {
         {!isLoading && motels?.status && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {motels?.data?.map((motel) => (
-              <MotelCard key={motel?.id} motelData={motel} />
+              <MotelCaravanCard key={motel?.id} data={motel} />
             ))}
           </div>
         )}

@@ -15,7 +15,7 @@ import CaravanImage from "@/public/cardImage/caravan.jpg";
 import Image from "next/image";
 import Link from "next/link";
 import useGetApi from "@/hooks/useGetApi";
-import CaravanCard from "@/component/cards/CaravanCard";
+import MotelCaravanCard from "@/component/cards/MotelCaravanCard";
 
 export default function CaravanSection() {
   const caravans = [
@@ -164,7 +164,7 @@ export default function CaravanSection() {
           {!isLoading &&
             caravansData?.status &&
             caravansData?.data?.map((caravan) => (
-              <CaravanCard key={caravan?.id} caravanData={caravan} />
+              <MotelCaravanCard key={caravan?.id} data={caravan} isCaravan />
             ))}
         </div>
       </div>

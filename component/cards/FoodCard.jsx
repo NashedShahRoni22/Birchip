@@ -18,7 +18,7 @@ export default function foodDataCard({ foodData, handleOrderClick }) {
 
       <div className="relative h-40 sm:h-48 flex items-center justify-center overflow-hidden">
         <Image
-          src={`https://birchip.nsrdev.com/public/storage/${foodData?.thumbnail}`}
+          src={foodData?.thumbnail}
           alt="foodData Image"
           fill
           className="w-full h-full object-cover rounded-t-2xl group-hover:scale-110 transition-transform duration-500"

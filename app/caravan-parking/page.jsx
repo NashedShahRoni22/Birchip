@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
+import { usePostApi } from "@/hooks/usePostApi";
 
 const australianStates = [
   "New South Wales (NSW)",
@@ -100,6 +101,8 @@ export default function CaravanParkingBooking() {
     },
   ]);
 
+  const { mutate } = usePostApi("/booking/parking/1");
+
   // handle date change
   const handleDateChange = (item) => {
     setDateRange([item.selection]);
@@ -163,6 +166,8 @@ export default function CaravanParkingBooking() {
       checkin: dateRange[0].startDate,
       checkout: dateRange[0].endDate,
     };
+
+    mutate(bookingData);
 
     // OLD Data patter
     // const bookingData = {

@@ -29,10 +29,10 @@ export default function Navbar() {
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "About", href: "/about" },
-    { name: "Motel", href: "/motel" },
-    { name: "Caravan", href: "/caravan" },
-    { name: "Food", href: "/food" },
-    { name: "Gas Station", href: "/gas" },
+    { name: "Motels", href: "/motels" },
+    { name: "Caravans", href: "/caravans" },
+    { name: "Foods", href: "/foods" },
+    { name: "Gas Stations", href: "/gas-stations" },
   ];
 
   return (
