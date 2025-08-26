@@ -7,6 +7,7 @@ import { usePostApi } from "@/hooks/usePostApi";
 import toast from "react-hot-toast";
 import useAuth from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -138,12 +139,12 @@ export default function LoginForm() {
           />
           <span className="ml-2 text-sm text-gray-600">Remember me</span>
         </label>
-        <a
-          href="#"
+        <Link
+          href="/forgot-password"
           className="text-sm text-[#B63D5E] hover:text-[#a83754] transition-colors"
         >
           Forgot password?
-        </a>
+        </Link>
       </div>
 
       <motion.button

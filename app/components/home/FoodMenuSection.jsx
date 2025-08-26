@@ -15,6 +15,8 @@ import {
 import FoodOrderModal from "../shared/FoodOrderModal";
 import useGetApi from "@/hooks/useGetApi";
 import FoodCard from "@/component/cards/FoodCard";
+import useAuth from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 const foodMenu = [
   {
@@ -76,11 +78,16 @@ const foodMenu = [
 ];
 
 export default function FoodMenuSection() {
+  const router = useRouter();
   const { data: foodsData, isLoading } = useGetApi("/foods");
+  const { authInfo } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedFood, setSelectedFood] = useState(null);
 
   const handleOrderClick = (food) => {
+    if (!authInfo?.token) {
+      return router.push("/auth");
+    }
     setSelectedFood(food);
     setIsModalOpen(true);
   };
