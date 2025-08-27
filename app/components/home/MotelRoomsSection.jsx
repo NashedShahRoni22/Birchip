@@ -248,7 +248,7 @@ export default function MotelRoomsSection() {
         </div>
 
         {/* Filter Options */}
-        <div className="mb-12">
+        {/*   <div className="mb-12">
           <div className="flex flex-wrap items-center justify-center gap-4">
             <div className="flex items-center gap-2 text-muted mb-4 md:mb-0">
               <Filter className="w-4 h-4" />
@@ -282,7 +282,7 @@ export default function MotelRoomsSection() {
               ))}
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Rooms Grid */}
         {!isLoading && motels?.status && (
