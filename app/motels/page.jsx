@@ -1,9 +1,5 @@
-import MotelRoomsSection from '../components/home/MotelRoomsSection'
+import MotelRoomsSection from "../components/home/MotelRoomsSection";
 
 export default function page() {
-  return (
-    <div className=''>
-        <MotelRoomsSection/>
-    </div>
-  )
+  return <MotelRoomsSection isPage={true} />;
 }

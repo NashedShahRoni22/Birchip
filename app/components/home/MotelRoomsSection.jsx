@@ -13,6 +13,8 @@ import {
   Star,
   MapPin,
   Filter,
+  Eye,
+  ArrowRight,
 } from "lucide-react";
 import RoomImage from "@/public/cardImage/motel.jpg";
 import Image from "next/image";
@@ -20,207 +22,230 @@ import Link from "next/link";
 import { getApi } from "@/lib/api";
 import useGetApi from "@/hooks/useGetApi";
 import MotelCaravanCard from "@/component/cards/MotelCaravanCard";
+import Pagination from "@/component/Pagination/Pagination";
+import ShowAllBtn from "@/component/buttons/ShowAllBtn";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import SkeletonCard from "@/component/loaders/CardSkeleton";
 
-export default function MotelRoomsSection() {
-  const [selectedFilter, setSelectedFilter] = useState("all");
+const roomTypes = [
+  { id: "all", label: "All Rooms", count: 12 },
+  { id: "standard", label: "Standard", count: 6 },
+  { id: "deluxe", label: "Deluxe", count: 4 },
+  { id: "suite", label: "Suite", count: 2 },
+];
 
-  const { data: motels, isLoading } = useGetApi("/motels");
+const rooms = [
+  {
+    id: 1,
+    name: "Standard Queen Room",
+    type: "standard",
+    price: 120,
+    originalPrice: 150,
+    rating: 4.5,
+    reviews: 28,
+    capacity: 2,
+    beds: "1 Queen Bed",
+    size: "25 m²",
+    features: [
+      "Free WiFi",
+      "Air Conditioning",
+      "TV",
+      "Private Bathroom",
+      "Coffee Maker",
+    ],
+    amenities: [
+      { icon: Wifi, label: "Free WiFi" },
+      { icon: Wind, label: "AC" },
+      { icon: Tv, label: "Smart TV" },
+      { icon: Coffee, label: "Coffee" },
+      { icon: Bath, label: "Private Bath" },
+      { icon: Car, label: "Parking" },
+    ],
+    available: true,
+    popular: false,
+  },
+  {
+    id: 2,
+    name: "Deluxe King Room",
+    type: "deluxe",
+    price: 180,
+    originalPrice: 220,
+    rating: 4.8,
+    reviews: 45,
+    capacity: 2,
+    beds: "1 King Bed",
+    size: "35 m²",
+    features: [
+      "Free WiFi",
+      "Air Conditioning",
+      "Smart TV",
+      "Mini Fridge",
+      "Premium Coffee",
+      "Work Desk",
+    ],
+    amenities: [
+      { icon: Wifi, label: "Free WiFi" },
+      { icon: Wind, label: "AC" },
+      { icon: Tv, label: "Smart TV" },
+      { icon: Coffee, label: "Premium Coffee" },
+      { icon: Bath, label: "Luxury Bath" },
+      { icon: Car, label: "Free Parking" },
+    ],
+    available: true,
+    popular: true,
+  },
+  {
+    id: 3,
+    name: "Family Suite",
+    type: "suite",
+    price: 280,
+    originalPrice: 340,
+    rating: 4.9,
+    reviews: 32,
+    capacity: 4,
+    beds: "1 King + 1 Sofa Bed",
+    size: "50 m²",
+    features: [
+      "Free WiFi",
+      "Air Conditioning",
+      "2 Smart TVs",
+      "Kitchenette",
+      "Premium Coffee",
+      "Living Area",
+      "Balcony",
+    ],
+    amenities: [
+      { icon: Wifi, label: "Free WiFi" },
+      { icon: Wind, label: "AC" },
+      { icon: Tv, label: "2 Smart TVs" },
+      { icon: Coffee, label: "Kitchenette" },
+      { icon: Bath, label: "Luxury Bath" },
+      { icon: Car, label: "Free Parking" },
+    ],
+    available: true,
+    popular: false,
+  },
+  {
+    id: 4,
+    name: "Standard Twin Room",
+    type: "standard",
+    price: 110,
+    originalPrice: 135,
+    rating: 4.3,
+    reviews: 18,
+    capacity: 2,
+    beds: "2 Single Beds",
+    size: "25 m²",
+    features: [
+      "Free WiFi",
+      "Air Conditioning",
+      "TV",
+      "Private Bathroom",
+      "Coffee Maker",
+    ],
+    amenities: [
+      { icon: Wifi, label: "Free WiFi" },
+      { icon: Wind, label: "AC" },
+      { icon: Tv, label: "Smart TV" },
+      { icon: Coffee, label: "Coffee" },
+      { icon: Bath, label: "Private Bath" },
+      { icon: Car, label: "Parking" },
+    ],
+    available: false,
+    popular: false,
+  },
+  {
+    id: 5,
+    name: "Deluxe Double Room",
+    type: "deluxe",
+    price: 160,
+    originalPrice: 190,
+    rating: 4.6,
+    reviews: 37,
+    capacity: 2,
+    beds: "1 Double Bed",
+    size: "32 m²",
+    features: [
+      "Free WiFi",
+      "Air Conditioning",
+      "Smart TV",
+      "Mini Fridge",
+      "Premium Coffee",
+      "City View",
+    ],
+    amenities: [
+      { icon: Wifi, label: "Free WiFi" },
+      { icon: Wind, label: "AC" },
+      { icon: Tv, label: "Smart TV" },
+      { icon: Coffee, label: "Premium Coffee" },
+      { icon: Bath, label: "Luxury Bath" },
+      { icon: Car, label: "Free Parking" },
+    ],
+    available: true,
+    popular: false,
+  },
+  {
+    id: 6,
+    name: "Executive Suite",
+    type: "suite",
+    price: 350,
+    originalPrice: 420,
+    rating: 5.0,
+    reviews: 15,
+    capacity: 4,
+    beds: "1 King + Living Area",
+    size: "65 m²",
+    features: [
+      "Free WiFi",
+      "Air Conditioning",
+      "3 Smart TVs",
+      "Full Kitchen",
+      "Premium Coffee",
+      "Living Area",
+      "Balcony",
+      "Work Space",
+    ],
+    amenities: [
+      { icon: Wifi, label: "Free WiFi" },
+      { icon: Wind, label: "AC" },
+      { icon: Tv, label: "3 Smart TVs" },
+      { icon: Coffee, label: "Full Kitchen" },
+      { icon: Bath, label: "Luxury Bath" },
+      { icon: Car, label: "Free Parking" },
+    ],
+    available: true,
+    popular: true,
+  },
+];
 
-  const roomTypes = [
-    { id: "all", label: "All Rooms", count: 12 },
-    { id: "standard", label: "Standard", count: 6 },
-    { id: "deluxe", label: "Deluxe", count: 4 },
-    { id: "suite", label: "Suite", count: 2 },
-  ];
+export default function MotelRoomsSection({ isPage = false }) {
+  // const [selectedFilter, setSelectedFilter] = useState("all");
 
-  const rooms = [
-    {
-      id: 1,
-      name: "Standard Queen Room",
-      type: "standard",
-      price: 120,
-      originalPrice: 150,
-      rating: 4.5,
-      reviews: 28,
-      capacity: 2,
-      beds: "1 Queen Bed",
-      size: "25 m²",
-      features: [
-        "Free WiFi",
-        "Air Conditioning",
-        "TV",
-        "Private Bathroom",
-        "Coffee Maker",
-      ],
-      amenities: [
-        { icon: Wifi, label: "Free WiFi" },
-        { icon: Wind, label: "AC" },
-        { icon: Tv, label: "Smart TV" },
-        { icon: Coffee, label: "Coffee" },
-        { icon: Bath, label: "Private Bath" },
-        { icon: Car, label: "Parking" },
-      ],
-      available: true,
-      popular: false,
-    },
-    {
-      id: 2,
-      name: "Deluxe King Room",
-      type: "deluxe",
-      price: 180,
-      originalPrice: 220,
-      rating: 4.8,
-      reviews: 45,
-      capacity: 2,
-      beds: "1 King Bed",
-      size: "35 m²",
-      features: [
-        "Free WiFi",
-        "Air Conditioning",
-        "Smart TV",
-        "Mini Fridge",
-        "Premium Coffee",
-        "Work Desk",
-      ],
-      amenities: [
-        { icon: Wifi, label: "Free WiFi" },
-        { icon: Wind, label: "AC" },
-        { icon: Tv, label: "Smart TV" },
-        { icon: Coffee, label: "Premium Coffee" },
-        { icon: Bath, label: "Luxury Bath" },
-        { icon: Car, label: "Free Parking" },
-      ],
-      available: true,
-      popular: true,
-    },
-    {
-      id: 3,
-      name: "Family Suite",
-      type: "suite",
-      price: 280,
-      originalPrice: 340,
-      rating: 4.9,
-      reviews: 32,
-      capacity: 4,
-      beds: "1 King + 1 Sofa Bed",
-      size: "50 m²",
-      features: [
-        "Free WiFi",
-        "Air Conditioning",
-        "2 Smart TVs",
-        "Kitchenette",
-        "Premium Coffee",
-        "Living Area",
-        "Balcony",
-      ],
-      amenities: [
-        { icon: Wifi, label: "Free WiFi" },
-        { icon: Wind, label: "AC" },
-        { icon: Tv, label: "2 Smart TVs" },
-        { icon: Coffee, label: "Kitchenette" },
-        { icon: Bath, label: "Luxury Bath" },
-        { icon: Car, label: "Free Parking" },
-      ],
-      available: true,
-      popular: false,
-    },
-    {
-      id: 4,
-      name: "Standard Twin Room",
-      type: "standard",
-      price: 110,
-      originalPrice: 135,
-      rating: 4.3,
-      reviews: 18,
-      capacity: 2,
-      beds: "2 Single Beds",
-      size: "25 m²",
-      features: [
-        "Free WiFi",
-        "Air Conditioning",
-        "TV",
-        "Private Bathroom",
-        "Coffee Maker",
-      ],
-      amenities: [
-        { icon: Wifi, label: "Free WiFi" },
-        { icon: Wind, label: "AC" },
-        { icon: Tv, label: "Smart TV" },
-        { icon: Coffee, label: "Coffee" },
-        { icon: Bath, label: "Private Bath" },
-        { icon: Car, label: "Parking" },
-      ],
-      available: false,
-      popular: false,
-    },
-    {
-      id: 5,
-      name: "Deluxe Double Room",
-      type: "deluxe",
-      price: 160,
-      originalPrice: 190,
-      rating: 4.6,
-      reviews: 37,
-      capacity: 2,
-      beds: "1 Double Bed",
-      size: "32 m²",
-      features: [
-        "Free WiFi",
-        "Air Conditioning",
-        "Smart TV",
-        "Mini Fridge",
-        "Premium Coffee",
-        "City View",
-      ],
-      amenities: [
-        { icon: Wifi, label: "Free WiFi" },
-        { icon: Wind, label: "AC" },
-        { icon: Tv, label: "Smart TV" },
-        { icon: Coffee, label: "Premium Coffee" },
-        { icon: Bath, label: "Luxury Bath" },
-        { icon: Car, label: "Free Parking" },
-      ],
-      available: true,
-      popular: false,
-    },
-    {
-      id: 6,
-      name: "Executive Suite",
-      type: "suite",
-      price: 350,
-      originalPrice: 420,
-      rating: 5.0,
-      reviews: 15,
-      capacity: 4,
-      beds: "1 King + Living Area",
-      size: "65 m²",
-      features: [
-        "Free WiFi",
-        "Air Conditioning",
-        "3 Smart TVs",
-        "Full Kitchen",
-        "Premium Coffee",
-        "Living Area",
-        "Balcony",
-        "Work Space",
-      ],
-      amenities: [
-        { icon: Wifi, label: "Free WiFi" },
-        { icon: Wind, label: "AC" },
-        { icon: Tv, label: "3 Smart TVs" },
-        { icon: Coffee, label: "Full Kitchen" },
-        { icon: Bath, label: "Luxury Bath" },
-        { icon: Car, label: "Free Parking" },
-      ],
-      available: true,
-      popular: true,
-    },
-  ];
+  // const filteredRooms =
+  //   selectedFilter === "all"
+  //     ? rooms
+  //     : rooms.filter((room) => room.type === selectedFilter);
 
-  const filteredRooms =
-    selectedFilter === "all"
-      ? rooms
-      : rooms.filter((room) => room.type === selectedFilter);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const currentPage = parseInt(searchParams.get("page")) || 1;
+
+  const { data: motels, isLoading } = useGetApi(`/motels?page=${currentPage}`);
+
+  const featuredMotels =
+    !isPage && motels?.data?.length > 0
+      ? motels?.data?.slice(0, 6)
+      : motels?.data || [];
+
+  const handlePageChange = (page) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", page.toString());
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <section className="relative py-20 bg-bg overflow-hidden">
@@ -285,16 +310,30 @@ export default function MotelRoomsSection() {
         </div> */}
 
         {/* Rooms Grid */}
-        {!isLoading && motels?.status && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-            {motels?.data?.map((motel) => (
-              <MotelCaravanCard key={motel?.id} data={motel} />
-            ))}
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+          {isLoading
+            ? Array.from({ length: 6 }).map((_, index) => (
+                <SkeletonCard key={index} />
+              ))
+            : motels?.status &&
+              featuredMotels?.map((motel) => (
+                <MotelCaravanCard key={motel?.id} data={motel} />
+              ))}
+        </div>
+
+        {!isLoading && motels?.status && isPage && (
+          <Pagination
+            pagination={motels?.pagination}
+            onPageChange={handlePageChange}
+          />
+        )}
+
+        {!isLoading && motels?.status && !isPage && (
+          <ShowAllBtn href="/motels" label="Show All Rooms" />
         )}
 
         {/* No Results Message */}
-        {filteredRooms.length === 0 && (
+        {/* {filteredRooms.length === 0 && (
           <div className="text-center py-12">
             <div className="w-16 h-16 bg-line/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <Bed className="w-8 h-8 text-muted" />
@@ -302,7 +341,7 @@ export default function MotelRoomsSection() {
             <h3 className="text-xl font-bold text-text mb-2">No rooms found</h3>
             <p className="text-muted">Try selecting a different room type.</p>
           </div>
-        )}
+        )} */}
       </div>
     </section>
   );

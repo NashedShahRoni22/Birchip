@@ -1,9 +1,5 @@
-import FoodMenuSection from '../components/home/FoodMenuSection'
+import FoodMenuSection from "../components/home/FoodMenuSection";
 
 export default function page() {
-  return (
-    <div>
-        <FoodMenuSection/>
-    </div>
-  )
+  return <FoodMenuSection isPage={true} />;
 }

@@ -14,11 +14,6 @@ const dropdownMenuLinks = [
     label: "My Bookings",
     href: "/bookings",
   },
-  {
-    Icon: Settings,
-    label: "Settings",
-    href: "/settings",
-  },
 ];
 
 export default function NavUserProfileDropdown() {
@@ -53,9 +48,9 @@ export default function NavUserProfileDropdown() {
     <div className="relative ml-4">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center cursor-pointer space-x-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2.5 rounded-full hover:bg-white/30 transition-all duration-300 border border-white/20 group"
+        className="flex items-center cursor-pointer space-x-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full hover:bg-white/30 transition-all duration-300 border border-white/20 group"
       >
-        <div className="w-8 h-8 bg-gradient-to-br from-[#903F5C] to-[#7A3450] rounded-full flex items-center justify-center text-white font-semibold text-sm">
+        <div className="w-7 h-7 bg-gradient-to-br from-[#903F5C] to-[#7A3450] rounded-full flex items-center justify-center text-white font-semibold text-xs">
           {authInfo.name
             .split(" ")
             .map((n) => n[0])
@@ -66,7 +61,6 @@ export default function NavUserProfileDropdown() {
           <div className="text-sm font-medium">
             Hi, {authInfo.name.split(" ")[0]}
           </div>
-          <div className="text-xs opacity-75">View Profile</div>
         </div>
         <ChevronDown
           size={18}

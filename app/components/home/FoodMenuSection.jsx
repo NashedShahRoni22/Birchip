@@ -1,88 +1,43 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Sandwich,
-  Drumstick,
-  Soup,
-  Pizza,
-  Leaf,
-  CakeSlice,
-  Coffee,
-  Salad,
-  Star,
-} from "lucide-react";
+import { Salad } from "lucide-react";
 import FoodOrderModal from "../shared/FoodOrderModal";
 import useGetApi from "@/hooks/useGetApi";
 import FoodCard from "@/component/cards/FoodCard";
 import useAuth from "@/hooks/useAuth";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import Pagination from "@/component/Pagination/Pagination";
+import ShowAllBtn from "@/component/buttons/ShowAllBtn";
+import SkeletonCard from "@/component/loaders/CardSkeleton";
 
-const foodMenu = [
-  {
-    id: 1,
-    name: "Grilled Chicken Wrap",
-    price: 12.99,
-    icon: <Sandwich className="w-10 h-10 text-[#603C59]" />,
-    available: true,
-  },
-  {
-    id: 2,
-    name: "Veggie Delight Burger",
-    price: 10.49,
-    icon: <Leaf className="w-10 h-10 text-[#603C59]" />,
-    available: true,
-  },
-  {
-    id: 3,
-    name: "Classic Pepperoni Pizza",
-    price: 15.99,
-    icon: <Pizza className="w-10 h-10 text-[#603C59]" />,
-    available: false,
-  },
-  {
-    id: 4,
-    name: "Hearty Beef Stew",
-    price: 13.75,
-    icon: <Soup className="w-10 h-10 text-[#603C59]" />,
-    available: true,
-  },
-  {
-    id: 5,
-    name: "Roasted Chicken Drumstick",
-    price: 11.5,
-    icon: <Drumstick className="w-10 h-10 text-[#603C59]" />,
-    available: true,
-  },
-  {
-    id: 6,
-    name: "Gourmet Sandwich",
-    price: 9.99,
-    icon: <Sandwich className="w-10 h-10 text-[#603C59]" />,
-    available: false,
-  },
-  {
-    id: 7,
-    name: "Chocolate Lava Cake",
-    price: 6.5,
-    icon: <CakeSlice className="w-10 h-10 text-[#603C59]" />,
-    available: true,
-  },
-  {
-    id: 8,
-    name: "Hot Espresso Coffee",
-    price: 4.25,
-    icon: <Coffee className="w-10 h-10 text-[#603C59]" />,
-    available: true,
-  },
-];
-
-export default function FoodMenuSection() {
-  const router = useRouter();
-  const { data: foodsData, isLoading } = useGetApi("/foods");
+export default function FoodMenuSection({ isPage = false }) {
   const { authInfo } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedFood, setSelectedFood] = useState(null);
+
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const currentPage = parseInt(searchParams.get("page")) || 1;
+
+  const { data: foodsData, isLoading } = useGetApi(
+    `/foods?page=${currentPage}`
+  );
+
+  const featuredfoods =
+    !isPage && foodsData?.data?.length > 0
+      ? foodsData?.data?.slice(0, 6)
+      : foodsData?.data || [];
+
+  const handlePageChange = (page) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", page.toString());
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const handleOrderClick = (food) => {
     if (!authInfo?.token) {
@@ -116,17 +71,35 @@ export default function FoodMenuSection() {
         </p>
       </div>
 
+      {/* foods grid */}
       <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 max-w-7xl mx-auto">
-        {!isLoading &&
-          foodsData?.data?.length > 0 &&
-          foodsData?.data?.map((food) => (
-            <FoodCard
-              key={food?.id}
-              foodData={food}
-              handleOrderClick={handleOrderClick}
-            />
-          ))}
+        {isLoading
+          ? Array.from({ length: 8 }).map((_, index) => (
+              <SkeletonCard key={index} />
+            ))
+          : foodsData?.status &&
+            featuredfoods?.map((food) => (
+              <FoodCard
+                key={food?.id}
+                foodData={food}
+                handleOrderClick={handleOrderClick}
+              />
+            ))}
       </div>
+
+      {/* pagination */}
+      {!isLoading && foodsData?.status && isPage && (
+        <Pagination
+          pagination={foodsData?.pagination}
+          onPageChange={handlePageChange}
+        />
+      )}
+
+      {/* show all foods */}
+      {!isLoading &&
+        foodsData?.status &&
+        foodsData?.data?.length > 6 &&
+        !isPage && <ShowAllBtn href="/foods" label="Show All Foods" />}
 
       {/* Order Modal */}
       <FoodOrderModal

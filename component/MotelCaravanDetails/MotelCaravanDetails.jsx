@@ -19,6 +19,7 @@ import { BookingModal } from "../../app/components/shared/AnimatePresence";
 import useGetApi from "@/hooks/useGetApi";
 import { calculateDiscount } from "@/utils/calculateDiscount";
 import Link from "next/link";
+import DetailedLoader from "../loaders/DetailedLoader";
 
 export default function MotelCaravanDetails({ params, isCaravan = false }) {
   const { slug } = React.use(params);
@@ -66,7 +67,7 @@ export default function MotelCaravanDetails({ params, isCaravan = false }) {
   };
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return <DetailedLoader />;
   }
 
   return (

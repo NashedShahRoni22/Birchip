@@ -7,17 +7,17 @@ import { renderStars } from "@/utils/renderStars";
 export default function MotelCaravanCard({ data, isCaravan = false }) {
   return (
     <div
-      className={`group relative bg-white backdrop-blur-xl rounded-2xl border shadow transition-all duration-500 overflow-hidden ${
+      className={`group relative h-full bg-white backdrop-blur-xl rounded-2xl border shadow transition-all duration-500 overflow-hidden flex flex-col ${
         data?.status ? "border-line/20" : "border-line/10 opacity-75"
       }`}
     >
       {/* Popular Badge */}
       {/* TODO: need popular badge property */}
       {/* {room.popular && (
-        <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-10 bg-primary text-white px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs font-bold shadow">
-          POPULAR
-        </div>
-      )} */}
+    <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-10 bg-primary text-white px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs font-bold shadow">
+      POPULAR
+    </div>
+  )} */}
 
       {/* Availability Badge */}
       <div
@@ -41,56 +41,59 @@ export default function MotelCaravanCard({ data, isCaravan = false }) {
       </div>
 
       {/* Content */}
-      <div className="p-4 sm:p-6">
-        {/* Room Name & Rating */}
-        <div className="mb-3 sm:mb-4">
-          <div className="flex items-start justify-between gap-2 mb-2">
-            <h3 className="text-lg sm:text-xl font-bold text-text leading-tight">
-              {data?.title}
-            </h3>
-          </div>
-
-          {/* TODO: ratings is unavailable */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            {data?.rating && renderStars(data?.rating)}
-            <span className="text-xs sm:text-sm text-muted">
-              {data?.rating ? motelData.rating : "Not rated"} (
-              {data?.reviews && motelData.reviews > 0
-                ? `${motelData.reviews} reviews`
-                : "No reviews yet"}
-              )
-            </span>
-          </div>
-        </div>
-
-        {/* Room Details */}
-        <div className="mb-3 sm:mb-4 space-y-2">
-          <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm text-muted">
-            {data?.capacity && (
-              <div className="flex items-center gap-1">
-                <Users className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span>{data.capacity} guests</span>
-              </div>
-            )}
-
-            {data?.bed_size && (
-              <div className="flex items-center gap-1">
-                <Bed className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span>{data?.bed_size}</span>
-              </div>
-            )}
-          </div>
-
-          {data?.room_size && (
-            <div className="flex items-center gap-1 text-xs sm:text-sm text-muted">
-              <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span>{data?.room_size}</span>
+      <div className="p-4 sm:p-6 flex flex-col flex-1">
+        {/* Top Content - Will expand to fill space */}
+        <div className="flex-1">
+          {/* Room Name & Rating */}
+          <div className="mb-3 sm:mb-4">
+            <div className="flex items-start justify-between gap-2 mb-2">
+              <h3 className="text-lg sm:text-xl font-bold text-text leading-tight line-clamp-2">
+                {data?.title}
+              </h3>
             </div>
-          )}
+
+            {/* TODO: ratings is unavailable */}
+            <div className="flex items-center gap-2 sm:gap-3">
+              {data?.rating && renderStars(data?.rating)}
+              <span className="text-xs sm:text-sm text-muted">
+                {data?.rating ? motelData.rating : "Not rated"} (
+                {data?.reviews && motelData.reviews > 0
+                  ? `${motelData.reviews} reviews`
+                  : "No reviews yet"}
+                )
+              </span>
+            </div>
+          </div>
+
+          {/* Room Details */}
+          <div className="mb-3 sm:mb-4 space-y-2">
+            <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm text-muted">
+              {data?.capacity && (
+                <div className="flex items-center gap-1">
+                  <Users className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span>{data.capacity} guests</span>
+                </div>
+              )}
+
+              {data?.bed_size && (
+                <div className="flex items-center gap-1">
+                  <Bed className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span>{data?.bed_size}</span>
+                </div>
+              )}
+            </div>
+
+            {data?.room_size && (
+              <div className="flex items-center gap-1 text-xs sm:text-sm text-muted">
+                <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span>{data?.room_size}</span>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Price & Booking */}
-        <div className="flex items-center justify-between gap-2">
+        {/* Price & Booking - Will stick to bottom */}
+        <div className="flex items-center justify-between gap-2 mt-auto">
           <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
             <div className="text-xl sm:text-2xl font-bold text-primary">
               $
