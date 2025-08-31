@@ -20,9 +20,12 @@ export default function AuthProvider({ children }) {
     }
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = (silent = false) => {
     setAuthInfo(null);
-    toast.success("Logged out");
+
+    if (!silent) {
+      toast.success("Logged out");
+    }
 
     const localData = localStorage.getItem("authInfo");
     const sessionData = sessionStorage.getItem("authInfo");

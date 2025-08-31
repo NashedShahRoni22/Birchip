@@ -1,8 +1,14 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { Eye, EyeOff, Save, Key } from "lucide-react";
+import { Eye, EyeOff, Save, Key, LoaderCircle } from "lucide-react";
+import useAuth from "@/hooks/useAuth";
+import usePostMutation from "@/hooks/mutations/usePostMutation";
+import { useRouter } from "next/navigation";
 
 export default function ResetPassword() {
+  const { authInfo, handleLogout } = useAuth();
+  const router = useRouter();
+
   const [passwordData, setPasswordData] = useState({
     newPassword: "",
     confirmPassword: "",
@@ -12,7 +18,7 @@ export default function ResetPassword() {
     new: false,
     confirm: false,
   });
-  const [isLoading, setIsLoading] = useState(false);
+
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
     setPasswordData((prev) => ({
@@ -21,26 +27,46 @@ export default function ResetPassword() {
     }));
   };
 
+  const { mutate, isPending } = usePostMutation({
+    endPoint: "/reset-password",
+    token: true,
+  });
+
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
 
-    // Add password validation logic here
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      toast.error("New passwords don't match!");
-      setIsLoading(false);
-      return;
+      return toast.error("Passwords don't match!");
     }
 
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Password updated");
-      setPasswordData({
-        newPassword: "",
-        confirmPassword: "",
-      });
-      setIsLoading(false);
-    }, 2000);
+    const payload = {
+      token: authInfo?.token,
+      email: authInfo?.email,
+      password: passwordData.newPassword,
+      password_confirmation: passwordData.confirmPassword,
+    };
+
+    mutate(payload, {
+      onSuccess: (data) => {
+        toast.success(data?.message || "Password updated!");
+      },
+
+      onError: (error) => {
+        console.error(error?.message);
+
+        if (
+          error?.message?.toLocaleLowerCase()?.includes("invalid") ||
+          error?.message?.toLocaleLowerCase()?.includes("expired token.")
+        ) {
+          toast.error("Your session has expired. Please login again.");
+          handleLogout(true);
+          router.push("/auth");
+          return;
+        }
+
+        toast.error(error?.message || "Password couldn't update!");
+      },
+    });
   };
 
   const togglePasswordVisibility = (field) => {
@@ -52,9 +78,9 @@ export default function ResetPassword() {
   return (
     <div className="space-y-6">
       {/* Change Password Section */}
-      <div className="bg-white rounded-2xl shadow-lg border border-line/20 p-8">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+      <div className="border-line/20 rounded-2xl border bg-white p-8 shadow-lg">
+        <div className="mb-6 flex items-center gap-3">
+          <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
             <Key size={20} className="text-primary" />
           </div>
           <div>
@@ -70,7 +96,7 @@ export default function ResetPassword() {
         <form onSubmit={handlePasswordSubmit} className="space-y-6">
           {/* New Password */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="mb-2 block text-sm font-semibold text-gray-700">
               New Password <span className="text-red-400">*</span>
             </label>
             <div className="relative">
@@ -79,14 +105,14 @@ export default function ResetPassword() {
                 name="newPassword"
                 value={passwordData.newPassword}
                 onChange={handlePasswordChange}
-                className="w-full px-4 py-4 pr-12 rounded-xl border-2 border-gray-200 text-gray-900 outline-none focus:border-[#B63D5E] focus:scale-[1.02] transition-all duration-300"
+                className="w-full rounded-xl border-2 border-gray-200 px-4 py-4 pr-12 text-gray-900 transition-all duration-300 outline-none focus:scale-[1.02] focus:border-[#B63D5E]"
                 placeholder="Enter new password"
                 required
               />
               <button
                 type="button"
                 onClick={() => togglePasswordVisibility("new")}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute top-1/2 right-4 -translate-y-1/2 transform text-gray-400 hover:text-gray-600"
               >
                 {showPasswords.new ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
@@ -95,7 +121,7 @@ export default function ResetPassword() {
 
           {/* Confirm Password */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="mb-2 block text-sm font-semibold text-gray-700">
               Confirm New Password <span className="text-red-400">*</span>
             </label>
             <div className="relative">
@@ -104,14 +130,14 @@ export default function ResetPassword() {
                 name="confirmPassword"
                 value={passwordData.confirmPassword}
                 onChange={handlePasswordChange}
-                className="w-full px-4 py-4 pr-12 rounded-xl border-2 border-gray-200 text-gray-900 outline-none focus:border-[#B63D5E] focus:scale-[1.02] transition-all duration-300"
+                className="w-full rounded-xl border-2 border-gray-200 px-4 py-4 pr-12 text-gray-900 transition-all duration-300 outline-none focus:scale-[1.02] focus:border-[#B63D5E]"
                 placeholder="Confirm new password"
                 required
               />
               <button
                 type="button"
                 onClick={() => togglePasswordVisibility("confirm")}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute top-1/2 right-4 -translate-y-1/2 transform text-gray-400 hover:text-gray-600"
               >
                 {showPasswords.confirm ? (
                   <EyeOff size={20} />
@@ -125,23 +151,17 @@ export default function ResetPassword() {
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={isLoading}
-            className={`w-full flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-semibold transition-all duration-300 ${
-              isLoading
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-gradient-to-r from-primary to-button text-white hover:shadow-lg transform hover:scale-[1.02]"
+            disabled={isPending}
+            className={`flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-xl py-4 font-semibold shadow-lg transition-all duration-300 ${
+              isPending
+                ? "cursor-not-allowed bg-gray-400 text-gray-200"
+                : "from-primary to-button flex items-center justify-center gap-2.5 bg-gradient-to-r text-white"
             }`}
           >
-            {isLoading ? (
-              <>
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                Updating Password...
-              </>
-            ) : (
-              <>
-                <Save size={20} />
-                Update Password
-              </>
+            <Save size={20} />
+            Update Password
+            {isPending && (
+              <LoaderCircle size={18} className="mt-0.5 animate-spin" />
             )}
           </button>
         </form>
