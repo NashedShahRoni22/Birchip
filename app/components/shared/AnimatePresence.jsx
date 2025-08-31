@@ -47,7 +47,7 @@ export function BookingModal({ isOpen, onClose, itemId, itemType }) {
   }, [isOpen]);
 
   const { mutate } = usePostMutation({
-    endPoint: `/booking/motel/${itemId}`,
+    endPoint: `/booking/${itemType === "room" ? "motel" : "caravan"}/${itemId}`,
     token: true,
   });
 
@@ -72,14 +72,14 @@ export function BookingModal({ isOpen, onClose, itemId, itemType }) {
       onSuccess: (data) => {
         toast.success(
           data?.message ||
-            "Your request is in process. Our agent will contact you soon"
+            "Your request is in process. Our agent will contact you soon",
         );
         onClose();
       },
       onError: (error) => {
         console.error("Error:", error);
         toast.error(
-          error?.message || "Something went wrong. Please try again."
+          error?.message || "Something went wrong. Please try again.",
         );
       },
     });
@@ -102,13 +102,13 @@ export function BookingModal({ isOpen, onClose, itemId, itemType }) {
             onClick={onClose}
           />
 
-          <div className="flex items-center justify-center min-h-screen p-4">
+          <div className="flex min-h-screen items-center justify-center p-4">
             <motion.div
               initial={{ opacity: 0, y: 20, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.95 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="relative rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden"
+              className="relative w-full max-w-2xl overflow-hidden rounded-2xl shadow-xl"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="bg-primary p-4 text-white">
@@ -118,28 +118,28 @@ export function BookingModal({ isOpen, onClose, itemId, itemType }) {
                     {itemType === "room"
                       ? "Room"
                       : itemType === "caravan"
-                      ? "Caravan"
-                      : "Meal"}
+                        ? "Caravan"
+                        : "Meal"}
                   </h2>
                   <button
                     onClick={onClose}
-                    className="p-1 rounded-full hover:bg-white/20 transition-colors"
+                    className="rounded-full p-1 transition-colors hover:bg-white/20"
                   >
                     <X size={20} />
                   </button>
                 </div>
-                <p className="text-sm opacity-90 mt-1">ID: {itemId}</p>
+                <p className="mt-1 text-sm opacity-90">ID: {itemId}</p>
               </div>
 
               <form
                 onSubmit={handleSubmit}
-                className="p-6 space-y-6 bg-white max-h-[80vh] overflow-y-auto"
+                className="max-h-[80vh] space-y-6 overflow-y-auto bg-white p-6"
               >
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="mb-1 block text-sm font-medium text-gray-700">
                     Dates
                   </label>
-                  <div className="shadow rounded-lg p-3 flex justify-center">
+                  <div className="flex justify-center rounded-lg p-3 shadow">
                     <DateRange
                       editableDateInputs={true}
                       onChange={handleDateChange}
@@ -152,15 +152,15 @@ export function BookingModal({ isOpen, onClose, itemId, itemType }) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="mb-1 block text-sm font-medium text-gray-700">
                     Total Guests
                   </label>
                   <div className="flex justify-between gap-4">
-                    <div className="flex items-center gap-4 w-1/2">
-                      <label className="block text-xs text-gray-500 mb-1">
+                    <div className="flex w-1/2 items-center gap-4">
+                      <label className="mb-1 block text-xs text-gray-500">
                         Adults
                       </label>
-                      <div className="flex-1 flex items-center justify-center shadow rounded-lg p-2">
+                      <div className="flex flex-1 items-center justify-center rounded-lg p-2 shadow">
                         <button
                           type="button"
                           onClick={() =>
@@ -169,7 +169,7 @@ export function BookingModal({ isOpen, onClose, itemId, itemType }) {
                               adults: Math.max(1, prev.adults - 1),
                             }))
                           }
-                          className="p-1 rounded-full hover:bg-gray-100 cursor-pointer"
+                          className="cursor-pointer rounded-full p-1 hover:bg-gray-100"
                         >
                           <Minus size={16} />
                         </button>
@@ -182,17 +182,17 @@ export function BookingModal({ isOpen, onClose, itemId, itemType }) {
                               adults: prev.adults + 1,
                             }))
                           }
-                          className="p-1 rounded-full hover:bg-gray-100 cursor-pointer"
+                          className="cursor-pointer rounded-full p-1 hover:bg-gray-100"
                         >
                           <Plus size={16} />
                         </button>
                       </div>
                     </div>
-                    <div className="flex items-center gap-4 w-1/2">
-                      <label className="block text-xs text-gray-500 mb-1">
+                    <div className="flex w-1/2 items-center gap-4">
+                      <label className="mb-1 block text-xs text-gray-500">
                         Children
                       </label>
-                      <div className="flex-1 flex items-center justify-center shadow rounded-lg p-2">
+                      <div className="flex flex-1 items-center justify-center rounded-lg p-2 shadow">
                         <button
                           type="button"
                           onClick={() =>
@@ -201,7 +201,7 @@ export function BookingModal({ isOpen, onClose, itemId, itemType }) {
                               children: Math.max(0, prev.children - 1),
                             }))
                           }
-                          className="p-1 rounded-full hover:bg-gray-100 cursor-pointer"
+                          className="cursor-pointer rounded-full p-1 hover:bg-gray-100"
                         >
                           <Minus size={16} />
                         </button>
@@ -214,7 +214,7 @@ export function BookingModal({ isOpen, onClose, itemId, itemType }) {
                               children: prev.children + 1,
                             }))
                           }
-                          className="p-1 rounded-full hover:bg-gray-100 cursor-pointer"
+                          className="cursor-pointer rounded-full p-1 hover:bg-gray-100"
                         >
                           <Plus size={16} />
                         </button>
@@ -224,14 +224,14 @@ export function BookingModal({ isOpen, onClose, itemId, itemType }) {
                 </div>
 
                 {/* New fields section */}
-                <div className="border-t pt-6 space-y-4">
+                <div className="space-y-4 border-t pt-6">
                   <h3 className="text-lg font-medium text-gray-900">
                     Personal Information
                   </h3>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="mb-1 block text-sm font-medium text-gray-700">
                         Driving License Number *
                       </label>
                       <input
@@ -240,20 +240,20 @@ export function BookingModal({ isOpen, onClose, itemId, itemType }) {
                         onChange={(e) =>
                           setDrivingLicenseNumber(e.target.value)
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none"
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none"
                         placeholder="Enter license number"
                         required
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="mb-1 block text-sm font-medium text-gray-700">
                         License State *
                       </label>
                       <select
                         value={licenseState}
                         onChange={(e) => setLicenseState(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none"
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none"
                         required
                       >
                         {australianStates.map((state) => (
@@ -266,14 +266,14 @@ export function BookingModal({ isOpen, onClose, itemId, itemType }) {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="mb-1 block text-sm font-medium text-gray-700">
                       Date of Birth *
                     </label>
                     <input
                       type="date"
                       value={dateOfBirth}
                       onChange={(e) => setDateOfBirth(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none"
                       max={new Date().toISOString().split("T")[0]} // Prevent future dates
                       required
                     />
@@ -283,7 +283,7 @@ export function BookingModal({ isOpen, onClose, itemId, itemType }) {
                 <div className="pt-4">
                   <button
                     type="submit"
-                    className="w-full bg-primary hover:bg-button text-white py-3 rounded-lg font-semibold transition-colors cursor-pointer"
+                    className="bg-primary hover:bg-button w-full cursor-pointer rounded-lg py-3 font-semibold text-white transition-colors"
                   >
                     Confirm Booking
                   </button>

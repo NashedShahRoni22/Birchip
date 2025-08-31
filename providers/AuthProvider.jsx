@@ -7,16 +7,25 @@ export const AuthContext = createContext(null);
 
 export default function AuthProvider({ children }) {
   const [authInfo, setAuthInfo] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   // load auth info from either localstorage or session storage.
   useEffect(() => {
-    const localData = localStorage.getItem("authInfo");
-    const sessionData = sessionStorage.getItem("authInfo");
+    try {
+      const localData = localStorage.getItem("authInfo");
+      const sessionData = sessionStorage.getItem("authInfo");
 
-    if (localData) {
-      setAuthInfo(JSON.parse(localData));
-    } else if (sessionData) {
-      setAuthInfo(JSON.parse(sessionData));
+      if (localData) {
+        setAuthInfo(JSON.parse(localData));
+      } else if (sessionData) {
+        setAuthInfo(JSON.parse(sessionData));
+      }
+    } catch (error) {
+      console.error("Error parsing auth data:", error);
+      localStorage.removeItem("authInfo");
+      sessionStorage.removeItem("authInfo");
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
@@ -41,6 +50,7 @@ export default function AuthProvider({ children }) {
     authInfo,
     setAuthInfo,
     handleLogout,
+    isLoading,
   };
 
   return (

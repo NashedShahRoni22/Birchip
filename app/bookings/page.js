@@ -18,6 +18,7 @@ import useGetQuery from "@/hooks/queries/useGetQuery";
 import useAuth from "@/hooks/useAuth";
 import Pagination from "@/component/Pagination/Pagination";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import PrivateRoute from "@/routes/PrivateRoute";
 
 export default function BookingPage() {
   const { authInfo } = useAuth();
@@ -100,19 +101,19 @@ export default function BookingPage() {
 
   if (isLoading) {
     return (
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="mx-auto max-w-6xl px-4 py-8">
         <div className="animate-pulse space-y-6">
           {[1, 2, 3].map((item) => (
             <div
               key={item}
-              className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6"
+              className="rounded-2xl border border-gray-200 bg-white p-6 shadow-lg"
             >
               <div className="flex gap-6">
-                <div className="w-48 h-32 bg-gray-300 rounded-xl"></div>
+                <div className="h-32 w-48 rounded-xl bg-gray-300"></div>
                 <div className="flex-1 space-y-4">
-                  <div className="h-6 bg-gray-300 rounded w-3/4"></div>
-                  <div className="h-4 bg-gray-300 rounded w-1/2"></div>
-                  <div className="h-4 bg-gray-300 rounded w-1/3"></div>
+                  <div className="h-6 w-3/4 rounded bg-gray-300"></div>
+                  <div className="h-4 w-1/2 rounded bg-gray-300"></div>
+                  <div className="h-4 w-1/3 rounded bg-gray-300"></div>
                 </div>
               </div>
             </div>
@@ -123,231 +124,238 @@ export default function BookingPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">My Bookings</h1>
-        <p className="text-gray-600">Manage and track all your reservations</p>
-      </div>
-
-      {/* Filter Tabs */}
-      <div className="mb-6">
-        <div className="flex flex-wrap gap-2">
-          {[
-            { key: "all", label: "All Bookings", count: bookings.length },
-            {
-              key: "confirmed",
-              label: "Confirmed",
-              count: bookings.filter((b) => b.confirmed === 1).length,
-            },
-            {
-              key: "pending",
-              label: "Pending",
-              count: bookings.filter((b) => b.confirmed === 0).length,
-            },
-            {
-              key: "cancelled",
-              label: "Cancelled",
-              count: bookings.filter((b) => b.status === "cancelled").length,
-            },
-          ].map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setFilter(tab.key)}
-              className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 ${
-                filter === tab.key
-                  ? "bg-primary text-white shadow-md"
-                  : "bg-white text-gray-600 border border-gray-200 hover:border-primary hover:text-primary"
-              }`}
-            >
-              {tab.label} ({tab.count})
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Bookings List */}
-      {filteredBookings.length === 0 ? (
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-12 text-center">
-          <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Receipt size={32} className="text-gray-400" />
-          </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
-            No bookings found
-          </h3>
+    <PrivateRoute>
+      <div className="mx-auto max-w-6xl px-4 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="mb-2 text-3xl font-bold text-gray-900">My Bookings</h1>
           <p className="text-gray-600">
-            You don&apos;t have any bookings yet. Start exploring and make your
-            first reservation!
+            Manage and track all your reservations
           </p>
         </div>
-      ) : (
-        <div className="space-y-6">
-          {filteredBookings.map((booking) => {
-            const statusInfo = getStatusColor(
-              booking.confirmed,
-              booking.status
-            );
-            const StatusIcon = statusInfo.icon;
-            const finalAmount = calculateFinalAmount(
-              booking.amount,
-              booking.discount,
-              booking.discount_type
-            );
 
-            return (
-              <div
-                key={booking.id}
-                className="bg-white rounded-2xl shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 overflow-hidden"
+        {/* Filter Tabs */}
+        <div className="mb-6">
+          <div className="flex flex-wrap gap-2">
+            {[
+              { key: "all", label: "All Bookings", count: bookings.length },
+              {
+                key: "confirmed",
+                label: "Confirmed",
+                count: bookings.filter((b) => b.confirmed === 1).length,
+              },
+              {
+                key: "pending",
+                label: "Pending",
+                count: bookings.filter((b) => b.confirmed === 0).length,
+              },
+              {
+                key: "cancelled",
+                label: "Cancelled",
+                count: bookings.filter((b) => b.status === "cancelled").length,
+              },
+            ].map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setFilter(tab.key)}
+                className={`rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 ${
+                  filter === tab.key
+                    ? "bg-primary text-white shadow-md"
+                    : "hover:border-primary hover:text-primary border border-gray-200 bg-white text-gray-600"
+                }`}
               >
-                <div className="p-6">
-                  <div className="flex flex-col lg:flex-row gap-6">
-                    {/* Property Image */}
-                    <div className="lg:w-64 flex-shrink-0">
-                      <div className="relative w-full h-48 lg:h-40 rounded-xl overflow-hidden bg-gray-100">
-                        <Image
-                          src={
-                            booking.reference?.thumbnail ||
-                            "/api/placeholder/300/200"
-                          }
-                          alt={booking.reference?.title || "Property"}
-                          fill
-                          className="object-cover"
-                        />
-                        <div className="absolute top-3 right-3">
-                          <div
-                            className={`px-3 py-1 rounded-full text-xs font-semibold ${statusInfo.bg} ${statusInfo.text} flex items-center gap-1`}
-                          >
-                            <StatusIcon size={12} />
-                            {statusInfo.label}
+                {tab.label} ({tab.count})
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Bookings List */}
+        {filteredBookings.length === 0 ? (
+          <div className="rounded-2xl border border-gray-200 bg-white p-12 text-center shadow-lg">
+            <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-gray-100">
+              <Receipt size={32} className="text-gray-400" />
+            </div>
+            <h3 className="mb-2 text-xl font-semibold text-gray-900">
+              No bookings found
+            </h3>
+            <p className="text-gray-600">
+              You don&apos;t have any bookings yet. Start exploring and make
+              your first reservation!
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {filteredBookings.map((booking) => {
+              const statusInfo = getStatusColor(
+                booking.confirmed,
+                booking.status,
+              );
+              const StatusIcon = statusInfo.icon;
+              const finalAmount = calculateFinalAmount(
+                booking.amount,
+                booking.discount,
+                booking.discount_type,
+              );
+
+              return (
+                <div
+                  key={booking.id}
+                  className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg transition-all duration-300 hover:shadow-xl"
+                >
+                  <div className="p-6">
+                    <div className="flex flex-col gap-6 lg:flex-row">
+                      {/* Property Image */}
+                      <div className="flex-shrink-0 lg:w-64">
+                        <div className="relative h-48 w-full overflow-hidden rounded-xl bg-gray-100 lg:h-40">
+                          <Image
+                            src={
+                              booking.reference?.thumbnail ||
+                              "/api/placeholder/300/200"
+                            }
+                            alt={booking.reference?.title || "Property"}
+                            fill
+                            className="object-cover"
+                          />
+                          <div className="absolute top-3 right-3">
+                            <div
+                              className={`rounded-full px-3 py-1 text-xs font-semibold ${statusInfo.bg} ${statusInfo.text} flex items-center gap-1`}
+                            >
+                              <StatusIcon size={12} />
+                              {statusInfo.label}
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Booking Details */}
-                    <div className="flex-1 space-y-4">
-                      {/* Header */}
-                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-                        <div>
-                          <h3 className="text-xl font-bold text-gray-900 mb-1">
-                            {booking.reference?.title || "Property Booking"}
-                          </h3>
-                          <p className="text-gray-600 text-sm">
-                            {booking.reference?.short_description}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-2xl font-bold text-primary">
-                            ${finalAmount.toFixed(2)}
+                      {/* Booking Details */}
+                      <div className="flex-1 space-y-4">
+                        {/* Header */}
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                          <div>
+                            <h3 className="mb-1 text-xl font-bold text-gray-900">
+                              {booking.reference?.title || "Property Booking"}
+                            </h3>
+                            <p className="text-sm text-gray-600">
+                              {booking.reference?.short_description}
+                            </p>
                           </div>
-                          {booking.discount > 0 && (
-                            <div className="text-sm text-gray-500">
-                              <span className="line-through">
-                                ${booking.amount}
-                              </span>
-                              <span className="ml-2 text-green-600 font-medium">
-                                -
-                                {booking.discount_type === "static"
-                                  ? `$${booking.discount}`
-                                  : `${booking.discount}%`}
-                              </span>
+                          <div className="text-right">
+                            <div className="text-primary text-2xl font-bold">
+                              ${finalAmount.toFixed(2)}
+                            </div>
+                            {booking.discount > 0 && (
+                              <div className="text-sm text-gray-500">
+                                <span className="line-through">
+                                  ${booking.amount}
+                                </span>
+                                <span className="ml-2 font-medium text-green-600">
+                                  -
+                                  {booking.discount_type === "static"
+                                    ? `$${booking.discount}`
+                                    : `${booking.discount}%`}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Property Details */}
+                        <div className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2 lg:grid-cols-3">
+                          {booking.reference?.address && (
+                            <div className="flex items-center gap-2 text-gray-600">
+                              <MapPin size={16} className="text-primary" />
+                              <span>{booking.reference.address}</span>
                             </div>
                           )}
-                        </div>
-                      </div>
-
-                      {/* Property Details */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-                        {booking.reference?.address && (
+                          {booking.reference?.contact && (
+                            <div className="flex items-center gap-2 text-gray-600">
+                              <Phone size={16} className="text-primary" />
+                              <span>{booking.reference.contact}</span>
+                            </div>
+                          )}
                           <div className="flex items-center gap-2 text-gray-600">
-                            <MapPin size={16} className="text-primary" />
-                            <span>{booking.reference.address}</span>
+                            <Receipt size={16} className="text-primary" />
+                            <span>Invoice: {booking.invoice}</span>
                           </div>
-                        )}
-                        {booking.reference?.contact && (
-                          <div className="flex items-center gap-2 text-gray-600">
-                            <Phone size={16} className="text-primary" />
-                            <span>{booking.reference.contact}</span>
-                          </div>
-                        )}
-                        <div className="flex items-center gap-2 text-gray-600">
-                          <Receipt size={16} className="text-primary" />
-                          <span>Invoice: {booking.invoice}</span>
                         </div>
-                      </div>
 
-                      {/* Booking Info */}
-                      <div className="bg-gray-50 rounded-xl p-4">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-                          <div>
-                            <span className="font-semibold text-gray-700">
-                              Booked On:
-                            </span>
-                            <div className="flex items-center gap-1 mt-1">
-                              <Calendar size={14} className="text-gray-500" />
-                              <span className="text-gray-600">
-                                {formatDate(booking.created_at)}
+                        {/* Booking Info */}
+                        <div className="rounded-xl bg-gray-50 p-4">
+                          <div className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2 lg:grid-cols-3">
+                            <div>
+                              <span className="font-semibold text-gray-700">
+                                Booked On:
                               </span>
+                              <div className="mt-1 flex items-center gap-1">
+                                <Calendar size={14} className="text-gray-500" />
+                                <span className="text-gray-600">
+                                  {formatDate(booking.created_at)}
+                                </span>
+                              </div>
                             </div>
-                          </div>
-                          <div>
-                            <span className="font-semibold text-gray-700">
-                              Last Updated:
-                            </span>
-                            <div className="flex items-center gap-1 mt-1">
-                              <Clock size={14} className="text-gray-500" />
-                              <span className="text-gray-600">
-                                {formatDate(booking.updated_at)}
+                            <div>
+                              <span className="font-semibold text-gray-700">
+                                Last Updated:
                               </span>
+                              <div className="mt-1 flex items-center gap-1">
+                                <Clock size={14} className="text-gray-500" />
+                                <span className="text-gray-600">
+                                  {formatDate(booking.updated_at)}
+                                </span>
+                              </div>
                             </div>
-                          </div>
-                          <div>
-                            <span className="font-semibold text-gray-700">
-                              Payment:
-                            </span>
-                            <div className="flex items-center gap-1 mt-1">
-                              <CreditCard size={14} className="text-gray-500" />
-                              <span className="text-gray-600">
-                                {booking.gateway || "Cash Payment"}
+                            <div>
+                              <span className="font-semibold text-gray-700">
+                                Payment:
                               </span>
+                              <div className="mt-1 flex items-center gap-1">
+                                <CreditCard
+                                  size={14}
+                                  className="text-gray-500"
+                                />
+                                <span className="text-gray-600">
+                                  {booking.gateway || "Cash Payment"}
+                                </span>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
 
-                      {/* Action Buttons */}
-                      <div className="flex flex-wrap gap-3 pt-2">
-                        <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all duration-300">
-                          <Eye size={16} />
-                          View Details
-                        </button>
-                        <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:border-primary hover:text-primary transition-all duration-300">
-                          <Download size={16} />
-                          Download Invoice
-                        </button>
-                        {booking.confirmed === 1 && (
-                          <button className="flex items-center gap-2 px-4 py-2 border border-accent text-accent rounded-lg hover:bg-accent hover:text-white transition-all duration-300">
-                            <Star size={16} />
-                            Write Review
+                        {/* Action Buttons */}
+                        <div className="flex flex-wrap gap-3 pt-2">
+                          <button className="bg-primary hover:bg-primary/90 flex items-center gap-2 rounded-lg px-4 py-2 text-white transition-all duration-300">
+                            <Eye size={16} />
+                            View Details
                           </button>
-                        )}
+                          <button className="hover:border-primary hover:text-primary flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 transition-all duration-300">
+                            <Download size={16} />
+                            Download Invoice
+                          </button>
+                          {booking.confirmed === 1 && (
+                            <button className="border-accent text-accent hover:bg-accent flex items-center gap-2 rounded-lg border px-4 py-2 transition-all duration-300 hover:text-white">
+                              <Star size={16} />
+                              Write Review
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+              );
+            })}
+          </div>
+        )}
 
-      {/* Pagination would go here using data?.pagination */}
-      {data?.pagination && (
-        <Pagination
-          pagination={data?.pagination}
-          onPageChange={handlePageChange}
-        />
-      )}
-    </div>
+        {/* Pagination would go here using data?.pagination */}
+        {data?.pagination && (
+          <Pagination
+            pagination={data?.pagination}
+            onPageChange={handlePageChange}
+          />
+        )}
+      </div>
+    </PrivateRoute>
   );
 }
