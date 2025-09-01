@@ -7,7 +7,7 @@ import { renderStars } from "@/utils/renderStars";
 export default function MotelCaravanCard({ data, isCaravan = false }) {
   return (
     <div
-      className={`group relative h-full bg-white backdrop-blur-xl rounded-2xl border shadow transition-all duration-500 overflow-hidden flex flex-col ${
+      className={`group relative flex h-full flex-col overflow-hidden rounded-2xl border bg-white shadow backdrop-blur-xl transition-all duration-500 ${
         data?.status ? "border-line/20" : "border-line/10 opacity-75"
       }`}
     >
@@ -21,33 +21,33 @@ export default function MotelCaravanCard({ data, isCaravan = false }) {
 
       {/* Availability Badge */}
       <div
-        className={`absolute top-3 right-3 sm:top-4 sm:right-4 z-10 px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs font-bold shadow ${
+        className={`absolute top-3 right-3 z-10 rounded-full px-2 py-1 text-xs font-bold shadow sm:top-4 sm:right-4 sm:px-3 sm:py-1 ${
           data?.status
-            ? "bg-success text-white border border-success/30"
-            : "bg-red-500 text-white border border-red-500/30"
+            ? "bg-success border-success/30 border text-white"
+            : "border border-red-500/30 bg-red-500 text-white"
         }`}
       >
         {data?.status ? "Available" : "Booked"}
       </div>
 
       {/* Image Placeholder */}
-      <div className="relative h-52 sm:h-56 flex items-center justify-center overflow-hidden rounded-t-2xl">
+      <div className="relative flex h-52 items-center justify-center overflow-hidden rounded-t-2xl sm:h-56">
         <Image
           src={data?.thumbnail}
           alt="Room Image"
           fill
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
       </div>
 
       {/* Content */}
-      <div className="p-4 sm:p-6 flex flex-col flex-1">
+      <div className="flex flex-1 flex-col p-4 sm:p-6">
         {/* Top Content - Will expand to fill space */}
         <div className="flex-1">
           {/* Room Name & Rating */}
           <div className="mb-3 sm:mb-4">
-            <div className="flex items-start justify-between gap-2 mb-2">
-              <h3 className="text-lg sm:text-xl font-bold text-text leading-tight line-clamp-2">
+            <div className="mb-2 flex items-start justify-between gap-2">
+              <h3 className="text-text line-clamp-2 text-lg leading-tight font-bold sm:text-xl">
                 {data?.title}
               </h3>
             </div>
@@ -55,7 +55,7 @@ export default function MotelCaravanCard({ data, isCaravan = false }) {
             {/* TODO: ratings is unavailable */}
             <div className="flex items-center gap-2 sm:gap-3">
               {data?.rating && renderStars(data?.rating)}
-              <span className="text-xs sm:text-sm text-muted">
+              <span className="text-muted text-xs sm:text-sm">
                 {data?.rating ? motelData.rating : "Not rated"} (
                 {data?.reviews && motelData.reviews > 0
                   ? `${motelData.reviews} reviews`
@@ -66,26 +66,26 @@ export default function MotelCaravanCard({ data, isCaravan = false }) {
           </div>
 
           {/* Room Details */}
-          <div className="mb-3 sm:mb-4 space-y-2">
-            <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm text-muted">
+          <div className="mb-3 space-y-2 sm:mb-4">
+            <div className="text-muted flex items-center gap-3 text-xs sm:gap-4 sm:text-sm">
               {data?.capacity && (
                 <div className="flex items-center gap-1">
-                  <Users className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <Users className="h-3 w-3 sm:h-4 sm:w-4" />
                   <span>{data.capacity} guests</span>
                 </div>
               )}
 
               {data?.bed_size && (
                 <div className="flex items-center gap-1">
-                  <Bed className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <Bed className="h-3 w-3 sm:h-4 sm:w-4" />
                   <span>{data?.bed_size}</span>
                 </div>
               )}
             </div>
 
             {data?.room_size && (
-              <div className="flex items-center gap-1 text-xs sm:text-sm text-muted">
-                <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />
+              <div className="text-muted flex items-center gap-1 text-xs sm:text-sm">
+                <MapPin className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span>{data?.room_size}</span>
               </div>
             )}
@@ -93,28 +93,30 @@ export default function MotelCaravanCard({ data, isCaravan = false }) {
         </div>
 
         {/* Price & Booking - Will stick to bottom */}
-        <div className="flex items-center justify-between gap-2 mt-auto">
-          <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
-            <div className="text-xl sm:text-2xl font-bold text-primary">
+        <div className="mt-auto flex items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-1 sm:gap-2">
+            <div className="text-primary text-xl font-bold sm:text-2xl">
               $
               {calculateDiscount(
                 data?.discount_type,
                 data?.price,
-                data?.discount
+                data?.discount,
               )}
             </div>
-            <div className="text-xs sm:text-sm text-muted line-through">
-              ${data?.price}
-            </div>
-            <div className="text-xs sm:text-sm text-muted">/night</div>
+            {data?.discount_type && data?.discount && (
+              <div className="text-muted text-xs line-through sm:text-sm">
+                ${data?.price}
+              </div>
+            )}
+            <div className="text-muted text-xs sm:text-sm">/night</div>
           </div>
 
           <Link
             href={`${isCaravan ? "/caravans" : "/motels"}/${data?.slug}`}
             disabled={!data?.status}
-            className={`px-4 py-2 sm:px-6 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 ${
+            className={`rounded-xl px-4 py-2 text-xs font-bold transition-all duration-300 sm:px-6 sm:py-3 sm:text-sm ${
               data?.status
-                ? "bg-primary text-white cursor-pointer hover:bg-button"
+                ? "bg-primary hover:bg-button cursor-pointer text-white"
                 : "bg-line/20 text-muted cursor-not-allowed"
             }`}
           >
@@ -125,7 +127,7 @@ export default function MotelCaravanCard({ data, isCaravan = false }) {
 
       {/* Gradient Border Effect */}
       {data?.status === 0 && (
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-accent/10 rounded-2xl opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+        <div className="from-primary/10 to-accent/10 pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-r via-transparent opacity-0 transition-opacity duration-500 hover:opacity-100"></div>
       )}
     </div>
   );

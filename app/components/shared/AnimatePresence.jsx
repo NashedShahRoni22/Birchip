@@ -1,6 +1,4 @@
 "use client";
-
-import usePostMutation from "@/hooks/mutations/usePostMutation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Minus, Plus, X } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -22,7 +20,13 @@ const australianStates = [
   { code: "NT", name: "Northern Territory" },
 ];
 
-export function BookingModal({ isOpen, onClose, itemId, itemType }) {
+export function BookingModal({
+  isOpen,
+  onClose,
+  itemId,
+  itemType,
+  onBookingSuccess,
+}) {
   const [dateRange, setDateRange] = useState([
     {
       startDate: new Date(),
@@ -46,11 +50,6 @@ export function BookingModal({ isOpen, onClose, itemId, itemType }) {
     };
   }, [isOpen]);
 
-  const { mutate } = usePostMutation({
-    endPoint: `/booking/${itemType === "room" ? "motel" : "caravan"}/${itemId}`,
-    token: true,
-  });
-
   const handleDateChange = (item) => {
     setDateRange([item.selection]);
   };
@@ -58,7 +57,12 @@ export function BookingModal({ isOpen, onClose, itemId, itemType }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const payload = {
+    if (!drivingLicenseNumber || !licenseState || !dateOfBirth) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    const bookingFormData = {
       driving_license: drivingLicenseNumber,
       license_state: licenseState,
       dob: dateOfBirth,
@@ -66,23 +70,11 @@ export function BookingModal({ isOpen, onClose, itemId, itemType }) {
       checkout: dateRange[0].endDate,
       adults: guests.adults,
       children: guests.children,
+      itemId,
+      itemType,
     };
 
-    mutate(payload, {
-      onSuccess: (data) => {
-        toast.success(
-          data?.message ||
-            "Your request is in process. Our agent will contact you soon",
-        );
-        onClose();
-      },
-      onError: (error) => {
-        console.error("Error:", error);
-        toast.error(
-          error?.message || "Something went wrong. Please try again.",
-        );
-      },
-    });
+    onBookingSuccess(bookingFormData);
   };
 
   return (

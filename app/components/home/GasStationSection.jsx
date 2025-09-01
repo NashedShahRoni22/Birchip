@@ -11,8 +11,18 @@ import {
   Car,
   Truck,
 } from "lucide-react";
+import useGetQuery from "@/hooks/queries/useGetQuery";
+import Pagination from "@/component/Pagination/Pagination";
+import GasSkeleton from "@/component/loaders/GasSkeleton";
 
 const GasStationSection = () => {
+  // get gas pricing data
+  const { data: apiData, isLoading } = useGetQuery({
+    endpoint: "/gas-stations",
+    queryKey: ["gas-stations"],
+    enabled: true,
+  });
+
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -22,49 +32,33 @@ const GasStationSection = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // Sample gas/oil prices data
-  const fuelPrices = [
-    {
-      id: 1,
-      type: "Regular Unleaded",
-      icon: <Car className="w-5 h-5" />,
-      price: 3.45,
-      change: +0.12,
-      trending: "up",
-      color: "bg-blue-500",
-      available: true,
-    },
-    {
-      id: 2,
-      type: "Premium Unleaded",
-      icon: <Zap className="w-5 h-5" />,
-      price: 3.89,
-      change: +0.08,
-      trending: "up",
-      color: "bg-purple-500",
-      available: true,
-    },
-    {
-      id: 3,
-      type: "Diesel",
-      icon: <Truck className="w-5 h-5" />,
-      price: 3.67,
-      change: -0.05,
-      trending: "down",
-      color: "bg-green-500",
-      available: true,
-    },
-    {
-      id: 4,
-      type: "E85 Ethanol",
-      icon: <Droplets className="w-5 h-5" />,
-      price: 2.89,
-      change: +0.03,
-      trending: "up",
-      color: "bg-orange-500",
-      available: false,
-    },
-  ];
+  // Function to get appropriate icon based on fuel type
+  const getFuelIcon = (title) => {
+    const lowerTitle = title.toLowerCase();
+    if (lowerTitle.includes("premium") || lowerTitle.includes("super")) {
+      return <Zap className="h-5 w-5" />;
+    } else if (lowerTitle.includes("diesel")) {
+      return <Truck className="h-5 w-5" />;
+    } else if (lowerTitle.includes("ethanol") || lowerTitle.includes("e85")) {
+      return <Droplets className="h-5 w-5" />;
+    } else {
+      return <Car className="h-5 w-5" />;
+    }
+  };
+
+  // Function to get color based on fuel type
+  const getFuelColor = (title) => {
+    const lowerTitle = title.toLowerCase();
+    if (lowerTitle.includes("premium") || lowerTitle.includes("super")) {
+      return "bg-purple-500";
+    } else if (lowerTitle.includes("diesel")) {
+      return "bg-green-500";
+    } else if (lowerTitle.includes("ethanol") || lowerTitle.includes("e85")) {
+      return "bg-orange-500";
+    } else {
+      return "bg-blue-500";
+    }
+  };
 
   const formatTime = (date) => {
     return date.toLocaleTimeString("en-US", {
@@ -74,27 +68,31 @@ const GasStationSection = () => {
     });
   };
 
+  if (isLoading) {
+    return <GasSkeleton />;
+  }
+
   return (
-    <section className="py-20 px-6">
-      <div className="max-w-7xl mx-auto">
+    <section className="px-6 py-20">
+      <div className="mx-auto max-w-7xl">
         {/* Header */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 bg-secondary/60 backdrop-blur-sm px-4 py-2 rounded-full border border-line/20 mb-6">
-            <Fuel className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-muted">Live Updates</span>
+        <div className="mb-16 text-center">
+          <div className="bg-secondary/60 border-line/20 mb-6 inline-flex items-center gap-2 rounded-full border px-4 py-2 backdrop-blur-sm">
+            <Fuel className="text-primary h-4 w-4" />
+            <span className="text-muted text-sm font-medium">Live Updates</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-text mb-4">
+          <h2 className="text-text mb-4 text-4xl font-bold md:text-5xl">
             Current Fuel
-            <span className="block text-primary">Market Prices</span>
+            <span className="text-primary block">Market Prices</span>
           </h2>
-          <p className="text-xl text-muted max-w-3xl mx-auto mb-8">
+          <p className="text-muted mx-auto mb-8 max-w-3xl text-xl">
             Stay informed with real-time fuel prices and make smart decisions
             for your journey ahead.
           </p>
 
           {/* Live indicator */}
-          <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/30 px-4 py-2 rounded-full">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+          <div className="inline-flex items-center gap-2 rounded-full border border-green-500/30 bg-green-500/10 px-4 py-2">
+            <div className="h-2 w-2 animate-pulse rounded-full bg-green-500"></div>
             <span className="text-sm font-medium text-green-600">
               Live • Updated {formatTime(currentTime)}
             </span>
@@ -102,41 +100,49 @@ const GasStationSection = () => {
         </div>
 
         {/* Price Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12">
-          {fuelPrices.map((fuel) => (
+        <div className="mb-12 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
+          {apiData?.data?.map((fuel) => (
             <div
               key={fuel.id}
-              className={`group relative backdrop-blur-xl rounded-2xl border border-line/20 shadow transition-all duration-500 overflow-hidden ${
-                !fuel.available ? "opacity-75" : ""
+              className={`group border-line/20 relative overflow-hidden rounded-2xl border shadow backdrop-blur-xl transition-all duration-500 ${
+                fuel.status !== 1 ? "opacity-75" : ""
               }`}
             >
               {/* Status Badge */}
               <div
-                className={`absolute top-1.5 right-1.5 z-10 px-2 py-1 rounded-full text-xs font-bold shadow ${
-                  fuel.available
-                    ? "bg-green-500 text-white border border-green-500/30"
-                    : "bg-red-500 text-white border border-red-500/30"
+                className={`absolute top-1.5 right-1.5 z-10 rounded-full px-2 py-1 text-xs font-bold shadow ${
+                  fuel.status === 1
+                    ? "border border-green-500/30 bg-green-500 text-white"
+                    : "border border-red-500/30 bg-red-500 text-white"
                 }`}
               >
-                {fuel.available ? "Available" : "Out of Stock"}
+                {fuel.status === 1 ? "Available" : "Out of Stock"}
               </div>
 
               {/* Color strip */}
-              <div className={`h-1 ${fuel.color}`}></div>
+              <div className="bg-primary h-1"></div>
 
               <div className="p-4 sm:p-6">
                 {/* Icon and Type */}
-                <div className="flex items-center gap-3 mb-4">
-                  <div className={`p-3 rounded-xl ${fuel.color} text-white`}>
-                    {fuel.icon}
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="bg-primary rounded-xl p-3 text-white">
+                    {fuel.icon ? (
+                      <img
+                        src={fuel.icon}
+                        alt={fuel.title}
+                        className="h-5 w-5 object-contain"
+                      />
+                    ) : (
+                      getFuelIcon(fuel.title)
+                    )}
                   </div>
                   <div>
-                    <h3 className="text-base sm:text-lg font-bold text-text leading-tight">
-                      {fuel.type}
+                    <h3 className="text-text text-base leading-tight font-bold sm:text-lg">
+                      {fuel.title}
                     </h3>
-                    <div className="flex items-center gap-1 text-xs text-muted">
-                      <MapPin className="w-3 h-3" />
-                      <span>Per Gallon</span>
+                    <div className="text-muted flex items-center gap-1 text-xs">
+                      <MapPin className="h-3 w-3" />
+                      <span>Per {fuel.unit}</span>
                     </div>
                   </div>
                 </div>
@@ -144,27 +150,29 @@ const GasStationSection = () => {
                 {/* Price */}
                 <div className="mb-3">
                   <div className="flex items-end gap-1">
-                    <span className="text-2xl sm:text-3xl font-bold text-primary">
+                    <span className="text-primary text-2xl font-bold sm:text-3xl">
                       ${fuel.price.toFixed(2)}
                     </span>
-                    <span className="text-sm text-muted mb-1">/gal</span>
+                    <span className="text-muted mb-1 text-sm">
+                      /{fuel.unit}
+                    </span>
                   </div>
                 </div>
 
                 {/* Price Change */}
                 <div
                   className={`flex items-center gap-1 text-sm font-medium ${
-                    fuel.trending === "up" ? "text-red-500" : "text-green-500"
+                    fuel.difference >= 0 ? "text-red-500" : "text-green-500"
                   }`}
                 >
-                  {fuel.trending === "up" ? (
-                    <TrendingUp className="w-4 h-4" />
+                  {fuel.difference >= 0 ? (
+                    <TrendingUp className="h-4 w-4" />
                   ) : (
-                    <TrendingDown className="w-4 h-4" />
+                    <TrendingDown className="h-4 w-4" />
                   )}
                   <span>
-                    {fuel.change > 0 ? "+" : ""}$
-                    {Math.abs(fuel.change).toFixed(2)} today
+                    {fuel.difference > 0 ? "+" : ""}$
+                    {Math.abs(fuel.difference).toFixed(2)} today
                   </span>
                 </div>
               </div>
@@ -173,18 +181,18 @@ const GasStationSection = () => {
         </div>
 
         {/* Detailed Price Table */}
-        <div className=" backdrop-blur-xl rounded-2xl border border-line/20 shadow overflow-hidden">
-          <div className="p-6 border-b border-line/20">
+        <div className="border-line/20 overflow-hidden rounded-2xl border shadow backdrop-blur-xl">
+          <div className="border-line/20 border-b p-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <Clock className="w-5 h-5 text-primary" />
+                <div className="bg-primary/10 rounded-lg p-2">
+                  <Clock className="text-primary h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-text">
+                  <h3 className="text-text text-lg font-bold">
                     Today's Price History
                   </h3>
-                  <p className="text-sm text-muted">
+                  <p className="text-muted text-sm">
                     Last updated: {formatTime(currentTime)}
                   </p>
                 </div>
@@ -196,80 +204,86 @@ const GasStationSection = () => {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-line/20 bg-secondary/40">
-                  <th className="text-left p-4 text-sm font-semibold text-text">
+                <tr className="border-line/20 bg-secondary/40 border-b">
+                  <th className="text-text p-4 text-left text-sm font-semibold">
                     Fuel Type
                   </th>
-                  <th className="text-left p-4 text-sm font-semibold text-text hidden sm:table-cell">
+                  <th className="text-text hidden p-4 text-left text-sm font-semibold sm:table-cell">
                     Morning
                   </th>
-                  <th className="text-left p-4 text-sm font-semibold text-text hidden md:table-cell">
+                  <th className="text-text hidden p-4 text-left text-sm font-semibold md:table-cell">
                     Afternoon
                   </th>
-                  <th className="text-left p-4 text-sm font-semibold text-text">
+                  <th className="text-text p-4 text-left text-sm font-semibold">
                     Current
                   </th>
-                  <th className="text-left p-4 text-sm font-semibold text-text">
+                  <th className="text-text p-4 text-left text-sm font-semibold">
                     Change
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {fuelPrices.map((fuel, index) => (
+                {apiData?.data?.map((fuel, index) => (
                   <tr
                     key={fuel.id}
-                    className={`border-b border-line/10 ${
+                    className={`border-line/10 border-b ${
                       index % 2 === 0 ? "bg-secondary/20" : ""
                     } hover:bg-secondary/40 transition-colors`}
                   >
                     <td className="p-4">
                       <div className="flex items-center gap-3">
-                        <div
-                          className={`p-2 rounded-lg ${fuel.color} text-white`}
-                        >
-                          {fuel.icon}
+                        <div className="bg-primary rounded-lg p-2 text-white">
+                          {fuel.icon ? (
+                            <img
+                              src={fuel.icon}
+                              alt={fuel.title}
+                              className="h-4 w-4 object-contain"
+                            />
+                          ) : (
+                            getFuelIcon(fuel.title)
+                          )}
                         </div>
                         <div>
-                          <span className="font-medium text-text text-sm sm:text-base">
-                            {fuel.type}
+                          <span className="text-text text-sm font-medium sm:text-base">
+                            {fuel.title}
                           </span>
-                          <div className="text-xs text-muted sm:hidden">
-                            Current: ${fuel.price.toFixed(2)}/gal
+                          <div className="text-muted text-xs sm:hidden">
+                            Current: ${fuel.price.toFixed(2)}/{fuel.unit}
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td className="p-4 text-muted text-sm hidden sm:table-cell">
-                      ${(fuel.price - 0.03).toFixed(2)}
+                    <td className="text-muted hidden p-4 text-sm sm:table-cell">
+                      ${fuel.morning_price?.toFixed(2) || "N/A"}
                     </td>
-                    <td className="p-4 text-muted text-sm hidden md:table-cell">
-                      ${(fuel.price - 0.01).toFixed(2)}
+                    <td className="text-muted hidden p-4 text-sm md:table-cell">
+                      ${fuel.afternoon_price?.toFixed(2) || "N/A"}
                     </td>
                     <td className="p-4">
-                      <span className="font-bold text-primary text-base sm:text-lg">
+                      <span className="text-primary text-base font-bold sm:text-lg">
                         ${fuel.price.toFixed(2)}
                       </span>
                     </td>
                     <td className="p-4">
                       <div
                         className={`flex items-center gap-1 text-sm font-medium ${
-                          fuel.trending === "up"
+                          fuel.difference >= 0
                             ? "text-red-500"
                             : "text-green-500"
                         }`}
                       >
-                        {fuel.trending === "up" ? (
-                          <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" />
+                        {fuel.difference >= 0 ? (
+                          <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
                         ) : (
-                          <TrendingDown className="w-3 h-3 sm:w-4 sm:h-4" />
+                          <TrendingDown className="h-3 w-3 sm:h-4 sm:w-4" />
                         )}
                         <span className="hidden sm:inline">
-                          {fuel.change > 0 ? "+" : ""}$
-                          {Math.abs(fuel.change).toFixed(2)}
+                          {fuel.difference > 0 ? "+" : ""}$
+                          {Math.abs(fuel.difference).toFixed(2)}
                         </span>
                         <span className="sm:hidden">
-                          {fuel.change > 0 ? "↑" : "↓"}
-                          {Math.abs(fuel.change).toFixed(2)}
+                          {fuel.difference >= 0 ? "↑" : "↓"}
+                          {Math.abs(fuel.difference).toFixed(2)}
                         </span>
                       </div>
                     </td>
@@ -280,9 +294,16 @@ const GasStationSection = () => {
           </div>
         </div>
 
+        {/* Pagination */}
+        {apiData?.pagination && (
+          <div className="mt-8 flex justify-center">
+            <Pagination pagination={apiData.pagination} />
+          </div>
+        )}
+
         {/* Footer Info */}
         <div className="mt-8 text-center">
-          <p className="text-sm text-muted">
+          <p className="text-muted text-sm">
             Prices are updated every 15 minutes • Data sourced from local gas
             stations
           </p>

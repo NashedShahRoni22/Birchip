@@ -22,6 +22,7 @@ import DetailedLoader from "../loaders/DetailedLoader";
 import useGetQuery from "@/hooks/queries/useGetQuery";
 import { useRouter } from "next/navigation";
 import useAuth from "@/hooks/useAuth";
+import { PaymentModal } from "../modals/PaymentModal";
 
 export default function MotelCaravanDetails({ params, isCaravan = false }) {
   const { slug } = React.use(params);
@@ -35,6 +36,7 @@ export default function MotelCaravanDetails({ params, isCaravan = false }) {
   });
 
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [bookingFormData, setBookingFormData] = useState(null);
   const [selectedItem, setSelectedItem] = useState({ id: "", type: "" });
   const [allImages, setAllImages] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -326,11 +328,12 @@ export default function MotelCaravanDetails({ params, isCaravan = false }) {
                       )}
                     </span>
                     <span className="text-lg text-gray-600">/ night</span>
-                    {details?.data?.price > details?.data?.discount && (
-                      <span className="ml-2 text-sm text-gray-500 line-through">
-                        ${details?.data?.price}
-                      </span>
-                    )}
+                    {details?.data?.discount_type &&
+                      details?.data?.discount && (
+                        <span className="ml-2 text-sm text-gray-500 line-through">
+                          ${details?.data?.price}
+                        </span>
+                      )}
                   </div>
                   {details?.data?.status && (
                     <div className="flex items-center gap-1 text-sm text-green-600">
@@ -399,6 +402,28 @@ export default function MotelCaravanDetails({ params, isCaravan = false }) {
         onClose={() => setIsBookingOpen(false)}
         itemId={selectedItem.id}
         itemType={selectedItem.type}
+        onBookingSuccess={(formData) => {
+          // Store form data and close booking modal
+          setBookingFormData({
+            ...formData,
+            itemDetails: {
+              title: details?.data?.title,
+              thumbnail: details?.data?.thumbnail,
+              price: details?.data?.price,
+              discount_type: details?.data?.discount_type,
+              discount: details?.data?.discount,
+              address: details?.data?.address,
+            },
+          });
+          setIsBookingOpen(false);
+        }}
+      />
+
+      <PaymentModal
+        isOpen={!!bookingFormData}
+        onClose={() => setBookingFormData(null)}
+        bookingData={bookingFormData}
+        itemDetails={bookingFormData?.itemDetails}
       />
     </div>
   );
