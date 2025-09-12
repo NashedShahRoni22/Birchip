@@ -52,7 +52,7 @@ const SkeletonTable = () => (
           </tr>
         </thead>
         <tbody>
-          {Array.from({ length: 4 }).map((index) => (
+          {Array.from({ length: 4 }).map((_, index) => (
             <tr
               key={index}
               className={`border-line/10 border-b ${index % 2 === 0 ? "bg-secondary/20" : ""}`}
@@ -111,7 +111,7 @@ const GasSkeleton = () => {
 
         {/* Skeleton Price Cards Grid */}
         <div className="mb-12 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
-          {Array.from({ length: 4 }).map((index) => (
+          {Array.from({ length: 4 }).map((_, index) => (
             <SkeletonCard key={index} />
           ))}
         </div>

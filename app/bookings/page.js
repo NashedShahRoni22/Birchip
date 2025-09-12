@@ -31,13 +31,32 @@ export default function BookingPage() {
   const currentPage = parseInt(searchParams.get("page")) || 1;
 
   const { data, isLoading } = useGetQuery({
-    endpoint: `/my-bookings?page=${currentPage}`,
+    endpoint: `/my/bookings?page=${currentPage}`,
     token: true,
     queryKey: ["/my-bookings", currentPage, authInfo?.token],
     enabled: !!authInfo?.token,
   });
 
   const bookings = data?.data || [];
+
+  const filterTabs = [
+    { key: "all", label: "All Bookings", count: bookings?.length },
+    {
+      key: "confirmed",
+      label: "Confirmed",
+      count: bookings?.filter((b) => b.confirmed === 1)?.length,
+    },
+    {
+      key: "pending",
+      label: "Pending",
+      count: bookings?.filter((b) => b.confirmed === 0)?.length,
+    },
+    {
+      key: "cancelled",
+      label: "Cancelled",
+      count: bookings?.filter((b) => b.status === "cancelled")?.length,
+    },
+  ];
 
   const getStatusColor = (confirmed, status) => {
     if (confirmed === 1) {
@@ -137,24 +156,7 @@ export default function BookingPage() {
         {/* Filter Tabs */}
         <div className="mb-6">
           <div className="flex flex-wrap gap-2">
-            {[
-              { key: "all", label: "All Bookings", count: bookings.length },
-              {
-                key: "confirmed",
-                label: "Confirmed",
-                count: bookings.filter((b) => b.confirmed === 1).length,
-              },
-              {
-                key: "pending",
-                label: "Pending",
-                count: bookings.filter((b) => b.confirmed === 0).length,
-              },
-              {
-                key: "cancelled",
-                label: "Cancelled",
-                count: bookings.filter((b) => b.status === "cancelled").length,
-              },
-            ].map((tab) => (
+            {filterTabs.map((tab) => (
               <button
                 key={tab.key}
                 onClick={() => setFilter(tab.key)}

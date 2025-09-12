@@ -12,6 +12,7 @@ import {
 import useAuth from "@/hooks/useAuth";
 import Image from "next/image";
 import usePutMutation from "@/hooks/mutations/usePutMutation";
+import usePostMutation from "@/hooks/mutations/usePostMutation";
 
 export default function ProfileForm() {
   const { authInfo } = useAuth();
@@ -36,9 +37,9 @@ export default function ProfileForm() {
   }, [authInfo]);
 
   const [profileImage, setProfileImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState("/api/placeholder/150/150");
+  const [imagePreview, setImagePreview] = useState(null);
 
-  const { mutate, isPending } = usePutMutation({
+  const { mutate, isPending } = usePostMutation({
     endPoint: "/profile",
     token: true,
   });
@@ -73,6 +74,9 @@ export default function ProfileForm() {
         address: authInfo.address || "",
       });
     }
+
+    setImagePreview(null);
+    setProfileImage(null);
   };
 
   const handleSubmit = async (e) => {
@@ -207,7 +211,7 @@ export default function ProfileForm() {
               className={`flex flex-1 items-center justify-center gap-2.5 rounded-xl px-8 py-4 font-semibold transition-all duration-300 ${
                 isPending
                   ? "cursor-not-allowed bg-gray-400 text-gray-200"
-                  : "from-primary to-button transform bg-gradient-to-r text-white hover:shadow-lg"
+                  : "from-primary to-button transform cursor-pointer bg-gradient-to-r text-white hover:shadow-lg"
               }`}
             >
               <Save size={20} />

@@ -75,6 +75,7 @@ export default function ResetPassword() {
       [field]: !prev[field],
     }));
   };
+
   return (
     <div className="space-y-6">
       {/* Change Password Section */}

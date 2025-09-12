@@ -5,6 +5,7 @@ import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import CustomToaster from "@/component/shared/CustomToaster";
 import AuthProvider from "@/providers/AuthProvider";
+import { CartProvider } from "@/providers/CartProvider";
 
 export const metadata = {
   title: "Birchip",
@@ -17,10 +18,12 @@ export default function RootLayout({ children }) {
       <body>
         <TanstackProvider>
           <AuthProvider>
-            <Navbar />
-            <main>{children}</main>
-            <Footer />
-            <CustomToaster />
+            <CartProvider>
+              <Navbar />
+              <main>{children}</main>
+              <Footer />
+              <CustomToaster />
+            </CartProvider>
           </AuthProvider>
         </TanstackProvider>
       </body>

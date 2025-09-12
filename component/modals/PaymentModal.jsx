@@ -144,7 +144,7 @@ export function PaymentModal({ isOpen, onClose, bookingData, itemDetails }) {
                   <h2 className="text-2xl font-bold">Complete Your Booking</h2>
                   <button
                     onClick={onClose}
-                    className="rounded-full p-1 transition-colors hover:bg-white/20"
+                    className="cursor-pointer rounded-full p-1 transition-colors hover:bg-white/20"
                   >
                     <X size={24} />
                   </button>
@@ -382,7 +382,7 @@ export function PaymentModal({ isOpen, onClose, bookingData, itemDetails }) {
                 <button
                   onClick={handleConfirmPayment}
                   disabled={isProcessingPayment || isReserving}
-                  className="bg-primary hover:bg-primary/90 w-full rounded-xl p-4 font-semibold text-white transition-all disabled:opacity-50"
+                  className="bg-primary hover:bg-primary/90 w-full cursor-pointer rounded-xl p-4 font-semibold text-white transition-all disabled:opacity-50"
                 >
                   {isProcessingPayment || isReserving
                     ? "Processing..."
