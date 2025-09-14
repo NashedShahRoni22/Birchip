@@ -1,10 +1,8 @@
 "use client";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { usePostApi } from "@/hooks/usePostApi";
-import toast from "react-hot-toast";
-import SignupForm from "./SignupForm";
 import LoginForm from "./LoginForm";
+import SignupForm from "./SignupForm";
 
 // Right Side Component - Clean White Design
 export default function AuthForm() {
@@ -15,7 +13,7 @@ export default function AuthForm() {
       initial={{ opacity: 0, x: 50 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.8 }}
-      className="w-full lg:w-1/2 flex items-center justify-center bg-white min-h-screen"
+      className="flex min-h-screen w-full items-center justify-center bg-white lg:w-1/2"
     >
       <div className="w-full max-w-md p-12">
         {/* Floating elements for subtle animation */}
@@ -29,7 +27,7 @@ export default function AuthForm() {
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          className="absolute top-20 right-10 w-4 h-4 rounded-full bg-[#B63D5E]/30"
+          className="absolute top-20 right-10 h-4 w-4 rounded-full bg-[#B63D5E]/30"
         />
 
         <motion.div
@@ -42,7 +40,7 @@ export default function AuthForm() {
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          className="absolute bottom-32 right-20 w-6 h-6 rounded-full bg-[#E0C3FC]/40"
+          className="absolute right-20 bottom-32 h-6 w-6 rounded-full bg-[#E0C3FC]/40"
         />
 
         {/* Header */}
@@ -50,9 +48,9 @@ export default function AuthForm() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}
-          className="text-center mb-10"
+          className="mb-10 text-center"
         >
-          <motion.h2 className="text-3xl font-bold text-gray-900 mb-2">
+          <motion.h2 className="mb-2 text-3xl font-bold text-gray-900">
             {isLogin ? "Welcome Back" : "Create Account"}
           </motion.h2>
           <p className="text-gray-600">
@@ -61,11 +59,11 @@ export default function AuthForm() {
         </motion.div>
 
         {/* Tab Switch with Modern Design */}
-        <div className="flex justify-center mb-8 bg-gray-100 rounded-2xl p-2">
+        <div className="mb-8 flex justify-center rounded-2xl bg-gray-100 p-2">
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className={`flex-1 px-6 py-3 rounded-xl font-semibold transition-all duration-300 cursor-pointer ${
+            className={`flex-1 cursor-pointer rounded-xl px-6 py-3 font-semibold transition-all duration-300 ${
               isLogin
                 ? "bg-white text-[#B63D5E] shadow-lg shadow-gray-200/50"
                 : "text-gray-500 hover:text-gray-700"
@@ -77,7 +75,7 @@ export default function AuthForm() {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className={`flex-1 px-6 py-3 rounded-xl font-semibold transition-all duration-300 cursor-pointer ${
+            className={`flex-1 cursor-pointer rounded-xl px-6 py-3 font-semibold transition-all duration-300 ${
               !isLogin
                 ? "bg-white text-[#B63D5E] shadow-lg shadow-gray-200/50"
                 : "text-gray-500 hover:text-gray-700"

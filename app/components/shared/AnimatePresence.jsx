@@ -27,17 +27,38 @@ export function BookingModal({
   itemType,
   onBookingSuccess,
 }) {
-  const [dateRange, setDateRange] = useState([
+  // Default values
+  const getDefaultDateRange = () => [
     {
       startDate: new Date(),
       endDate: new Date(new Date().setDate(new Date().getDate() + 1)),
       key: "selection",
     },
-  ]);
-  const [guests, setGuests] = useState({ adults: 1, children: 0 });
+  ];
+
+  const getDefaultGuests = () => ({ adults: 1, children: 0 });
+
+  // State with default values
+  const [dateRange, setDateRange] = useState(getDefaultDateRange());
+  const [guests, setGuests] = useState(getDefaultGuests());
   const [drivingLicenseNumber, setDrivingLicenseNumber] = useState("");
   const [licenseState, setLicenseState] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
+
+  // Reset all values to default when modal closes
+  const resetAllValues = () => {
+    setDateRange(getDefaultDateRange());
+    setGuests(getDefaultGuests());
+    setDrivingLicenseNumber("");
+    setLicenseState("");
+    setDateOfBirth("");
+  };
+
+  // Handle modal close with reset
+  const handleClose = () => {
+    onClose();
+    resetAllValues();
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -48,6 +69,13 @@ export function BookingModal({
     return () => {
       document.body.style.overflow = "auto";
     };
+  }, [isOpen]);
+
+  // Reset when modal opens (in case it was closed improperly)
+  useEffect(() => {
+    if (isOpen) {
+      resetAllValues();
+    }
   }, [isOpen]);
 
   const handleDateChange = (item) => {
@@ -75,6 +103,8 @@ export function BookingModal({
     };
 
     onBookingSuccess(bookingFormData);
+    // Reset values after successful booking
+    resetAllValues();
   };
 
   return (
@@ -91,7 +121,7 @@ export function BookingModal({
             animate={{ backdropFilter: "blur(4px)" }}
             exit={{ backdropFilter: "blur(0px)" }}
             className="fixed inset-0 bg-black/30"
-            onClick={onClose}
+            onClick={handleClose}
           />
 
           <div className="flex min-h-screen items-center justify-center p-4">
@@ -106,7 +136,7 @@ export function BookingModal({
               <div className="bg-primary p-4 text-white">
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl font-bold">
-                    Book{" "}
+                    Reserve Your{" "}
                     {itemType === "room"
                       ? "Room"
                       : itemType === "caravan"
@@ -114,13 +144,20 @@ export function BookingModal({
                         : "Meal"}
                   </h2>
                   <button
-                    onClick={onClose}
+                    onClick={handleClose}
                     className="rounded-full p-1 transition-colors hover:bg-white/20"
                   >
                     <X size={20} />
                   </button>
                 </div>
-                <p className="mt-1 text-sm opacity-90">ID: {itemId}</p>
+                <p className="mt-2 text-sm opacity-90">
+                  Fill in the details below to reserve your{" "}
+                  {itemType === "room"
+                    ? "room"
+                    : itemType === "caravan"
+                      ? "caravan"
+                      : "meal"}
+                </p>
               </div>
 
               <form

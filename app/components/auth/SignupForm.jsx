@@ -1,12 +1,12 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, LoaderCircle } from "lucide-react";
-import { usePostApi } from "@/hooks/usePostApi";
-import toast from "react-hot-toast";
 import useAuth from "@/hooks/useAuth";
-import { useRouter } from "next/navigation";
+import { usePostApi } from "@/hooks/usePostApi";
 
 export default function SignupForm() {
   const router = useRouter();
@@ -85,7 +85,7 @@ export default function SignupForm() {
       onSubmit={handleSubmit}
     >
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="mb-2 block text-sm font-semibold text-gray-700">
           Full Name <span className="text-red-400">*</span>
         </label>
         <motion.input
@@ -94,7 +94,7 @@ export default function SignupForm() {
             boxShadow: "0 0 0 3px rgba(182, 61, 94, 0.1)",
           }}
           type="text"
-          className="w-full px-4 py-4 rounded-xl border-2 border-gray-200 text-gray-900 outline-none focus:border-[#B63D5E] transition-all duration-300"
+          className="w-full rounded-xl border-2 border-gray-200 px-4 py-4 text-gray-900 transition-all duration-300 outline-none focus:border-[#B63D5E]"
           placeholder="John Doe"
           name="name"
           value={formData.name}
@@ -103,7 +103,7 @@ export default function SignupForm() {
         />
       </div>
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="mb-2 block text-sm font-semibold text-gray-700">
           Email Address <span className="text-red-400">*</span>
         </label>
         <motion.input
@@ -112,7 +112,7 @@ export default function SignupForm() {
             boxShadow: "0 0 0 3px rgba(182, 61, 94, 0.1)",
           }}
           type="email"
-          className="w-full px-4 py-4 rounded-xl border-2 border-gray-200 text-gray-900 outline-none focus:border-[#B63D5E] transition-all duration-300"
+          className="w-full rounded-xl border-2 border-gray-200 px-4 py-4 text-gray-900 transition-all duration-300 outline-none focus:border-[#B63D5E]"
           placeholder="you@example.com"
           name="email"
           value={formData.email}
@@ -121,7 +121,7 @@ export default function SignupForm() {
         />
       </div>
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="mb-2 block text-sm font-semibold text-gray-700">
           Password <span className="text-red-400">*</span>
         </label>
         <div className="relative">
@@ -131,7 +131,7 @@ export default function SignupForm() {
               boxShadow: "0 0 0 3px rgba(182, 61, 94, 0.1)",
             }}
             type={showPassword ? "text" : "password"}
-            className="w-full px-4 py-4 pr-12 rounded-xl border-2 border-gray-200 text-gray-900 outline-none focus:border-[#B63D5E] transition-all duration-300"
+            className="w-full rounded-xl border-2 border-gray-200 px-4 py-4 pr-12 text-gray-900 transition-all duration-300 outline-none focus:border-[#B63D5E]"
             placeholder="••••••••"
             name="password"
             value={formData.password}
@@ -141,14 +141,14 @@ export default function SignupForm() {
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="cursor-pointer absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-[#B63D5E] transition-colors"
+            className="absolute inset-y-0 right-0 flex cursor-pointer items-center pr-4 text-gray-400 transition-colors hover:text-[#B63D5E]"
           >
             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
           </button>
         </div>
       </div>
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="mb-2 block text-sm font-semibold text-gray-700">
           Confirm Password <span className="text-red-400">*</span>
         </label>
         <div className="relative">
@@ -158,7 +158,7 @@ export default function SignupForm() {
               boxShadow: "0 0 0 3px rgba(182, 61, 94, 0.1)",
             }}
             type={showConfirmPassword ? "text" : "password"}
-            className="w-full px-4 py-4 pr-12 rounded-xl border-2 border-gray-200 text-gray-900 outline-none focus:border-[#B63D5E] transition-all duration-300"
+            className="w-full rounded-xl border-2 border-gray-200 px-4 py-4 pr-12 text-gray-900 transition-all duration-300 outline-none focus:border-[#B63D5E]"
             placeholder="••••••••"
             name="confirmPass"
             value={formData.confirmPass}
@@ -168,7 +168,7 @@ export default function SignupForm() {
           <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="cursor-pointer absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-[#B63D5E] transition-colors"
+            className="absolute inset-y-0 right-0 flex cursor-pointer items-center pr-4 text-gray-400 transition-colors hover:text-[#B63D5E]"
           >
             {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
           </button>
@@ -181,7 +181,7 @@ export default function SignupForm() {
           onChange={handleChange}
           checked={formData.terms}
           required
-          className="w-4 h-4 text-[#B63D5E] rounded border-gray-300 focus:ring-[#B63D5E]"
+          className="accent-primary h-4 w-4 rounded"
         />
         <span className="ml-2 text-sm text-gray-600">
           I agree to the{" "}
@@ -195,12 +195,11 @@ export default function SignupForm() {
         whileTap={{ scale: 0.98 }}
         type="submit"
         disabled={isPending}
-        className={`cursor-pointer flex items-center gap-2.5 justify-center w-full py-4 rounded-xl font-semibold transition-all duration-300 shadow-lg
-    ${
-      isSignupDisabled
-        ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-        : "bg-gradient-to-r from-[#B63D5E] to-[#E0C3FC] hover:from-[#a83754] hover:to-[#d1b3f7] text-white"
-    }`}
+        className={`flex w-full items-center justify-center gap-2.5 rounded-xl py-4 font-semibold shadow-lg transition-all duration-300 ${
+          isSignupDisabled
+            ? "from-primary/75 to-button/75 cursor-not-allowed bg-gradient-to-r text-gray-200"
+            : "from-primary to-button flex cursor-pointer items-center justify-center gap-2.5 bg-gradient-to-r text-white"
+        }`}
       >
         Create Account{" "}
         {isPending && (

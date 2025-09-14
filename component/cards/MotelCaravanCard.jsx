@@ -22,23 +22,25 @@ export default function MotelCaravanCard({ data, isCaravan = false }) {
       {/* Availability Badge */}
       <div
         className={`absolute top-3 right-3 z-10 rounded-full px-2 py-1 text-xs font-bold shadow sm:top-4 sm:right-4 sm:px-3 sm:py-1 ${
-          data?.status
-            ? "bg-success border-success/30 border text-white"
-            : "border border-red-500/30 bg-red-500 text-white"
+          data?.is_booked
+            ? "border border-red-500/30 bg-red-500 text-white"
+            : "bg-success border-success/30 border text-white"
         }`}
       >
-        {data?.status ? "Available" : "Booked"}
+        {data?.is_booked ? "Booked" : "Available"}
       </div>
 
       {/* Image Placeholder */}
-      <div className="relative flex h-52 items-center justify-center overflow-hidden rounded-t-2xl sm:h-56">
-        <Image
-          src={data?.thumbnail}
-          alt="Room Image"
-          fill
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-        />
-      </div>
+      <Link href={`${isCaravan ? "/caravans" : "/motels"}/${data?.slug}`}>
+        <div className="relative flex h-52 items-center justify-center overflow-hidden rounded-t-2xl sm:h-56">
+          <Image
+            src={data?.thumbnail}
+            alt="Room Image"
+            fill
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+          />
+        </div>
+      </Link>
 
       {/* Content */}
       <div className="flex flex-1 flex-col p-4 sm:p-6">
@@ -47,9 +49,12 @@ export default function MotelCaravanCard({ data, isCaravan = false }) {
           {/* Room Name & Rating */}
           <div className="mb-3 sm:mb-4">
             <div className="mb-2 flex items-start justify-between gap-2">
-              <h3 className="text-text line-clamp-2 text-lg leading-tight font-bold sm:text-xl">
+              <Link
+                href={`${isCaravan ? "/caravans" : "/motels"}/${data?.slug}`}
+                className="text-text hover:text-button line-clamp-2 text-lg leading-tight font-bold transition-all duration-200 ease-linear sm:text-xl"
+              >
                 {data?.title}
-              </h3>
+              </Link>
             </div>
 
             {/* TODO: ratings is unavailable */}
@@ -120,7 +125,7 @@ export default function MotelCaravanCard({ data, isCaravan = false }) {
                 : "bg-line/20 text-muted cursor-not-allowed"
             }`}
           >
-            {data?.status ? "Book Now" : "Unavailable"}
+            {data?.is_booked ? "See Details" : "Book Now"}
           </Link>
         </div>
       </div>

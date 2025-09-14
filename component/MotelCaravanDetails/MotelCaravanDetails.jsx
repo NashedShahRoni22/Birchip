@@ -8,12 +8,12 @@ import {
   Bed,
   Maximize,
   Clock,
-  MapPin,
   ChevronLeft,
   Heart,
   Share2,
   CheckCircle,
   Camera,
+  CircleX,
 } from "lucide-react";
 import { BookingModal } from "../../app/components/shared/AnimatePresence";
 import { calculateDiscount } from "@/utils/calculateDiscount";
@@ -23,13 +23,18 @@ import useGetQuery from "@/hooks/queries/useGetQuery";
 import { useRouter } from "next/navigation";
 import useAuth from "@/hooks/useAuth";
 import { PaymentModal } from "../modals/PaymentModal";
+import { motion } from "framer-motion";
 
 export default function MotelCaravanDetails({ params, isCaravan = false }) {
   const { slug } = React.use(params);
   const router = useRouter();
   const { authInfo } = useAuth();
 
-  const { data: details, isLoading } = useGetQuery({
+  const {
+    data: details,
+    isLoading,
+    refetch,
+  } = useGetQuery({
     endpoint: isCaravan ? `/caravans/${slug}` : `/motels/${slug}`,
     queryKey: [isCaravan ? "caravans" : "motels", slug],
     enabled: !!slug,
@@ -42,6 +47,7 @@ export default function MotelCaravanDetails({ params, isCaravan = false }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
 
   // update all images for slider
   useEffect(() => {
@@ -66,6 +72,18 @@ export default function MotelCaravanDetails({ params, isCaravan = false }) {
     } else {
       const currentPath = isCaravan ? `/caravans/${slug}` : `/motels/${slug}`;
       router.push(`/auth?redirect=${encodeURIComponent(currentPath)}`);
+    }
+  };
+
+  // Handle Check Availability button click
+  const handleCheckAvailability = async () => {
+    setIsCheckingAvailability(true);
+    try {
+      await refetch();
+    } catch (error) {
+      console.error("Error checking availability:", error);
+    } finally {
+      setIsCheckingAvailability(false);
     }
   };
 
@@ -200,10 +218,6 @@ export default function MotelCaravanDetails({ params, isCaravan = false }) {
                     </h1>
                     <div className="flex flex-col gap-4 text-sm text-gray-600 md:flex-row md:items-center">
                       <div className="flex items-center gap-1">
-                        <MapPin className="h-4 w-4" />
-                        {details?.data?.address}
-                      </div>
-                      <div className="flex items-center gap-1">
                         <Users className="h-4 w-4" />
                         Up to {details?.data?.capacity} guests
                       </div>
@@ -335,10 +349,15 @@ export default function MotelCaravanDetails({ params, isCaravan = false }) {
                         </span>
                       )}
                   </div>
-                  {details?.data?.status && (
+                  {details?.data?.is_booked === "Available" ? (
                     <div className="flex items-center gap-1 text-sm text-green-600">
                       <CheckCircle className="h-4 w-4" />
                       <span>Available now</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1 text-sm text-red-600">
+                      <CircleX className="h-4 w-4" />
+                      <span>Not Available</span>
                     </div>
                   )}
                 </div>
@@ -376,13 +395,41 @@ export default function MotelCaravanDetails({ params, isCaravan = false }) {
                 <div className="space-y-4">
                   <button
                     onClick={handleCardClick}
-                    className="bg-primary hover:bg-button w-full cursor-pointer rounded-xl px-4 py-3 font-semibold text-white transition-colors"
+                    disabled={details?.data?.is_booked === "Booked"}
+                    className="bg-primary hover:bg-button disabled:hover:bg-primary w-full cursor-pointer rounded-xl px-4 py-3 font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     Reserve Now
                   </button>
-                  <button className="w-full cursor-pointer rounded-xl border border-gray-300 px-4 py-3 font-semibold text-gray-700 transition-colors hover:bg-gray-50">
-                    Check Availability
-                  </button>
+                  <motion.button
+                    onClick={handleCheckAvailability}
+                    disabled={isCheckingAvailability}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full cursor-pointer rounded-xl border border-gray-300 px-4 py-3 font-semibold text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <motion.span
+                      animate={
+                        isCheckingAvailability
+                          ? {
+                              opacity: [1, 0.5, 1],
+                            }
+                          : {}
+                      }
+                      transition={
+                        isCheckingAvailability
+                          ? {
+                              duration: 1,
+                              repeat: Infinity,
+                              ease: "easeInOut",
+                            }
+                          : {}
+                      }
+                    >
+                      {isCheckingAvailability
+                        ? "Checking..."
+                        : "Check Availability"}
+                    </motion.span>
+                  </motion.button>
                 </div>
 
                 <div className="mt-4 border-t border-gray-200 pt-4">

@@ -1,13 +1,13 @@
 "use client";
 
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, LoaderCircle } from "lucide-react";
-import { usePostApi } from "@/hooks/usePostApi";
 import toast from "react-hot-toast";
+import { Eye, EyeOff, LoaderCircle } from "lucide-react";
 import useAuth from "@/hooks/useAuth";
-import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
+import { usePostApi } from "@/hooks/usePostApi";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -143,7 +143,7 @@ export default function LoginForm() {
             onChange={handleChange}
             checked={formData.remember}
             name="remember"
-            className="h-4 w-4 rounded border-gray-300 text-[#B63D5E] focus:ring-[#B63D5E]"
+            className="accent-primary h-4 w-4 rounded border-gray-300 text-[#B63D5E] focus:ring-[#B63D5E]"
           />
           <span className="ml-2 text-sm text-gray-600">Remember me</span>
         </label>
@@ -159,10 +159,10 @@ export default function LoginForm() {
         whileTap={{ scale: 0.98 }}
         type="submit"
         disabled={isPending}
-        className={`flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-xl py-4 font-semibold shadow-lg transition-all duration-300 ${
+        className={`flex w-full items-center justify-center gap-2.5 rounded-xl py-4 font-semibold shadow-lg transition-all duration-300 ${
           isLoginDisabled
-            ? "cursor-not-allowed bg-gray-400 text-gray-200"
-            : "flex items-center justify-center gap-2.5 bg-gradient-to-r from-[#B63D5E] to-[#E0C3FC] text-white hover:from-[#a83754] hover:to-[#d1b3f7]"
+            ? "from-primary/75 to-button/75 cursor-not-allowed bg-gradient-to-r text-gray-200"
+            : "from-primary to-button flex cursor-pointer items-center justify-center gap-2.5 bg-gradient-to-r text-white"
         }`}
       >
         Login

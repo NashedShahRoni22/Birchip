@@ -47,9 +47,6 @@ export default function FoodMenuSection({ isPage = false }) {
   };
 
   const handleOrderClick = (food) => {
-    if (!authInfo?.token) {
-      return router.push("/auth?redirect=foods");
-    }
     addToCart(food);
   };
 

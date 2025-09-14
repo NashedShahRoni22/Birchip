@@ -101,7 +101,7 @@ const GasStationSection = () => {
 
         {/* Price Cards Grid */}
         <div className="mb-12 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
-          {apiData?.data?.map((fuel) => (
+          {apiData?.data?.slice(0, 4)?.map((fuel) => (
             <div
               key={fuel.id}
               className={`group border-line/20 relative overflow-hidden rounded-2xl border shadow backdrop-blur-xl transition-all duration-500 ${

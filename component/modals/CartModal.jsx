@@ -18,8 +18,10 @@ import toast from "react-hot-toast";
 import { useCart } from "@/hooks/useCart";
 import CartItem from "../CartItem";
 import { redirect, useRouter } from "next/navigation";
+import useAuth from "@/hooks/useAuth";
 
 export default function CartModal({ isOpen, onClose }) {
+  const { authInfo } = useAuth();
   const {
     cart,
     updateQuantity,
@@ -43,7 +45,7 @@ export default function CartModal({ isOpen, onClose }) {
 
   const { mutate, isPending: isSubmitting } = usePostMutation({
     endPoint: "/food-order",
-    token: true,
+    token: customerType === "guest" ? true : false,
   });
 
   const handleQuantityChange = (foodId, change) => {
@@ -68,7 +70,7 @@ export default function CartModal({ isOpen, onClose }) {
     }
 
     if (customerType === "guest") {
-      if (!invoiceId.trim()) {
+      if (authInfo?.token && !invoiceId.trim()) {
         toast.error("Please enter your invoice ID");
         return false;
       }
@@ -89,6 +91,10 @@ export default function CartModal({ isOpen, onClose }) {
   const handlePlaceOrder = () => {
     if (!validateForm()) {
       return;
+    }
+
+    if (!authInfo?.token && customerType === "guest") {
+      return redirect("/auth?redirect=foods");
     }
 
     // Prepare FormData according to API requirements

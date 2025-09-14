@@ -116,8 +116,8 @@ export default function SearchResults({ data, pagination, searchParams }) {
             </div>
 
             {/* Filter and Sort Controls */}
-            <div className="flex items-center gap-3">
-              {/* Filter Dropdown */}
+            {/* <div className="flex items-center gap-3">
+              
               <div className="relative">
                 <select
                   value={filterBy}
@@ -133,7 +133,7 @@ export default function SearchResults({ data, pagination, searchParams }) {
                 <Filter className="pointer-events-none absolute top-1/2 right-2 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
               </div>
 
-              {/* Sort Dropdown */}
+             
               <div className="relative">
                 <select
                   value={sortBy}
@@ -148,7 +148,7 @@ export default function SearchResults({ data, pagination, searchParams }) {
                 </select>
                 <SortAsc className="pointer-events-none absolute top-1/2 right-2 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 
