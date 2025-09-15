@@ -9,9 +9,8 @@ import toast from "react-hot-toast";
 export default function FoodOrderModal({ isOpen, onClose, selectedFood }) {
   const [roomNumber, setRoomNumber] = useState("");
   const [quantity, setQuantity] = useState(1);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { mutate } = usePostMutation({ endPoint: "/food-order", token: true });
+  // const { mutate, isPending } = usePostMutation({ endPoint: "/food-order", token: true });
 
   const handleQuantityChange = (change) => {
     const newQuantity = quantity + change;
@@ -24,7 +23,7 @@ export default function FoodOrderModal({ isOpen, onClose, selectedFood }) {
     ? calculateDiscount(
         selectedFood?.discount_type,
         selectedFood?.price,
-        selectedFood?.discount
+        selectedFood?.discount,
       ) * quantity
     : selectedFood?.price * quantity;
 
@@ -42,34 +41,34 @@ export default function FoodOrderModal({ isOpen, onClose, selectedFood }) {
       [`references[0][qty]`]: quantity,
     };
 
-    mutate(payload, {
-      onSuccess: (data) => {
-        toast.success(
-          data?.message || "Your order have been placed successfully!"
-        );
-        onClose();
-      },
-      onError: (error) => {
-        console.error(error);
-        toast.error(error?.message || "Order submission failed!");
-      },
-    });
+    // mutate(payload, {
+    //   onSuccess: (data) => {
+    //     toast.success(
+    //       data?.message || "Your order have been placed successfully!",
+    //     );
+    //     onClose();
+    //   },
+    //   onError: (error) => {
+    //     console.error(error);
+    //     toast.error(error?.message || "Order submission failed!");
+    //   },
+    // });
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+      <div className="mx-4 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-3xl bg-white shadow-2xl">
         {/* Header */}
-        <div className="relative p-6 pb-4 border-b border-gray-100">
+        <div className="relative border-b border-gray-100 p-6 pb-4">
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
+            className="absolute top-4 right-4 rounded-full p-2 transition-colors hover:bg-gray-100"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="h-5 w-5 text-gray-500" />
           </button>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-primary/10 rounded-full">
-              <ShoppingCart className="w-6 h-6 text-primary" />
+          <div className="mb-2 flex items-center gap-3">
+            <div className="bg-primary/10 rounded-full p-2">
+              <ShoppingCart className="text-primary h-6 w-6" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900">
               Place Your Order
@@ -82,8 +81,8 @@ export default function FoodOrderModal({ isOpen, onClose, selectedFood }) {
 
         {/* Order Summary */}
         <div className="p-6 pb-4">
-          <div className="bg-gray-50 rounded-2xl p-4 mb-6">
-            <h3 className="font-semibold text-gray-900 mb-2">Order Summary</h3>
+          <div className="mb-6 rounded-2xl bg-gray-50 p-4">
+            <h3 className="mb-2 font-semibold text-gray-900">Order Summary</h3>
             <div className="flex items-center gap-3">
               {selectedFood.icon}
               <div className="flex-1">
@@ -97,9 +96,9 @@ export default function FoodOrderModal({ isOpen, onClose, selectedFood }) {
 
           {/* Room Number Input */}
           <div className="mb-6">
-            <label className="block text-sm font-semibold text-gray-900 mb-3">
+            <label className="mb-3 block text-sm font-semibold text-gray-900">
               <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-primary" />
+                <MapPin className="text-primary h-4 w-4" />
                 Room Number
               </div>
             </label>
@@ -108,23 +107,23 @@ export default function FoodOrderModal({ isOpen, onClose, selectedFood }) {
               value={roomNumber}
               onChange={(e) => setRoomNumber(e.target.value)}
               placeholder="Enter your motel room number"
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-colors text-gray-900 placeholder:text-gray-500"
-              disabled={isSubmitting}
+              className="focus:ring-primary focus:border-primary w-full rounded-xl border border-gray-200 px-4 py-3 text-gray-900 transition-colors placeholder:text-gray-500 focus:ring-2"
+              disabled={isPending}
             />
           </div>
 
           {/* Quantity Selector */}
           <div className="mb-6">
-            <label className="block text-sm font-semibold text-gray-900 mb-3">
+            <label className="mb-3 block text-sm font-semibold text-gray-900">
               Quantity
             </label>
             <div className="flex items-center gap-4">
               <button
                 onClick={() => handleQuantityChange(-1)}
-                disabled={quantity <= 1 || isSubmitting}
-                className="p-2 rounded-xl border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                disabled={quantity <= 1 || isPending}
+                className="rounded-xl border border-gray-200 p-2 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <Minus className="w-5 h-5 text-gray-600" />
+                <Minus className="h-5 w-5 text-gray-600" />
               </button>
               <div className="flex-1 text-center">
                 <span className="text-2xl font-bold text-gray-900">
@@ -133,21 +132,21 @@ export default function FoodOrderModal({ isOpen, onClose, selectedFood }) {
               </div>
               <button
                 onClick={() => handleQuantityChange(1)}
-                disabled={isSubmitting}
-                className="p-2 rounded-xl border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                disabled={isPending}
+                className="rounded-xl border border-gray-200 p-2 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <Plus className="w-5 h-5 text-gray-600" />
+                <Plus className="h-5 w-5 text-gray-600" />
               </button>
             </div>
           </div>
 
           {/* Total Amount */}
-          <div className="bg-primary/5 rounded-2xl p-4 mb-6">
-            <div className="flex justify-between items-center">
+          <div className="bg-primary/5 mb-6 rounded-2xl p-4">
+            <div className="flex items-center justify-between">
               <span className="text-lg font-semibold text-gray-900">
                 Total Amount:
               </span>
-              <span className="text-2xl font-bold text-primary">
+              <span className="text-primary text-2xl font-bold">
                 $
                 {Number.isInteger(totalAmount)
                   ? totalAmount
@@ -160,24 +159,24 @@ export default function FoodOrderModal({ isOpen, onClose, selectedFood }) {
           <div className="flex gap-3">
             <button
               onClick={onClose}
-              disabled={isSubmitting}
-              className="flex-1 px-6 py-3 border border-gray-200 rounded-xl text-gray-600 font-semibold hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              disabled={isPending}
+              className="flex-1 rounded-xl border border-gray-200 px-6 py-3 font-semibold text-gray-600 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               onClick={handleSubmitOrder}
-              disabled={isSubmitting || !roomNumber.trim()}
-              className="flex-1 px-6 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-button disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+              disabled={isPending || !roomNumber.trim()}
+              className="bg-primary hover:bg-button flex flex-1 items-center justify-center gap-2 rounded-xl px-6 py-3 font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {isSubmitting ? (
+              {isPending ? (
                 <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
                   Processing...
                 </>
               ) : (
                 <>
-                  <ShoppingCart className="w-5 h-5" />
+                  <ShoppingCart className="h-5 w-5" />
                   Place Order
                 </>
               )}

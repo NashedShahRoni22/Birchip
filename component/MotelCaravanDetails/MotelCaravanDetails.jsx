@@ -349,15 +349,15 @@ export default function MotelCaravanDetails({ params, isCaravan = false }) {
                         </span>
                       )}
                   </div>
-                  {details?.data?.is_booked === "Available" ? (
-                    <div className="flex items-center gap-1 text-sm text-green-600">
-                      <CheckCircle className="h-4 w-4" />
-                      <span>Available now</span>
-                    </div>
-                  ) : (
+                  {details?.data?.is_booked ? (
                     <div className="flex items-center gap-1 text-sm text-red-600">
                       <CircleX className="h-4 w-4" />
                       <span>Not Available</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1 text-sm text-green-600">
+                      <CheckCircle className="h-4 w-4" />
+                      <span>Available now</span>
                     </div>
                   )}
                 </div>
@@ -395,7 +395,7 @@ export default function MotelCaravanDetails({ params, isCaravan = false }) {
                 <div className="space-y-4">
                   <button
                     onClick={handleCardClick}
-                    disabled={details?.data?.is_booked === "Booked"}
+                    disabled={details?.data?.is_booked}
                     className="bg-primary hover:bg-button disabled:hover:bg-primary w-full cursor-pointer rounded-xl px-4 py-3 font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     Reserve Now
@@ -464,6 +464,7 @@ export default function MotelCaravanDetails({ params, isCaravan = false }) {
           });
           setIsBookingOpen(false);
         }}
+        details={details}
       />
 
       <PaymentModal
@@ -471,6 +472,7 @@ export default function MotelCaravanDetails({ params, isCaravan = false }) {
         onClose={() => setBookingFormData(null)}
         bookingData={bookingFormData}
         itemDetails={bookingFormData?.itemDetails}
+        isCaravan={isCaravan}
       />
     </div>
   );

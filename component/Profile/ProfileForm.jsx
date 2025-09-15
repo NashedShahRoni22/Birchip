@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import useAuth from "@/hooks/useAuth";
 import Image from "next/image";
-import usePutMutation from "@/hooks/mutations/usePutMutation";
 import usePostMutation from "@/hooks/mutations/usePostMutation";
 
 export default function ProfileForm() {

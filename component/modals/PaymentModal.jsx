@@ -10,8 +10,16 @@ import PriceBreakdown from "./PaymentModal/PriceBreakdown";
 import ReservationInfo from "./PaymentModal/ReservationInfo";
 import PaymentNotice from "./PaymentModal/PaymentNotice";
 import ImportantNotice from "./PaymentModal/ImportantNotice";
+import { useQueryClient } from "@tanstack/react-query";
 
-export function PaymentModal({ isOpen, onClose, bookingData, itemDetails }) {
+export function PaymentModal({
+  isOpen,
+  onClose,
+  bookingData,
+  itemDetails,
+  isCaravan,
+}) {
+  const queryClient = useQueryClient();
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState("reserveOnly");
 
@@ -27,7 +35,7 @@ export function PaymentModal({ isOpen, onClose, bookingData, itemDetails }) {
   }, [isOpen]);
 
   // API mutation hooks for both motel and caravan payment options
-  const { mutate: reserveOnly, isLoading: isReserving } = usePostMutation({
+  const { mutate: reserveOnly, isPending: isReserving } = usePostMutation({
     endPoint: `/booking/${bookingData?.itemType === "room" ? "motel" : "caravan"}/${bookingData?.itemId}`,
     token: true,
   });
@@ -85,12 +93,18 @@ export function PaymentModal({ isOpen, onClose, bookingData, itemDetails }) {
     // } else {
     reserveOnly(reservePayload, {
       onSuccess: (data) => {
-        toast.success(
-          bookingData?.itemType === "room"
-            ? "Room reserved for 30 minutes! Complete payment from My Bookings to confirm your booking."
-            : "Caravan reserved for 30 minutes! Complete payment from My Bookings to confirm your booking.",
-        );
-        onClose();
+        if (data?.status) {
+          toast.success(
+            bookingData?.itemType === "room"
+              ? "Room reserved for 30 minutes! Complete payment from My Bookings to confirm your booking."
+              : "Caravan reserved for 30 minutes! Complete payment from My Bookings to confirm your booking.",
+          );
+          queryClient.invalidateQueries([
+            isCaravan ? "caravans" : "motels",
+            slug,
+          ]);
+          onClose();
+        }
       },
       onError: (error) => {
         console.error("Reserve Error:", error);

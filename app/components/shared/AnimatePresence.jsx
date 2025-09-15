@@ -26,6 +26,7 @@ export function BookingModal({
   itemId,
   itemType,
   onBookingSuccess,
+  details,
 }) {
   // Default values
   const getDefaultDateRange = () => [
@@ -105,6 +106,22 @@ export function BookingModal({
     onBookingSuccess(bookingFormData);
     // Reset values after successful booking
     resetAllValues();
+  };
+
+  const handleGuestsQuantity = (action) => {
+    const totalGuests = guests.adults;
+
+    if (action === "increase" && totalGuests < details.data.capacity) {
+      setGuests((prev) => ({
+        ...prev,
+        adults: Math.max(1, prev.adults + 1),
+      }));
+    } else if (action === "decrease") {
+      setGuests((prev) => ({
+        ...prev,
+        adults: Math.max(1, prev.adults - 1),
+      }));
+    }
   };
 
   return (
@@ -192,12 +209,7 @@ export function BookingModal({
                       <div className="flex flex-1 items-center justify-center rounded-lg p-2 shadow">
                         <button
                           type="button"
-                          onClick={() =>
-                            setGuests((prev) => ({
-                              ...prev,
-                              adults: Math.max(1, prev.adults - 1),
-                            }))
-                          }
+                          onClick={() => handleGuestsQuantity("decrease")}
                           className="cursor-pointer rounded-full p-1 hover:bg-gray-100"
                         >
                           <Minus size={16} />
@@ -205,12 +217,7 @@ export function BookingModal({
                         <span className="mx-4">{guests.adults}</span>
                         <button
                           type="button"
-                          onClick={() =>
-                            setGuests((prev) => ({
-                              ...prev,
-                              adults: prev.adults + 1,
-                            }))
-                          }
+                          onClick={() => handleGuestsQuantity("increase")}
                           className="cursor-pointer rounded-full p-1 hover:bg-gray-100"
                         >
                           <Plus size={16} />

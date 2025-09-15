@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { Eye, EyeOff, LoaderCircle } from "lucide-react";
 import useAuth from "@/hooks/useAuth";
-import { usePostApi } from "@/hooks/usePostApi";
+import usePostMutation from "@/hooks/mutations/usePostMutation";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -26,7 +26,7 @@ export default function LoginForm() {
   const redirectUrl = searchParams.get("redirect");
 
   // post mutation hook
-  const { mutate, isPending } = usePostApi("/login");
+  const { mutate, isPending } = usePostMutation({ endPoint: "/login" });
 
   // handle input and checkbox change
   const handleChange = (e) => {

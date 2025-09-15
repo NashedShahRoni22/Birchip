@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
@@ -10,6 +10,7 @@ import { usePostApi } from "@/hooks/usePostApi";
 
 export default function SignupForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { setAuthInfo } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -28,6 +29,9 @@ export default function SignupForm() {
     !formData.confirmPass ||
     !formData.terms ||
     formData.password !== formData.confirmPass;
+
+  // redirect url if user tried to access private route
+  const redirectUrl = searchParams.get("redirect");
 
   // post mutation hook
   const { mutate, isPending } = usePostApi("/register");
@@ -59,7 +63,13 @@ export default function SignupForm() {
         if (data?.status) {
           sessionStorage.setItem("authInfo", JSON.stringify(data?.data));
         }
-        router.replace("/");
+
+        if (redirectUrl) {
+          router.replace(redirectUrl);
+        } else {
+          router.replace("/");
+        }
+
         setFormData({
           name: "",
           email: "",

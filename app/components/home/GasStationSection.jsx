@@ -14,6 +14,7 @@ import {
 import useGetQuery from "@/hooks/queries/useGetQuery";
 import Pagination from "@/component/Pagination/Pagination";
 import GasSkeleton from "@/component/loaders/GasSkeleton";
+import LiveIndicator from "@/component/LiveIndicator";
 
 const GasStationSection = () => {
   // get gas pricing data
@@ -22,15 +23,6 @@ const GasStationSection = () => {
     queryKey: ["gas-stations"],
     enabled: true,
   });
-
-  const [currentTime, setCurrentTime] = useState(new Date());
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
 
   // Function to get appropriate icon based on fuel type
   const getFuelIcon = (title) => {
@@ -91,12 +83,7 @@ const GasStationSection = () => {
           </p>
 
           {/* Live indicator */}
-          <div className="inline-flex items-center gap-2 rounded-full border border-green-500/30 bg-green-500/10 px-4 py-2">
-            <div className="h-2 w-2 animate-pulse rounded-full bg-green-500"></div>
-            <span className="text-sm font-medium text-green-600">
-              Live • Updated {formatTime(currentTime)}
-            </span>
-          </div>
+          <LiveIndicator formatTime={formatTime} />
         </div>
 
         {/* Price Cards Grid */}
@@ -151,7 +138,7 @@ const GasStationSection = () => {
                 <div className="mb-3">
                   <div className="flex items-end gap-1">
                     <span className="text-primary text-2xl font-bold sm:text-3xl">
-                      ${fuel.price.toFixed(2)}
+                      ${fuel.price}
                     </span>
                     <span className="text-muted mb-1 text-sm">
                       /{fuel.unit}
@@ -192,9 +179,6 @@ const GasStationSection = () => {
                   <h3 className="text-text text-lg font-bold">
                     Today's Price History
                   </h3>
-                  <p className="text-muted text-sm">
-                    Last updated: {formatTime(currentTime)}
-                  </p>
                 </div>
               </div>
             </div>
@@ -248,20 +232,20 @@ const GasStationSection = () => {
                             {fuel.title}
                           </span>
                           <div className="text-muted text-xs sm:hidden">
-                            Current: ${fuel.price.toFixed(2)}/{fuel.unit}
+                            Current: ${fuel.price}/{fuel.unit}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td className="text-muted hidden p-4 text-sm sm:table-cell">
-                      ${fuel.morning_price?.toFixed(2) || "N/A"}
+                      ${fuel.morning_price || "N/A"}
                     </td>
                     <td className="text-muted hidden p-4 text-sm md:table-cell">
-                      ${fuel.afternoon_price?.toFixed(2) || "N/A"}
+                      ${fuel.afternoon_price || "N/A"}
                     </td>
                     <td className="p-4">
                       <span className="text-primary text-base font-bold sm:text-lg">
-                        ${fuel.price.toFixed(2)}
+                        ${fuel.price}
                       </span>
                     </td>
                     <td className="p-4">
@@ -279,11 +263,11 @@ const GasStationSection = () => {
                         )}
                         <span className="hidden sm:inline">
                           {fuel.difference > 0 ? "+" : ""}$
-                          {Math.abs(fuel.difference).toFixed(2)}
+                          {Math.abs(fuel?.difference).toFixed(2)}
                         </span>
                         <span className="sm:hidden">
                           {fuel.difference >= 0 ? "↑" : "↓"}
-                          {Math.abs(fuel.difference).toFixed(2)}
+                          {Math.abs(fuel?.difference).toFixed(2)}
                         </span>
                       </div>
                     </td>

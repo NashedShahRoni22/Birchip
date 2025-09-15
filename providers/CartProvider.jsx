@@ -4,6 +4,7 @@ import { calculateDiscount } from "@/utils/calculateDiscount";
 import { loadFromLocalStorage } from "@/utils/loadFromLocalStorage";
 import { saveToLocalStorage } from "@/utils/saveToLocalStorage";
 import { createContext, useState, useEffect } from "react";
+import toast from "react-hot-toast";
 
 // Cart Context
 export const CartContext = createContext();
@@ -61,6 +62,13 @@ export const CartProvider = ({ children }) => {
         return [...prevCart, newItem];
       }
     });
+
+    const existingItem = cart.find((item) => item.id === food.id);
+    if (existingItem) {
+      toast.success("Item Quantity Updated");
+    } else {
+      toast.success("Item added to cart");
+    }
   };
 
   // Remove item from cart

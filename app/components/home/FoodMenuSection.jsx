@@ -16,8 +16,7 @@ import { AnimatePresence, motion } from "framer-motion";
 
 export default function FoodMenuSection({ isPage = false }) {
   const pathName = usePathname();
-  const showCartButton = pathName === "/foods";
-  const { authInfo } = useAuth();
+  const showCartButton = pathName === "/foods" || "/";
   const { cart, addToCart } = useCart();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -105,11 +104,11 @@ export default function FoodMenuSection({ isPage = false }) {
         !isPage && <ShowAllBtn href="/foods" label="Show All Foods" />}
 
       {/* Order Modal */}
-      <FoodOrderModal
+      {/* <FoodOrderModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         selectedFood={selectedFood}
-      />
+      /> */}
 
       <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
 

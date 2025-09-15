@@ -34,6 +34,8 @@ export default async function SearchPage({ params, searchParams }) {
     // Server-side fetch
     const apiResponse = await newGetApi(endpoint);
 
+    console.log(apiResponse);
+
     if (!apiResponse || !apiResponse.status) {
       throw new Error("Failed to fetch search results");
     }

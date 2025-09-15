@@ -9,17 +9,17 @@ import {
   Truck,
   Plus,
   Check,
-  Zap,
-  Droplets,
-  Wifi,
-  Shield,
-  Car,
-  Coffee,
-  Wrench,
+  LoaderCircle,
 } from "lucide-react";
+import useGetQuery from "@/hooks/queries/useGetQuery";
+import Image from "next/image";
+import useAuth from "@/hooks/useAuth";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import usePostMutation from "@/hooks/mutations/usePostMutation";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import { usePostApi } from "@/hooks/usePostApi";
+import toast from "react-hot-toast";
 
 const australianStates = [
   "New South Wales (NSW)",
@@ -31,60 +31,9 @@ const australianStates = [
   "Australian Capital Territory (ACT)",
   "Northern Territory (NT)",
 ];
-const addons = [
-  {
-    id: 1,
-    name: "Power Hookup (240V)",
-    description: "Electrical connection for your caravan",
-    price: 15.0,
-    icon: <Zap className="w-5 h-5" />,
-    popular: true,
-  },
-  {
-    id: 2,
-    name: "Water Connection",
-    description: "Fresh water supply hookup",
-    price: 10.0,
-    icon: <Droplets className="w-5 h-5" />,
-  },
-  {
-    id: 3,
-    name: "WiFi Access",
-    description: "High-speed internet connection",
-    price: 8.0,
-    icon: <Wifi className="w-5 h-5" />,
-  },
-  {
-    id: 4,
-    name: "24/7 Security",
-    description: "Enhanced security monitoring",
-    price: 12.0,
-    icon: <Shield className="w-5 h-5" />,
-  },
-  {
-    id: 5,
-    name: "Waste Disposal",
-    description: "Access to dump station",
-    price: 5.0,
-    icon: <Car className="w-5 h-5" />,
-  },
-  {
-    id: 6,
-    name: "Amenities Access",
-    description: "Shower, toilet, and laundry facilities",
-    price: 20.0,
-    icon: <Coffee className="w-5 h-5" />,
-  },
-  {
-    id: 7,
-    name: "Maintenance Kit",
-    description: "Basic tools and maintenance supplies",
-    price: 25.0,
-    icon: <Wrench className="w-5 h-5" />,
-  },
-];
 
 export default function CaravanParkingBooking() {
+  const { authInfo } = useAuth();
   const [selectedAddons, setSelectedAddons] = useState([]);
   const [formData, setFormData] = useState({
     licenseNumber: "",
@@ -101,7 +50,17 @@ export default function CaravanParkingBooking() {
     },
   ]);
 
-  const { mutate } = usePostApi("/booking/parking/1");
+  // fetch add ons
+  const { data: addons } = useGetQuery({
+    endpoint: "/parking-services",
+    queryKey: ["/parking-services"],
+    enabled: true,
+  });
+
+  const { mutate, isPending } = usePostMutation({
+    endPoint: "/book-parking",
+    token: true,
+  });
 
   // handle date change
   const handleDateChange = (item) => {
@@ -142,80 +101,99 @@ export default function CaravanParkingBooking() {
   const baseTotal = basePricePerNight * totalDays;
   const addonsTotal = selectedAddons.reduce(
     (sum, addon) => sum + addon.price * totalDays,
-    0
+    0,
   );
   const finalTotal = baseTotal + addonsTotal;
 
   // submit parking details
   const handleSubmit = () => {
-    if (
-      !formData.licenseNumber ||
-      !formData.licenseState ||
-      !formData.dateOfBirth
-    ) {
-      alert("Please fill in all required fields");
+    // Validation with specific error messages
+    if (!formData.licenseNumber) {
+      toast.error("Driver's license number is required");
       return;
     }
 
-    const bookingData = {
-      vh_type: formData.vehicleType,
-      license_plate: formData.licensePlate,
-      driving_license: formData.licenseNumber,
-      license_state: formData.licenseState,
-      dob: formData.dateOfBirth,
-      checkin: dateRange[0].startDate,
-      checkout: dateRange[0].endDate,
+    if (!formData.licenseState) {
+      toast.error("License state is required");
+      return;
+    }
+
+    if (!formData.dateOfBirth) {
+      toast.error("Date of birth is required");
+      return;
+    }
+
+    if (!dateRange || !dateRange[0]?.startDate || !dateRange[0]?.endDate) {
+      toast.error("Please select check-in and check-out dates");
+      return;
+    }
+
+    const submitFormData = new FormData();
+
+    // Add basic form fields
+    submitFormData.append("driving_license", formData.licenseNumber);
+    submitFormData.append("license_state", formData.licenseState);
+    submitFormData.append("dob", formData.dateOfBirth);
+    submitFormData.append("license_plate", formData.licensePlate);
+    submitFormData.append("vehicle_type", formData.vehicleType);
+
+    // Format dates from full date string to YYYY-MM-DD format
+    const formatDateToYMD = (dateString) => {
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
     };
 
-    mutate(bookingData);
+    submitFormData.append("checkin", formatDateToYMD(dateRange[0].startDate));
+    submitFormData.append("checkout", formatDateToYMD(dateRange[0].endDate));
 
-    // OLD Data patter
-    // const bookingData = {
-    //   dateRange: dateRange[0],
-    //   driverDetails: formData,
-    //   addons: selectedAddons,
-    //   pricing: {
-    //     basePricePerNight,
-    //     totalDays,
-    //     baseTotal,
-    //     addonsTotal,
-    //     finalTotal,
-    //   },
-    //   timestamp: new Date().toISOString(),
-    // };
+    // Add selected addon IDs as references
+    selectedAddons.forEach((addon, index) => {
+      submitFormData.append(`references[${index}]`, addon.id);
+    });
 
-    console.log("Booking submitted:", bookingData);
-    alert("Caravan parking spot booked successfully!");
+    mutate(submitFormData, {
+      onSuccess: (data) => {
+        if (data?.status) {
+          window.location.href = data?.data?.checkout_url;
+        }
+      },
+      onError: (error) => {
+        console.error(error);
+      },
+    });
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-12">
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="mx-auto max-w-6xl px-6">
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-white backdrop-blur-sm px-4 py-2 rounded-full border border-line/20 mb-6">
-            <Truck className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-muted">
+        <div className="mb-12 text-center">
+          <div className="border-line/20 mb-6 inline-flex items-center gap-2 rounded-full border bg-white px-4 py-2 backdrop-blur-sm">
+            <Truck className="text-primary h-4 w-4" />
+            <span className="text-muted text-sm font-medium">
               Caravan Parking
             </span>
           </div>
 
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <h1 className="mb-4 text-4xl font-bold text-gray-900 md:text-5xl">
             Book Your Parking Spot
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="mx-auto max-w-3xl text-xl text-gray-600">
             Secure and comfortable parking for your caravan with optional
             services and amenities
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           {/* Main Booking Form */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="space-y-8 lg:col-span-2">
             {/* Date Selection */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-200/50 shadow-sm">
-              <div className="flex items-center gap-3 mb-6">
-                <Calendar className="w-6 h-6 text-[#B63D5E]" />
+            <div className="rounded-2xl border border-gray-200/50 bg-white p-6 shadow-sm">
+              <div className="mb-6 flex items-center gap-3">
+                <Calendar className="h-6 w-6 text-[#B63D5E]" />
                 <h2 className="text-2xl font-bold text-gray-900">
                   Select Dates
                 </h2>
@@ -234,18 +212,18 @@ export default function CaravanParkingBooking() {
             </div>
 
             {/* Driver Details */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-200/50 shadow-sm">
-              <div className="flex items-center gap-3 mb-6">
-                <User className="w-6 h-6 text-[#B63D5E]" />
+            <div className="rounded-2xl border border-gray-200/50 bg-white p-6 shadow-sm">
+              <div className="mb-6 flex items-center gap-3">
+                <User className="h-6 w-6 text-[#B63D5E]" />
                 <h2 className="text-2xl font-bold text-gray-900">
                   Driver Details
                 </h2>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 {/* driving license number */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  <label className="mb-2 block text-sm font-semibold text-gray-900">
                     Driving License Number *
                   </label>
                   <input
@@ -254,21 +232,21 @@ export default function CaravanParkingBooking() {
                     value={formData.licenseNumber}
                     onChange={handleInputChange}
                     placeholder="Enter license number"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#B63D5E] focus:border-[#B63D5E] transition-colors"
+                    className="w-full rounded-xl border border-gray-200 px-4 py-3 transition-colors focus:border-[#B63D5E] focus:ring-2 focus:ring-[#B63D5E]"
                     required
                   />
                 </div>
 
                 {/* license state */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  <label className="mb-2 block text-sm font-semibold text-gray-900">
                     License State *
                   </label>
                   <select
                     name="licenseState"
                     value={formData.licenseState}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#B63D5E] focus:border-[#B63D5E] transition-colors"
+                    className="w-full rounded-xl border border-gray-200 px-4 py-3 transition-colors focus:border-[#B63D5E] focus:ring-2 focus:ring-[#B63D5E]"
                     required
                   >
                     <option value="">Select state</option>
@@ -282,7 +260,7 @@ export default function CaravanParkingBooking() {
 
                 {/* date of birth */}
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  <label className="mb-2 block text-sm font-semibold text-gray-900">
                     Date of Birth *
                   </label>
                   <input
@@ -290,14 +268,14 @@ export default function CaravanParkingBooking() {
                     name="dateOfBirth"
                     value={formData.dateOfBirth}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#B63D5E] focus:border-[#B63D5E] transition-colors"
+                    className="w-full rounded-xl border border-gray-200 px-4 py-3 transition-colors focus:border-[#B63D5E] focus:ring-2 focus:ring-[#B63D5E]"
                     required
                   />
                 </div>
 
                 {/* License Plate Number */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  <label className="mb-2 block text-sm font-semibold text-gray-900">
                     License Plate Number *
                   </label>
                   <input
@@ -306,21 +284,21 @@ export default function CaravanParkingBooking() {
                     value={formData.licensePlate}
                     onChange={handleInputChange}
                     placeholder="Enter license plate number"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#B63D5E] focus:border-[#B63D5E] transition-colors"
+                    className="w-full rounded-xl border border-gray-200 px-4 py-3 transition-colors focus:border-[#B63D5E] focus:ring-2 focus:ring-[#B63D5E]"
                     required
                   />
                 </div>
 
                 {/* Vehicle Type */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  <label className="mb-2 block text-sm font-semibold text-gray-900">
                     Vehicle Type *
                   </label>
                   <select
                     name="vehicleType"
                     value={formData.vehicleType}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#B63D5E] focus:border-[#B63D5E] transition-colors"
+                    className="w-full rounded-xl border border-gray-200 px-4 py-3 transition-colors focus:border-[#B63D5E] focus:ring-2 focus:ring-[#B63D5E]"
                     required
                   >
                     <option value="">Select vehicle type</option>
@@ -339,66 +317,66 @@ export default function CaravanParkingBooking() {
             </div>
 
             {/* Add-ons */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-200/50 shadow-sm">
-              <div className="flex items-center gap-3 mb-6">
-                <Plus className="w-6 h-6 text-[#B63D5E]" />
+            <div className="rounded-2xl border border-gray-200/50 bg-white p-6 shadow-sm">
+              <div className="mb-6 flex items-center gap-3">
+                <Plus className="h-6 w-6 text-[#B63D5E]" />
                 <h2 className="text-2xl font-bold text-gray-900">
                   Additional Services
                 </h2>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {addons.map((addon) => {
-                  const isSelected = selectedAddons.find(
-                    (item) => item.id === addon.id
-                  );
-                  return (
-                    <div
-                      key={addon.id}
-                      onClick={() => toggleAddon(addon)}
-                      className={`relative p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 ${
-                        isSelected
-                          ? "border-[#B63D5E] bg-[#B63D5E]/5"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
-                    >
-                      {addon.popular && (
-                        <div className="absolute -top-2 -right-2 bg-[#B63D5E] text-white text-xs px-2 py-1 rounded-full font-semibold">
-                          Popular
-                        </div>
-                      )}
-
-                      <div className="flex items-start gap-3">
-                        <div
-                          className={`p-2 rounded-lg ${
-                            isSelected
-                              ? "bg-[#B63D5E] text-white"
-                              : "bg-gray-100 text-gray-600"
-                          }`}
-                        >
-                          {addon.icon}
-                        </div>
-
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h3 className="font-semibold text-gray-900">
-                              {addon.name}
-                            </h3>
-                            {isSelected && (
-                              <Check className="w-4 h-4 text-[#B63D5E]" />
-                            )}
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                {addons?.data &&
+                  addons?.data?.length > 0 &&
+                  addons?.data?.map((addon) => {
+                    const isSelected = selectedAddons.find(
+                      (item) => item.id === addon.id,
+                    );
+                    return (
+                      // Add On Card
+                      <div
+                        key={addon.id}
+                        onClick={() => toggleAddon(addon)}
+                        className={`relative cursor-pointer rounded-xl border-2 p-4 transition-all duration-300 ${
+                          isSelected
+                            ? "border-[#B63D5E] bg-[#B63D5E]/5"
+                            : "border-gray-200 hover:border-gray-300"
+                        }`}
+                      >
+                        {addon.is_popular === 1 && (
+                          <div className="absolute -top-2 -right-2 rounded-full bg-[#B63D5E] px-2 py-1 text-xs font-semibold text-white">
+                            Popular
                           </div>
-                          <p className="text-sm text-gray-600 mb-2">
-                            {addon.description}
-                          </p>
-                          <p className="font-bold text-[#B63D5E]">
-                            ${addon.price.toFixed(2)}/night
-                          </p>
+                        )}
+
+                        <div className="flex items-start gap-3">
+                          <Image
+                            src={addon.icon}
+                            alt="addon icon"
+                            height={20}
+                            width={20}
+                          />
+
+                          <div className="flex-1">
+                            <div className="mb-1 flex items-center gap-2">
+                              <h3 className="font-semibold text-gray-900">
+                                {addon.title}
+                              </h3>
+                              {isSelected && (
+                                <Check className="h-4 w-4 text-[#B63D5E]" />
+                              )}
+                            </div>
+                            <p className="mb-2 text-sm text-gray-600">
+                              {addon.description}
+                            </p>
+                            <p className="font-bold text-[#B63D5E]">
+                              ${addon.price.toFixed(2)}/night
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
               </div>
             </div>
           </div>
@@ -406,30 +384,29 @@ export default function CaravanParkingBooking() {
           {/* Price Summary & Booking */}
           <div className="lg:col-span-1">
             <div className="sticky top-20">
-              <div className="bg-white rounded-2xl p-6 border border-gray-200/50 shadow-sm">
-                <div className="flex items-center gap-3 mb-6">
-                  <CreditCard className="w-6 h-6 text-[#B63D5E]" />
+              <div className="rounded-2xl border border-gray-200/50 bg-white p-6 shadow-sm">
+                <div className="mb-6 flex items-center gap-3">
+                  <CreditCard className="h-6 w-6 text-[#B63D5E]" />
                   <h2 className="text-2xl font-bold text-gray-900">
                     Booking Summary
                   </h2>
                 </div>
-
-                <div className="space-y-4 mb-6">
-                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                <div className="mb-6 space-y-4">
+                  <div className="flex items-center justify-between border-b border-gray-100 py-2">
                     <span className="text-gray-600">Duration</span>
                     <span className="font-semibold">
                       {totalDays} night{totalDays > 1 ? "s" : ""}
                     </span>
                   </div>
 
-                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                  <div className="flex items-center justify-between border-b border-gray-100 py-2">
                     <span className="text-gray-600">Base Rate</span>
                     <span className="font-semibold">
                       ${basePricePerNight.toFixed(2)}/night
                     </span>
                   </div>
 
-                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                  <div className="flex items-center justify-between border-b border-gray-100 py-2">
                     <span className="text-gray-600">Subtotal</span>
                     <span className="font-semibold">
                       ${baseTotal.toFixed(2)}
@@ -439,10 +416,10 @@ export default function CaravanParkingBooking() {
                   {selectedAddons.map((addon) => (
                     <div
                       key={addon.id}
-                      className="flex justify-between items-center py-2 border-b border-gray-100"
+                      className="flex items-center justify-between border-b border-gray-100 py-2"
                     >
                       <span className="text-sm text-gray-600">
-                        {addon.name}
+                        {addon.title}
                       </span>
                       <span className="text-sm font-semibold">
                         ${(addon.price * totalDays).toFixed(2)}
@@ -451,7 +428,7 @@ export default function CaravanParkingBooking() {
                   ))}
 
                   {addonsTotal > 0 && (
-                    <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                    <div className="flex items-center justify-between border-b border-gray-100 py-2">
                       <span className="text-gray-600">Add-ons Subtotal</span>
                       <span className="font-semibold">
                         ${addonsTotal.toFixed(2)}
@@ -459,9 +436,8 @@ export default function CaravanParkingBooking() {
                     </div>
                   )}
                 </div>
-
-                <div className="bg-[#B63D5E]/5 rounded-xl p-4 mb-6">
-                  <div className="flex justify-between items-center">
+                <div className="mb-6 rounded-xl bg-[#B63D5E]/5 p-4">
+                  <div className="flex items-center justify-between">
                     <span className="text-lg font-bold text-gray-900">
                       Total Amount
                     </span>
@@ -471,15 +447,37 @@ export default function CaravanParkingBooking() {
                   </div>
                 </div>
 
-                <button
-                  onClick={handleSubmit}
-                  className="w-full bg-gradient-to-r from-[#B63D5E] to-[#603C59] text-white font-bold py-4 rounded-xl hover:from-[#603C59] hover:to-[#B63D5E] transition-all duration-300 flex items-center justify-center gap-2"
-                >
-                  <MapPin className="w-5 h-5" />
-                  Book Parking Spot
-                </button>
+                {authInfo?.token ? (
+                  <button
+                    onClick={handleSubmit}
+                    disabled={isPending}
+                    className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#B63D5E] to-[#603C59] py-4 font-bold text-white transition-all duration-300 hover:from-[#603C59] hover:to-[#B63D5E] disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <MapPin size={20} />
+                    Book Parking Spot
+                    {isPending && (
+                      <LoaderCircle size={20} className="animate-spin" />
+                    )}
+                  </button>
+                ) : (
+                  <motion.div
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <Link
+                      href="/auth?redirect=caravan-parking"
+                      className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-transparent bg-gradient-to-r from-[#B63D5E] to-[#603C59] py-4 font-bold text-white shadow-lg transition-all duration-300 hover:border-[#B63D5E]/30 hover:from-[#603C59] hover:to-[#B63D5E] hover:shadow-xl"
+                    >
+                      <MapPin className="h-5 w-5" />
+                      Login to Book
+                    </Link>
+                  </motion.div>
+                )}
 
-                <p className="text-xs text-gray-500 text-center mt-4">
+                <p className="mt-4 text-center text-xs text-gray-500">
                   Secure booking • Free cancellation up to 24 hours before
                   arrival
                 </p>

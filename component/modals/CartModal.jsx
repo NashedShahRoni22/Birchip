@@ -128,6 +128,7 @@ export default function CartModal({ isOpen, onClose }) {
 
         if (data?.data?.checkout_url) {
           router.push(data.data.checkout_url);
+          clearCart();
         } else {
           toast.success(
             data?.message || "Your order has been placed successfully!",

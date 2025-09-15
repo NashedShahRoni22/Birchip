@@ -10,12 +10,23 @@ import {
   Users,
   CreditCard,
   LoaderCircle,
+  Copy,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import { useState } from "react";
+import { calculateDiscount } from "@/utils/calculateDiscount";
 
 const BookingCard = ({ booking }) => {
   const isMotel = booking.reference_type === "App\\Models\\Motel";
   const isCaravan = booking.reference_type === "App\\Models\\Caravan";
+  const perNightSaved = formatCurrency(
+    booking.amount -
+      calculateDiscount(
+        booking.discount_type,
+        booking.amount,
+        booking.discount,
+      ),
+  );
 
   // Determine which buttons to show
   const showMakePaymentButton = booking.status === "confirmed"; // Unpaid
@@ -26,6 +37,11 @@ const BookingCard = ({ booking }) => {
     endPoint: "/checkout",
     token: true,
   });
+
+  const copyInvoiceToClipboard = () => {
+    navigator.clipboard.writeText(booking.invoice);
+    toast.success("Invoice ID copied to clipboard!");
+  };
 
   const handleMakePayment = () => {
     const payload = {
@@ -65,7 +81,20 @@ const BookingCard = ({ booking }) => {
                   ? "Caravan Booking"
                   : "Property Booking"}
             </h3>
-            <p className="text-sm text-[#888888]">Invoice: {booking.invoice}</p>
+
+            {/* Invoice with copy functionality */}
+            <div className="flex items-center gap-1">
+              <p className="text-sm text-[#888888]">
+                Invoice: {booking.invoice}
+              </p>
+              <button
+                onClick={copyInvoiceToClipboard}
+                className="p-1 text-[#888888] transition-colors hover:text-[#603C59]"
+                title="Copy invoice ID"
+              >
+                <Copy size={14} />
+              </button>
+            </div>
 
             {/* Status and Payment Status */}
             <div className="mt-1 flex items-center gap-2">
@@ -91,11 +120,13 @@ const BookingCard = ({ booking }) => {
         </div>
         <div className="text-right">
           <p className="text-2xl font-bold text-[#2F2F2F]">
-            {formatCurrency(booking.amount)}
+            {formatCurrency(booking.total)}
           </p>
           {booking.discount && (
             <p className="text-sm text-[#7BA693]">
-              {booking.discount}% {booking.discount_type} discount
+              Saved
+              {perNightSaved}{" "}
+              <span className="text-xs text-gray-500">/per-night</span>
             </p>
           )}
         </div>

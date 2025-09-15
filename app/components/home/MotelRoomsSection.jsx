@@ -248,25 +248,25 @@ export default function MotelRoomsSection({ isPage = false }) {
   };
 
   return (
-    <section className="relative py-20 bg-bg overflow-hidden">
+    <section className="bg-bg relative overflow-hidden py-20">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(96,60,89,0.1),transparent_50%)]"></div>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(123,166,147,0.1),transparent_50%)]"></div>
 
-      <div className="relative max-w-7xl mx-auto px-6">
+      <div className="relative mx-auto max-w-7xl px-6">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 bg-white backdrop-blur-sm px-4 py-2 rounded-full border border-line/20 mb-6">
-            <Bed className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-muted">
+        <div className="mb-16 text-center">
+          <div className="border-line/20 mb-6 inline-flex items-center gap-2 rounded-full border bg-white px-4 py-2 backdrop-blur-sm">
+            <Bed className="text-primary h-4 w-4" />
+            <span className="text-muted text-sm font-medium">
               Comfortable Stays
             </span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-text mb-4">
+          <h2 className="text-text mb-4 text-4xl font-bold md:text-5xl">
             Our Motel
-            <span className="block text-primary">Room Options</span>
+            <span className="text-primary block">Room Options</span>
           </h2>
-          <p className="text-xl text-muted max-w-3xl mx-auto">
+          <p className="text-muted mx-auto max-w-3xl text-xl">
             Choose from our range of comfortable and well-equipped rooms,
             perfect for travelers seeking quality accommodation at great value.
           </p>
@@ -310,7 +310,7 @@ export default function MotelRoomsSection({ isPage = false }) {
         </div> */}
 
         {/* Rooms Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8">
           {isLoading
             ? Array.from({ length: 6 }).map((_, index) => (
                 <SkeletonCard key={index} />
@@ -328,9 +328,10 @@ export default function MotelRoomsSection({ isPage = false }) {
           />
         )}
 
-        {!isLoading && motels?.status && !isPage && (
-          <ShowAllBtn href="/motels" label="Show All Rooms" />
-        )}
+        {!isLoading &&
+          motels?.status &&
+          motels?.data?.length > 6 &&
+          !isPage && <ShowAllBtn href="/motels" label="Show All Rooms" />}
 
         {/* No Results Message */}
         {/* {filteredRooms.length === 0 && (
