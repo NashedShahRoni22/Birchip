@@ -13,10 +13,13 @@ import {
   Copy,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import { useState } from "react";
 import { calculateDiscount } from "@/utils/calculateDiscount";
+import { useState } from "react";
+import AddReviewModal from "../modals/AddReviewModal";
 
 const BookingCard = ({ booking }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const isMotel = booking.reference_type === "App\\Models\\Motel";
   const isCaravan = booking.reference_type === "App\\Models\\Caravan";
   const perNightSaved = formatCurrency(
@@ -29,9 +32,11 @@ const BookingCard = ({ booking }) => {
   );
 
   // Determine which buttons to show
+  const isExpired = booking.status === 'expired';
+  const isBookingStatusPending = booking.status === "pending";
   const showMakePaymentButton = booking.status === "confirmed"; // Unpaid
   const showWriteReviewButton = booking.status === "booked";
-  const isBookingStatusPending = booking.status === "pending";
+
 
   const { mutate, isPending } = usePostMutation({
     endPoint: "/checkout",
@@ -202,6 +207,7 @@ const BookingCard = ({ booking }) => {
           {/* Show Write Review button if payment_status is 1 (paid) */}
           {showWriteReviewButton && (
             <motion.button
+              onClick={() => setIsModalOpen(true)}
               className="cursor-pointer rounded-lg bg-[#7BA693] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#6B9582]"
               whileHover={{ scale: 1.03, y: -1 }}
               whileTap={{ scale: 0.97 }}
@@ -212,15 +218,31 @@ const BookingCard = ({ booking }) => {
           )}
 
           {/* If no buttons should show, display a message or keep empty */}
-          {!showMakePaymentButton &&
-            !showWriteReviewButton &&
-            !isBookingStatusPending && (
-              <span className="text-sm text-[#888888] italic">
-                No actions available
-              </span>
-            )}
+         {!showMakePaymentButton &&
+  !showWriteReviewButton &&
+  !isBookingStatusPending && (
+    <>
+      {isExpired ? (
+        <span className="text-sm text-[#888888] italic flex items-center gap-1">
+          <Calendar size={14} />
+          This booking has expired
+        </span>
+      ) : (
+        <span className="text-sm text-[#888888] italic">
+          No actions available
+        </span>
+      )}
+    </>
+  )}
         </div>
       </div>
+
+       <AddReviewModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        referenceType={isMotel ? 'motel' : isCaravan ? 'caravan' : 'food'}
+        referenceId={booking.id}
+      />
     </div>
   );
 };

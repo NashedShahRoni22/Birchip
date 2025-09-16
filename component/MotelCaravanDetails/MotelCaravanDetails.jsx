@@ -473,6 +473,7 @@ export default function MotelCaravanDetails({ params, isCaravan = false }) {
         bookingData={bookingFormData}
         itemDetails={bookingFormData?.itemDetails}
         isCaravan={isCaravan}
+        slug={slug}
       />
     </div>
   );

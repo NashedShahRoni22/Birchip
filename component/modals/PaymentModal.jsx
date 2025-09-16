@@ -18,6 +18,7 @@ export function PaymentModal({
   bookingData,
   itemDetails,
   isCaravan,
+  slug
 }) {
   const queryClient = useQueryClient();
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
