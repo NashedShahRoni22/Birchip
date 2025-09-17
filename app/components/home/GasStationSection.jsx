@@ -15,6 +15,7 @@ import useGetQuery from "@/hooks/queries/useGetQuery";
 import Pagination from "@/component/Pagination/Pagination";
 import GasSkeleton from "@/component/loaders/GasSkeleton";
 import LiveIndicator from "@/component/LiveIndicator";
+import Image from "next/image";
 
 const GasStationSection = () => {
   // get gas pricing data
@@ -97,7 +98,7 @@ const GasStationSection = () => {
             >
               {/* Status Badge */}
               <div
-                className={`absolute top-1.5 right-1.5 z-10 rounded-full px-2 py-1 text-xs font-bold shadow ${
+                className={`absolute top-1.5 right-1.5 z-10 rounded-full px-2 py-1 text-xs font-semibold shadow ${
                   fuel.status === 1
                     ? "border border-green-500/30 bg-green-500 text-white"
                     : "border border-red-500/30 bg-red-500 text-white"
@@ -112,12 +113,14 @@ const GasStationSection = () => {
               <div className="p-4 sm:p-6">
                 {/* Icon and Type */}
                 <div className="mb-4 flex items-center gap-3">
-                  <div className="bg-primary rounded-xl p-3 text-white">
+                  <div className="bg-secondary rounded-xl p-3 text-white">
                     {fuel.icon ? (
-                      <img
+                      <Image
                         src={fuel.icon}
                         alt={fuel.title}
-                        className="h-5 w-5 object-contain"
+                        width={24}
+                        height={24}
+                        className="object-contain"
                       />
                     ) : (
                       getFuelIcon(fuel.title)

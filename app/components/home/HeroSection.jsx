@@ -29,7 +29,7 @@ export default function HeroSection() {
   ]);
 
   const accommodationOptions = [
-    { value: "room", label: "Room", icon: Hotel },
+    { value: "room", label: "Motel", icon: Hotel },
     { value: "caravan", label: "Caravan", icon: Truck },
   ];
 

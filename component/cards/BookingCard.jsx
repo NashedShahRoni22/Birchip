@@ -32,11 +32,10 @@ const BookingCard = ({ booking }) => {
   );
 
   // Determine which buttons to show
-  const isExpired = booking.status === 'expired';
+  const isExpired = booking.status === "expired";
   const isBookingStatusPending = booking.status === "pending";
   const showMakePaymentButton = booking.status === "confirmed"; // Unpaid
   const showWriteReviewButton = booking.status === "booked";
-
 
   const { mutate, isPending } = usePostMutation({
     endPoint: "/checkout",
@@ -218,30 +217,30 @@ const BookingCard = ({ booking }) => {
           )}
 
           {/* If no buttons should show, display a message or keep empty */}
-         {!showMakePaymentButton &&
-  !showWriteReviewButton &&
-  !isBookingStatusPending && (
-    <>
-      {isExpired ? (
-        <span className="text-sm text-[#888888] italic flex items-center gap-1">
-          <Calendar size={14} />
-          This booking has expired
-        </span>
-      ) : (
-        <span className="text-sm text-[#888888] italic">
-          No actions available
-        </span>
-      )}
-    </>
-  )}
+          {!showMakePaymentButton &&
+            !showWriteReviewButton &&
+            !isBookingStatusPending && (
+              <>
+                {isExpired ? (
+                  <span className="flex items-center gap-1 text-sm text-[#888888] italic">
+                    <Calendar size={14} />
+                    This booking has expired
+                  </span>
+                ) : (
+                  <span className="text-sm text-[#888888] italic">
+                    No actions available
+                  </span>
+                )}
+              </>
+            )}
         </div>
       </div>
 
-       <AddReviewModal
+      <AddReviewModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        referenceType={isMotel ? 'motel' : isCaravan ? 'caravan' : 'food'}
-        referenceId={booking.id}
+        referenceType={isMotel ? "motel" : isCaravan ? "caravan" : "food"}
+        referenceId={booking.reference_id}
       />
     </div>
   );
