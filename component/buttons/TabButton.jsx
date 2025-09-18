@@ -8,21 +8,28 @@ const TabButton = ({
 }) => (
   <button
     onClick={() => setActiveTab(id)}
-    className={`flex cursor-pointer items-center gap-2 rounded-lg px-6 py-3 font-medium transition-colors ${
+    className={`flex cursor-pointer items-center justify-center gap-1.5 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 sm:gap-2 sm:px-6 sm:py-3 sm:text-base ${
       isActive
-        ? "bg-[#603C59] text-white"
-        : "bg-white text-[#2F2F2F] hover:bg-[#EDE9DA]"
+        ? "bg-[#603C59] text-white shadow-md"
+        : "bg-white text-[#2F2F2F] hover:bg-[#EDE9DA] hover:shadow-sm"
     }`}
   >
-    <Icon size={18} />
-    {label}
+    {/* Icon - Responsive sizing */}
+    <Icon size={16} className="flex-shrink-0 sm:size-[18px]" />
+
+    {/* Label - Hide on very small screens if needed */}
+    <span className="text-xs whitespace-nowrap sm:text-sm md:text-base">
+      {label}
+    </span>
+
+    {/* Count badge - Responsive */}
     {count !== undefined && count > 0 && (
       <span
-        className={`rounded-full px-2 py-1 text-xs ${
+        className={`ml-1 flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-xs leading-none font-semibold transition-colors sm:h-6 sm:min-w-[24px] sm:px-2 sm:text-xs ${
           isActive ? "bg-white text-[#603C59]" : "bg-[#EDE9DA] text-[#2F2F2F]"
         }`}
       >
-        {count}
+        {count > 99 ? "99+" : count}
       </span>
     )}
   </button>

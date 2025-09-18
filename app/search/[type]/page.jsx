@@ -1,12 +1,23 @@
-// app/search/[type]/page.js
-import { notFound } from "next/navigation";
-import { newGetApi } from "@/lib/api";
-import SearchResults from "@/component/Search/SearchResults";
+"use client";
 
-// Server Component - handles data fetching
-export default async function SearchPage({ params, searchParams }) {
-  const { type } = params; // 'motels' or 'caravans'
-  const { guests, checkin, checkout, page = "1", sort, filter } = searchParams;
+import { notFound } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import React, { useMemo } from "react";
+import SearchResults from "@/component/Search/SearchResults";
+import useGetQuery from "@/hooks/queries/useGetQuery";
+import LoadingSpinner from "@/component/loaders/LoadingSpinner";
+
+export default function SearchPage({ params }) {
+  const { type } = React.use(params);
+  const searchParams = useSearchParams();
+
+  // Extract search parameters
+  const guests = searchParams.get("guests");
+  const checkin = searchParams.get("checkin");
+  const checkout = searchParams.get("checkout");
+  const page = searchParams.get("page") || "1";
+  const sort = searchParams.get("sort");
+  const filter = searchParams.get("filter");
 
   // Validate required parameters
   if (!guests || !checkin || !checkout) {
@@ -19,69 +30,72 @@ export default async function SearchPage({ params, searchParams }) {
   }
 
   // Construct API endpoint with all parameters
-  const apiParams = new URLSearchParams({
-    guests,
-    checkin,
-    checkout,
-    page,
-    ...(sort && { sort }),
-    ...(filter && { filter }),
+  const endpoint = useMemo(() => {
+    const apiParams = new URLSearchParams({
+      guests,
+      checkin,
+      checkout,
+      page,
+      ...(sort && { sort }),
+      ...(filter && { filter }),
+    });
+    return `/${type}?${apiParams.toString()}`;
+  }, [type, guests, checkin, checkout, page, sort, filter]);
+
+  // Create unique query key
+  const queryKey = useMemo(
+    () =>
+      [
+        "search-results",
+        type,
+        guests,
+        checkin,
+        checkout,
+        page,
+        sort,
+        filter,
+      ].filter(Boolean),
+    [type, guests, checkin, checkout, page, sort, filter],
+  );
+
+  // Fetch data using your reusable hook
+  const {
+    data: apiResponse,
+    isLoading,
+    refetch,
+  } = useGetQuery({
+    endpoint,
+    queryKey,
+    enabled: true, // Always enabled since we've validated required params
   });
 
-  const endpoint = `/${type}?${apiParams.toString()}`;
-
-  try {
-    // Server-side fetch
-    const apiResponse = await newGetApi(endpoint);
-
-    console.log(apiResponse);
-
-    if (!apiResponse || !apiResponse.status) {
-      throw new Error("Failed to fetch search results");
-    }
-
-    const accommodationType = type === "motels" ? "room" : "caravan";
-
+  // Loading state
+  if (isLoading) {
     return (
-      <SearchResults
-        data={apiResponse.data}
-        pagination={apiResponse.pagination}
-        searchParams={{
-          guests,
-          checkin,
-          checkout,
-          type: accommodationType,
-          accommodationType: type,
-          currentPage: parseInt(page),
-          sort,
-          filter,
-        }}
-      />
-    );
-  } catch (error) {
-    console.error("Search API Error:", error);
-
-    // Return error state component
-    return (
-      <SearchError
-        error={error.message}
-        searchParams={{ guests, checkin, checkout, type }}
-      />
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <LoadingSpinner message="Searching for available accommodations..." />
+      </div>
     );
   }
-}
 
-// Generate metadata for SEO
-export async function generateMetadata({ params, searchParams }) {
-  const { type } = params;
-  const { guests, checkin, checkout } = searchParams;
+  const accommodationType = type === "motels" ? "room" : "caravan";
 
-  const accommodationType =
-    type === "motels" ? "Motels & Rooms" : "Caravan Parks";
-
-  return {
-    title: `${accommodationType} - ${guests} Guests | Search Results`,
-    description: `Find available ${accommodationType.toLowerCase()} for ${guests} guests from ${checkin} to ${checkout}. Book now for the best rates.`,
-    robots: "index, follow",
-  };
+  return (
+    <SearchResults
+      data={apiResponse.data}
+      pagination={apiResponse.pagination}
+      searchParams={{
+        guests,
+        checkin,
+        checkout,
+        type: accommodationType,
+        accommodationType: type,
+        currentPage: parseInt(page),
+        sort,
+        filter,
+      }}
+      onRefresh={() => refetch()}
+      isRefreshing={isLoading}
+    />
+  );
 }

@@ -1,11 +1,18 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeft, Filter, SortAsc } from "lucide-react";
+import { ArrowLeft, Filter, SortAsc, RefreshCw } from "lucide-react";
 import { useState } from "react";
 import MotelCaravanCard from "../cards/MotelCaravanCard";
+import Pagination from "../Pagination/Pagination";
 
-export default function SearchResults({ data, pagination, searchParams }) {
+export default function SearchResults({
+  data,
+  pagination,
+  searchParams,
+  onRefresh,
+  isRefreshing,
+}) {
   const router = useRouter();
   const urlSearchParams = useSearchParams();
   const [sortBy, setSortBy] = useState(searchParams.sort || "price_asc");
@@ -84,6 +91,21 @@ export default function SearchResults({ data, pagination, searchParams }) {
               <ArrowLeft className="h-5 w-5" />
               <span className="font-medium">Back to Search</span>
             </button>
+
+            {/* Add refresh button for real-time updates */}
+            <button
+              onClick={onRefresh}
+              disabled={isRefreshing}
+              className="flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-3 py-2 text-gray-600 transition-colors duration-200 hover:bg-gray-50 hover:text-gray-900 disabled:opacity-50"
+              title="Refresh to get latest availability"
+            >
+              <RefreshCw
+                className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
+              />
+              <span className="text-sm font-medium">
+                {isRefreshing ? "Refreshing..." : "Refresh"}
+              </span>
+            </button>
           </div>
 
           <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -115,9 +137,9 @@ export default function SearchResults({ data, pagination, searchParams }) {
               </div>
             </div>
 
-            {/* Filter and Sort Controls */}
-            {/* <div className="flex items-center gap-3">
-              
+            {/* Enhanced Filter and Sort Controls */}
+            <div className="flex items-center gap-3">
+              {/* Filter Dropdown */}
               <div className="relative">
                 <select
                   value={filterBy}
@@ -133,7 +155,7 @@ export default function SearchResults({ data, pagination, searchParams }) {
                 <Filter className="pointer-events-none absolute top-1/2 right-2 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
               </div>
 
-             
+              {/* Sort Dropdown */}
               <div className="relative">
                 <select
                   value={sortBy}
@@ -148,13 +170,23 @@ export default function SearchResults({ data, pagination, searchParams }) {
                 </select>
                 <SortAsc className="pointer-events-none absolute top-1/2 right-2 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
               </div>
-            </div> */}
+            </div>
           </div>
         </div>
 
         {/* Results */}
         {data && data.length > 0 ? (
           <>
+            {/* Show refreshing indicator */}
+            {isRefreshing && (
+              <div className="mb-4 rounded-xl border border-blue-200 bg-blue-50 p-3">
+                <div className="flex items-center gap-2 text-blue-700">
+                  <RefreshCw className="h-4 w-4 animate-spin" />
+                  <span className="text-sm">Updating availability...</span>
+                </div>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {data.map((item) => (
                 <MotelCaravanCard
@@ -166,7 +198,7 @@ export default function SearchResults({ data, pagination, searchParams }) {
             </div>
 
             {/* Pagination */}
-            {/* {pagination && pagination.last_page > 1 && (
+            {pagination && pagination.last_page > 1 && (
               <Pagination
                 pagination={pagination}
                 currentPage={searchParams.currentPage}
@@ -174,13 +206,14 @@ export default function SearchResults({ data, pagination, searchParams }) {
                   updateSearchParams({ page: page.toString() })
                 }
               />
-            )} */}
+            )}
           </>
         ) : (
           <NoResults
             type={searchParams.type}
             onModifySearch={() => router.back()}
             onNewSearch={() => router.push("/")}
+            onRefresh={onRefresh}
           />
         )}
       </div>
@@ -189,7 +222,7 @@ export default function SearchResults({ data, pagination, searchParams }) {
 }
 
 // No Results Component
-function NoResults({ type, onModifySearch, onNewSearch }) {
+function NoResults({ type, onModifySearch, onNewSearch, onRefresh }) {
   return (
     <div className="py-16 text-center">
       <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gray-100">
@@ -212,9 +245,16 @@ function NoResults({ type, onModifySearch, onNewSearch }) {
       </h2>
       <p className="mx-auto mb-8 max-w-md text-gray-600">
         No {type === "room" ? "rooms or motels" : "caravan spots"} available for
-        your selected dates and guest count. Try adjusting your search criteria.
+        your selected dates and guest count. Try adjusting your search criteria
+        or check for updated availability.
       </p>
       <div className="flex flex-col justify-center gap-3 sm:flex-row">
+        <button
+          onClick={onRefresh}
+          className="rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition-colors duration-200 hover:bg-blue-700"
+        >
+          Check Latest Availability
+        </button>
         <button
           onClick={onModifySearch}
           className="bg-primary hover:bg-primary/90 rounded-xl px-6 py-3 font-semibold text-white transition-colors duration-200"

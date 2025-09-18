@@ -114,13 +114,14 @@ const FoodOrderCard = ({ order }) => {
         <div className="fixed inset-0 z-10" onClick={handleCloseDropdown} />
       )}
 
-      <div className="rounded-lg border border-[#E0E0E0] bg-white p-6">
-        <div className="mb-4 flex items-start justify-between">
+      <div className="rounded-lg border border-[#E0E0E0] bg-white p-4 sm:p-6">
+        {/* Header section - mobile responsive */}
+        <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex items-center gap-3">
             <div className="rounded-lg bg-[#EDE9DA] p-3">
               <UtensilsCrossed size={24} className="text-[#603C59]" />
             </div>
-            <div>
+            <div className="flex-1">
               <h3 className="text-lg font-semibold text-[#2F2F2F]">
                 Food Order
               </h3>
@@ -151,7 +152,9 @@ const FoodOrderCard = ({ order }) => {
               </div>
             </div>
           </div>
-          <div className="text-right">
+
+          {/* Price section - mobile responsive */}
+          <div className="text-left sm:text-right">
             <p className="text-2xl font-bold text-[#2F2F2F]">
               {formatCurrency(total)}
             </p>
@@ -163,19 +166,19 @@ const FoodOrderCard = ({ order }) => {
           </div>
         </div>
 
-        {/* Food Items */}
+        {/* Food Items - mobile responsive */}
         <div className="mb-4 space-y-3">
           {order.reference_items.map((item, index) => (
             <div
               key={item.id || index}
-              className="flex items-center justify-between rounded-lg bg-gray-50 p-3"
+              className="flex flex-col gap-2 rounded-lg bg-gray-50 p-3 sm:flex-row sm:items-center sm:justify-between sm:gap-0"
             >
-              <div>
+              <div className="flex-1">
                 <p className="font-medium text-[#2F2F2F]">{item.title}</p>
                 <p className="text-sm text-[#888888]">Qty: {item.qty}</p>
               </div>
-              <div className="text-right">
-                <div className="flex items-center gap-2">
+              <div className="text-left sm:text-right">
+                <div className="flex items-center gap-2 sm:justify-end">
                   {item.discount > 0 && (
                     <span className="text-sm text-[#888888] line-through">
                       {formatCurrency(item.price * parseInt(item.qty))}
@@ -215,8 +218,10 @@ const FoodOrderCard = ({ order }) => {
           </div>
         )}
 
-        <div className="flex items-center justify-between border-t border-[#E0E0E0] pt-4">
-          <div className="flex items-center gap-4 text-sm text-[#888888]">
+        {/* Bottom section - mobile responsive */}
+        <div className="flex flex-col gap-3 border-t border-[#E0E0E0] pt-4 sm:flex-row sm:items-center sm:justify-between sm:gap-0">
+          {/* Date and payment info - mobile stack, desktop inline */}
+          <div className="flex flex-col gap-2 text-sm text-[#888888] sm:flex-row sm:items-center sm:gap-4">
             <div className="flex items-center gap-1">
               <Calendar size={16} />
               <span>Ordered: {formatDate(order.created_at)}</span>
@@ -229,10 +234,11 @@ const FoodOrderCard = ({ order }) => {
             )}
           </div>
 
-          <div className="flex items-center gap-2">
+          {/* Action buttons - mobile full width, desktop auto */}
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-2">
             {/* Show message if pending */}
             {isPendingOrder && (
-              <span className="text-sm text-[#888888] italic">
+              <span className="text-center text-sm text-[#888888] italic sm:text-left">
                 Order confirmation pending
               </span>
             )}
@@ -242,7 +248,7 @@ const FoodOrderCard = ({ order }) => {
               <motion.button
                 onClick={handleMakePayment}
                 disabled={isPending}
-                className={`rounded-lg bg-[#C73E5B] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#A53251] disabled:opacity-50 ${isPending ? "cursor-wait" : "cursor-pointer"}`}
+                className={`w-full rounded-lg bg-[#C73E5B] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#A53251] disabled:opacity-50 sm:w-auto ${isPending ? "cursor-wait" : "cursor-pointer"}`}
                 whileHover={{
                   scale: 1.02,
                   boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
@@ -264,14 +270,14 @@ const FoodOrderCard = ({ order }) => {
 
             {/* Enhanced Review Options for confirmed orders */}
             {isConfirmed && (
-              <div className="relative">
+              <div className="relative w-full sm:w-auto">
                 {order.reference_items.length === 1 ? (
                   // Single item - direct review button
                   <motion.button
                     onClick={() =>
                       handleReviewSpecificItem(order.reference_items[0])
                     }
-                    className="cursor-pointer rounded-lg bg-[#7BA693] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#6B9582]"
+                    className="w-full cursor-pointer rounded-lg bg-[#7BA693] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#6B9582] sm:w-auto"
                     whileHover={{ scale: 1.03, y: -1 }}
                     whileTap={{ scale: 0.97 }}
                     transition={{ type: "spring", stiffness: 400, damping: 20 }}
@@ -283,7 +289,7 @@ const FoodOrderCard = ({ order }) => {
                   <>
                     <motion.button
                       onClick={() => setShowItemsDropdown(!showItemsDropdown)}
-                      className="flex cursor-pointer items-center gap-2 rounded-lg bg-[#7BA693] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#6B9582]"
+                      className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#7BA693] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#6B9582] sm:w-auto sm:justify-start"
                       whileHover={{ scale: 1.03, y: -1 }}
                       whileTap={{ scale: 0.97 }}
                       transition={{
@@ -307,24 +313,9 @@ const FoodOrderCard = ({ order }) => {
                           initial={{ opacity: 0, y: -10, scale: 0.95 }}
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                          className="absolute top-full right-0 z-20 mt-2 w-64 rounded-lg border border-[#E0E0E0] bg-white shadow-lg"
+                          className="absolute top-full right-0 z-20 mt-2 w-full rounded-lg border border-[#E0E0E0] bg-white shadow-lg sm:right-0 sm:w-64"
                         >
                           <div className="p-2">
-                            {/* Review Overall Order */}
-                            {/* <button
-                              onClick={handleReviewOverallOrder}
-                              className="w-full rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-[#EDE9DA]"
-                            >
-                              <div className="font-medium text-[#2F2F2F]">
-                                Review Overall Order
-                              </div>
-                              <div className="text-xs text-[#888888]">
-                                Rate your entire food order experience
-                              </div>
-                            </button>
-
-                            <hr className="my-2 border-[#E0E0E0]" /> */}
-
                             {/* Individual Items */}
                             <div className="px-3 py-1 text-xs font-medium tracking-wide text-[#888888] uppercase">
                               Review Individual Items
@@ -356,7 +347,7 @@ const FoodOrderCard = ({ order }) => {
 
             {/* If no buttons should show and not pending */}
             {!isPendingOrder && !isConfirmed && (
-              <span className="text-sm text-[#888888] italic">
+              <span className="text-center text-sm text-[#888888] italic sm:text-left">
                 No actions available
               </span>
             )}

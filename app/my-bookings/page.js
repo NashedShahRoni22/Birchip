@@ -57,9 +57,9 @@ export default function MyBookingsPage() {
           </div>
         </div>
 
-        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto w-full max-w-7xl overflow-hidden px-4 py-8 sm:px-6 lg:px-8">
           {/* Tab Navigation */}
-          <div className="mb-8 flex flex-wrap gap-4">
+          <div className="mb-8 flex gap-4 overflow-x-auto">
             <TabButton
               id="bookings"
               label="All Bookings"

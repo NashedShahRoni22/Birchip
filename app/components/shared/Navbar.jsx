@@ -11,7 +11,7 @@ import useAuth from "@/hooks/useAuth";
 import NavUserProfileDropdown from "@/component/shared/NavUserProfileDropdown";
 
 export default function Navbar() {
-  const { authInfo } = useAuth();
+  const { authInfo, handleLogout } = useAuth();
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -35,22 +35,27 @@ export default function Navbar() {
     { name: "Gas Stations", href: "/gas-stations" },
   ];
 
+  const clickLogout = () => {
+    handleLogout();
+    setMobileMenuOpen((prev) => !prev);
+  };
+
   return (
     <nav
       className={`fixed top-0 z-50 w-full transition-all duration-300 ${
         pathname === "/"
           ? scrolled
-            ? "bg-black/30 backdrop-blur-xl shadow border-b border-white/20"
+            ? "border-b border-white/20 bg-black/30 shadow backdrop-blur-xl"
             : "bg-transparent"
-          : "sticky bg-black/80 backdrop-blur-xl shadow border-b border-white/20"
+          : "sticky border-b border-white/20 bg-black/80 shadow backdrop-blur-xl"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 py-1.5">
-        <div className="flex justify-between items-center">
+      <div className="mx-auto max-w-7xl px-6 py-1.5">
+        <div className="flex items-center justify-between">
           {/* Logo/Brand */}
           <Link
             href="/"
-            className="text-2xl font-bold text-white hover:text-white/90 transition-all duration-300"
+            className="text-2xl font-bold text-white transition-all duration-300 hover:text-white/90"
           >
             {scrolled ? (
               <Image
@@ -72,12 +77,12 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden items-center space-x-8 md:flex">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`relative text-sm font-medium transition-all duration-300 group ${
+                className={`group relative text-sm font-medium transition-all duration-300 ${
                   pathname === link.href
                     ? "text-white"
                     : "text-white/80 hover:text-white"
@@ -85,7 +90,7 @@ export default function Navbar() {
               >
                 {link.name}
                 <span
-                  className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full ${
+                  className={`absolute -bottom-1 left-0 h-0.5 w-0 bg-white transition-all duration-300 group-hover:w-full ${
                     pathname === link.href ? "w-full" : ""
                   }`}
                 ></span>
@@ -97,7 +102,7 @@ export default function Navbar() {
             ) : (
               <Link
                 href="/auth"
-                className="ml-4 bg-white/20 backdrop-blur-sm text-white px-6 py-2.5 rounded-full hover:bg-button transition-all duration-300 transform shadow hover:shadow-lg border border-white/20"
+                className="hover:bg-button ml-4 transform rounded-full border border-white/20 bg-white/20 px-6 py-2.5 text-white shadow backdrop-blur-sm transition-all duration-300 hover:shadow-lg"
               >
                 Login
               </Link>
@@ -108,18 +113,18 @@ export default function Navbar() {
           <div className="md:hidden">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="relative p-2 text-white/80 hover:text-white focus:outline-none transition-colors duration-300"
+              className="relative p-2 text-white/80 transition-colors duration-300 hover:text-white focus:outline-none"
             >
-              <div className="w-6 h-6 relative">
+              <div className="relative h-6 w-6">
                 <Menu
-                  className={`w-6 h-6 absolute transition-all duration-300 ${
+                  className={`absolute h-6 w-6 transition-all duration-300 ${
                     mobileMenuOpen
                       ? "rotate-90 opacity-0"
                       : "rotate-0 opacity-100"
                   }`}
                 />
                 <X
-                  className={`w-6 h-6 absolute transition-all duration-300 ${
+                  className={`absolute h-6 w-6 transition-all duration-300 ${
                     mobileMenuOpen
                       ? "rotate-0 opacity-100"
                       : "-rotate-90 opacity-0"
@@ -133,16 +138,16 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       <div
-        className={`md:hidden overflow-hidden transition-all duration-300 ${
+        className={`overflow-hidden transition-all duration-300 md:hidden ${
           mobileMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
         }`}
       >
-        <div className="bg-black/30 backdrop-blur-xl border-t border-white/20 px-6 py-4 space-y-4">
+        <div className="space-y-4 border-t border-white/20 bg-black/30 px-6 py-4 backdrop-blur-xl">
           {authInfo && (
-            <div className="mb-4 pb-4 border-b border-white/20">
+            <div className="mb-4 border-b border-white/20 pb-4">
               {/* User Info Display */}
-              <div className="flex items-center space-x-3 mb-4 px-2">
-                <div className="w-12 h-12 bg-gradient-to-br from-[#903F5C] to-[#7A3450] rounded-full flex items-center justify-center text-white font-semibold">
+              <div className="mb-4 flex items-center space-x-3 px-2">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[#903F5C] to-[#7A3450] font-semibold text-white">
                   {authInfo.name
                     .split(" ")
                     .map((n) => n[0])
@@ -150,10 +155,10 @@ export default function Navbar() {
                     .toUpperCase()}
                 </div>
                 <div className="flex-1">
-                  <p className="text-white font-medium text-sm">
+                  <p className="text-sm font-medium text-white">
                     {authInfo.name}
                   </p>
-                  <p className="text-white/70 text-xs">{authInfo.email}</p>
+                  <p className="text-xs text-white/70">{authInfo.email}</p>
                 </div>
               </div>
 
@@ -162,27 +167,24 @@ export default function Navbar() {
                 <Link
                   href="/profile"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center space-x-3 py-3 text-white/80 hover:text-white hover:pl-4 transition-all duration-300"
+                  className="flex items-center space-x-3 py-3 text-white/80 transition-all duration-300 hover:pl-4 hover:text-white"
                 >
                   <User size={20} />
                   <span>My Profile</span>
                 </Link>
 
                 <Link
-                  href="/bookings"
+                  href="/my-bookings"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center space-x-3 py-3 text-white/80 hover:text-white hover:pl-4 transition-all duration-300"
+                  className="flex items-center space-x-3 py-3 text-white/80 transition-all duration-300 hover:pl-4 hover:text-white"
                 >
                   <Calendar size={20} />
                   <span>My Bookings</span>
                 </Link>
 
                 <button
-                  onClick={() => {
-                    // Add logout logic here
-                    setMobileMenuOpen(false);
-                  }}
-                  className="flex items-center space-x-3 py-3 text-red-400 hover:text-red-300 hover:pl-4 transition-all duration-300 w-full"
+                  onClick={clickLogout}
+                  className="flex w-full items-center space-x-3 py-3 text-red-400 transition-all duration-300 hover:pl-4 hover:text-red-300"
                 >
                   <LogOut size={20} />
                   <span>Logout</span>
@@ -198,8 +200,8 @@ export default function Navbar() {
               onClick={() => setMobileMenuOpen(false)}
               className={`block py-3 text-base font-medium transition-all duration-300 ${
                 pathname === link.href
-                  ? "text-white pl-4 border-l-4 border-white"
-                  : "text-white/80 hover:text-white hover:pl-4"
+                  ? "border-l-4 border-white pl-4 text-white"
+                  : "text-white/80 hover:pl-4 hover:text-white"
               }`}
             >
               {link.name}
@@ -210,7 +212,7 @@ export default function Navbar() {
             <Link
               href="/auth"
               onClick={() => setMobileMenuOpen(false)}
-              className="block mt-4 bg-white/20 backdrop-blur-sm text-white text-center px-6 py-3 rounded-full hover:bg-button transition-all duration-300 transform shadow border border-white/20"
+              className="hover:bg-button mt-4 block transform rounded-full border border-white/20 bg-white/20 px-6 py-3 text-center text-white shadow backdrop-blur-sm transition-all duration-300"
             >
               Login
             </Link>

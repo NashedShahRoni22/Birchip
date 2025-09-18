@@ -11,6 +11,7 @@ import {
   CreditCard,
   LoaderCircle,
   Copy,
+  Clock,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { calculateDiscount } from "@/utils/calculateDiscount";
@@ -65,20 +66,21 @@ const BookingCard = ({ booking }) => {
   };
 
   return (
-    <div className="rounded-lg border border-[#E0E0E0] bg-white p-6">
-      <div className="mb-4 flex items-start justify-between">
-        <div className="flex items-center gap-3">
-          <div className="rounded-lg bg-[#EDE9DA] p-3">
+    <div className="rounded-lg border border-[#E0E0E0] bg-white p-4 sm:p-6">
+      {/* Header Section - Mobile Optimized */}
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex items-start gap-3">
+          <div className="flex-shrink-0 rounded-lg bg-[#EDE9DA] p-3">
             {isMotel ? (
-              <Building2 size={24} className="text-[#603C59]" />
+              <Building2 size={20} className="text-[#603C59] sm:size-6" />
             ) : isCaravan ? (
-              <Car size={24} className="text-[#603C59]" />
+              <Car size={20} className="text-[#603C59] sm:size-6" />
             ) : (
-              <Building2 size={24} className="text-[#603C59]" />
+              <Building2 size={20} className="text-[#603C59] sm:size-6" />
             )}
           </div>
-          <div>
-            <h3 className="text-lg font-semibold text-[#2F2F2F]">
+          <div className="min-w-0 flex-1">
+            <h3 className="text-base font-semibold text-[#2F2F2F] sm:text-lg">
               {isMotel
                 ? "Motel Booking"
                 : isCaravan
@@ -86,76 +88,81 @@ const BookingCard = ({ booking }) => {
                   : "Property Booking"}
             </h3>
 
-            {/* Invoice with copy functionality */}
+            {/* Invoice with copy functionality - Mobile Optimized */}
             <div className="flex items-center gap-1">
-              <p className="text-sm text-[#888888]">
+              <p className="truncate text-xs text-[#888888] sm:text-sm">
                 Invoice: {booking.invoice}
               </p>
               <button
                 onClick={copyInvoiceToClipboard}
-                className="p-1 text-[#888888] transition-colors hover:text-[#603C59]"
+                className="flex-shrink-0 p-1 text-[#888888] transition-colors hover:text-[#603C59]"
                 title="Copy invoice ID"
               >
-                <Copy size={14} />
+                <Copy size={12} className="sm:size-4" />
               </button>
             </div>
 
-            {/* Status and Payment Status */}
-            <div className="mt-1 flex items-center gap-2">
+            {/* Status and Payment Status - Mobile Stack */}
+            <div className="xs:flex-row xs:items-center mt-2 flex flex-col gap-2">
               <span
-                className={`inline-block rounded-full px-2 py-1 text-xs capitalize ${getStatusColor(booking.status)}`}
+                className={`inline-block w-fit rounded-full px-2 py-1 text-xs capitalize ${getStatusColor(booking.status)}`}
               >
                 {booking.status}
               </span>
 
               {/* Payment Status Badge */}
               <span
-                className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs ${
+                className={`inline-flex w-fit items-center gap-1 rounded-full px-2 py-1 text-xs ${
                   booking.payment_status === 1
                     ? "bg-green-50 text-green-700"
                     : "bg-red-50 text-red-700"
                 }`}
               >
-                <CreditCard size={12} />
+                <CreditCard size={10} className="sm:size-3" />
                 {booking.payment_status === 1 ? "Paid" : "Unpaid"}
               </span>
             </div>
           </div>
         </div>
-        <div className="text-right">
-          <p className="text-2xl font-bold text-[#2F2F2F]">
+
+        {/* Price Section - Mobile Optimized */}
+        <div className="flex-shrink-0 text-left sm:text-right">
+          <p className="text-xl font-bold text-[#2F2F2F] sm:text-2xl">
             {formatCurrency(booking.total)}
           </p>
           {booking.discount && (
-            <p className="text-sm text-[#7BA693]">
-              Saved
-              {perNightSaved}{" "}
+            <p className="text-xs text-[#7BA693] sm:text-sm">
+              Saved {perNightSaved}{" "}
               <span className="text-xs text-gray-500">/per-night</span>
             </p>
           )}
         </div>
       </div>
 
-      <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
-        <div className="flex items-center gap-2 text-sm text-[#2F2F2F]">
-          <Calendar size={16} className="text-[#888888]" />
-          <div>
+      {/* Booking Details - Mobile Stack */}
+      <div className="mb-4 space-y-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0">
+        {/* Check-in */}
+        <div className="flex items-center gap-3 text-sm text-[#2F2F2F]">
+          <Calendar size={16} className="flex-shrink-0 text-[#888888]" />
+          <div className="min-w-0 flex-1">
             <p className="font-medium">Check-in</p>
             <p className="text-[#888888]">{formatDate(booking.checkin)}</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 text-sm text-[#2F2F2F]">
-          <Calendar size={16} className="text-[#888888]" />
-          <div>
+        {/* Check-out */}
+        <div className="flex items-center gap-3 text-sm text-[#2F2F2F]">
+          <Calendar size={16} className="flex-shrink-0 text-[#888888]" />
+          <div className="min-w-0 flex-1">
             <p className="font-medium">Check-out</p>
             <p className="text-[#888888]">{formatDate(booking.checkout)}</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 text-sm text-[#2F2F2F]">
-          <Users size={16} className="text-[#888888]" />
-          <div>
+        {/* Guests */}
+        <div className="flex items-center gap-3 text-sm text-[#2F2F2F]">
+          <Users size={16} className="flex-shrink-0 text-[#888888]" />
+          <div className="min-w-0 flex-1">
             <p className="font-medium">Guests</p>
             <p className="text-[#888888]">
               {booking.adults} Adults
@@ -165,74 +172,97 @@ const BookingCard = ({ booking }) => {
         </div>
       </div>
 
-      <div className="flex items-center justify-between border-t border-[#E0E0E0] pt-4">
-        <div className="flex items-center gap-4 text-sm text-[#888888]">
-          <span>Booked: {formatDate(booking.created_at)}</span>
+      {/* Footer Section - Mobile Optimized */}
+      <div className="border-t border-[#E0E0E0] pt-4">
+        {/* Booking Dates - Mobile Friendly */}
+        <div className="mb-3 flex flex-wrap items-center gap-2 text-xs text-[#888888] sm:gap-4 sm:text-sm">
+          <div className="flex items-center gap-1">
+            <Clock size={12} />
+            <span>Booked: {formatDate(booking.created_at)}</span>
+          </div>
           {booking.confirmed_at && (
-            <span>Confirmed: {formatDate(booking.confirmed_at)}</span>
+            <>
+              <span className="hidden sm:inline">•</span>
+              <div className="flex items-center gap-1">
+                <span>Confirmed: {formatDate(booking.confirmed_at)}</span>
+              </div>
+            </>
           )}
         </div>
 
-        <div className="flex gap-2">
-          {/* Show message if pending */}
-          {isBookingStatusPending && (
-            <span className="text-sm text-[#888888] italic">
-              Waiting for admin confirmation before payment
-            </span>
-          )}
-
-          {/* Show Make Payment button if status is confirmed and payment_status is 0 (unpaid) */}
-          {showMakePaymentButton && (
-            <motion.button
-              onClick={handleMakePayment}
-              disabled={isPending}
-              className={`rounded-lg bg-[#C73E5B] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#A53251] disabled:opacity-50 ${isPending ? "cursor-wait" : "cursor-pointer"}`}
-              whileHover={{
-                scale: 1.02,
-                boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
-              }}
-              whileTap={{ scale: 0.98, boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}
-              transition={{ type: "tween", duration: 0.2 }}
-            >
-              <div className="inline-flex items-center justify-center gap-2">
-                <p>Make Payment</p>
-                {isPending && (
-                  <LoaderCircle size={18} className="animate-spin" />
-                )}
-              </div>
-            </motion.button>
-          )}
-
-          {/* Show Write Review button if payment_status is 1 (paid) */}
-          {showWriteReviewButton && (
-            <motion.button
-              onClick={() => setIsModalOpen(true)}
-              className="cursor-pointer rounded-lg bg-[#7BA693] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#6B9582]"
-              whileHover={{ scale: 1.03, y: -1 }}
-              whileTap={{ scale: 0.97 }}
-              transition={{ type: "spring", stiffness: 400, damping: 20 }}
-            >
-              Write Review
-            </motion.button>
-          )}
-
-          {/* If no buttons should show, display a message or keep empty */}
-          {!showMakePaymentButton &&
-            !showWriteReviewButton &&
-            !isBookingStatusPending && (
-              <>
-                {isExpired ? (
-                  <span className="flex items-center gap-1 text-sm text-[#888888] italic">
-                    <Calendar size={14} />
-                    This booking has expired
-                  </span>
-                ) : (
-                  <span className="text-sm text-[#888888] italic">
-                    No actions available
-                  </span>
-                )}
-              </>
+        {/* Action Buttons - Mobile Stack */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          {/* Status Messages */}
+          <div className="flex-1">
+            {/* Show message if pending */}
+            {isBookingStatusPending && (
+              <span className="text-xs text-[#888888] italic sm:text-sm">
+                Waiting for admin confirmation before payment
+              </span>
             )}
+
+            {/* Expired message */}
+            {isExpired && (
+              <span className="flex items-center gap-1 text-xs text-[#888888] italic sm:text-sm">
+                <Calendar size={12} />
+                This booking has expired
+              </span>
+            )}
+
+            {/* No actions message */}
+            {!showMakePaymentButton &&
+              !showWriteReviewButton &&
+              !isBookingStatusPending &&
+              !isExpired && (
+                <span className="text-xs text-[#888888] italic sm:text-sm">
+                  No actions available
+                </span>
+              )}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-col gap-2 sm:flex-row sm:gap-2">
+            {/* Make Payment Button */}
+            {showMakePaymentButton && (
+              <motion.button
+                onClick={handleMakePayment}
+                disabled={isPending}
+                className={`w-full rounded-lg bg-[#C73E5B] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#A53251] disabled:opacity-50 sm:w-auto sm:py-2 ${isPending ? "cursor-wait" : "cursor-pointer"}`}
+                whileHover={{
+                  scale: 1.02,
+                  boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+                }}
+                whileTap={{
+                  scale: 0.98,
+                  boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                }}
+                transition={{ type: "tween", duration: 0.2 }}
+              >
+                <div className="inline-flex items-center justify-center gap-2">
+                  <span>Make Payment</span>
+                  {isPending && (
+                    <LoaderCircle
+                      size={16}
+                      className="animate-spin sm:size-4"
+                    />
+                  )}
+                </div>
+              </motion.button>
+            )}
+
+            {/* Write Review Button */}
+            {showWriteReviewButton && (
+              <motion.button
+                onClick={() => setIsModalOpen(true)}
+                className="w-full cursor-pointer rounded-lg bg-[#7BA693] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#6B9582] sm:w-auto sm:py-2"
+                whileHover={{ scale: 1.03, y: -1 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ type: "spring", stiffness: 400, damping: 20 }}
+              >
+                Write Review
+              </motion.button>
+            )}
+          </div>
         </div>
       </div>
 
