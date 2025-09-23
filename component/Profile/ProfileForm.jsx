@@ -86,6 +86,7 @@ export default function ProfileForm() {
     payload.append("email", formData.email);
     payload.append("phone", formData.phone);
     payload.append("address", formData.address);
+    payload.append("_method", "PUT");
     if (profileImage) {
       payload.append("avatar", profileImage);
     }

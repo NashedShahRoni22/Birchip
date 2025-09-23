@@ -313,7 +313,7 @@ const FoodOrderCard = ({ order }) => {
                           initial={{ opacity: 0, y: -10, scale: 0.95 }}
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                          className="absolute top-full right-0 z-20 mt-2 w-full rounded-lg border border-[#E0E0E0] bg-white shadow-lg sm:right-0 sm:w-64"
+                          className="absolute top-full right-0 z-[9999] mt-2 w-full rounded-lg border border-[#E0E0E0] bg-white shadow-lg sm:right-0 sm:w-64"
                         >
                           <div className="p-2">
                             {/* Individual Items */}

@@ -3,8 +3,12 @@ import Image from "next/image";
 import { Bed, MapPin, Users } from "lucide-react";
 import { calculateDiscount } from "@/utils/calculateDiscount";
 import { renderStars } from "@/utils/renderStars";
+import calculateAvgRating from "@/utils/calculateAvgRating";
 
 export default function MotelCaravanCard({ data, isCaravan = false }) {
+  const totalReviews = data?.reviews?.length;
+  const averageRating = calculateAvgRating(data?.reviews);
+
   return (
     <div
       className={`group relative flex h-full flex-col overflow-hidden rounded-2xl border bg-white shadow backdrop-blur-xl transition-all duration-500 ${
@@ -57,13 +61,12 @@ export default function MotelCaravanCard({ data, isCaravan = false }) {
               </Link>
             </div>
 
-            {/* TODO: ratings is unavailable */}
             <div className="flex items-center gap-2 sm:gap-3">
-              {data?.rating && renderStars(data?.rating)}
+              {averageRating > 0 && renderStars(averageRating)}
               <span className="text-muted text-xs sm:text-sm">
-                {data?.rating ? motelData.rating : "Not rated"} (
-                {data?.reviews && motelData.reviews > 0
-                  ? `${motelData.reviews} reviews`
+                {averageRating > 0 ? averageRating : "Not rated"} (
+                {totalReviews > 0
+                  ? `${totalReviews} reviews`
                   : "No reviews yet"}
                 )
               </span>

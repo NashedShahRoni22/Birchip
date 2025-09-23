@@ -1,8 +1,12 @@
+import calculateAvgRating from "@/utils/calculateAvgRating";
 import { calculateDiscount } from "@/utils/calculateDiscount";
 import { renderStars } from "@/utils/renderStars";
 import Image from "next/image";
 
 export default function foodDataCard({ foodData, handleOrderClick }) {
+  const totalReviews = foodData?.reviews?.length;
+  const averageRating = calculateAvgRating(foodData?.reviews);
+
   return (
     <div className="group border-line/20 flex h-full flex-col overflow-hidden rounded-2xl border bg-white shadow backdrop-blur-xl transition-all duration-500">
       {/* Availability Badge */}
@@ -61,14 +65,11 @@ export default function foodDataCard({ foodData, handleOrderClick }) {
           </p>
 
           {/* TODO: ratings is unavailable */}
-          <div className="flex items-center justify-center gap-2 sm:gap-3">
-            {foodData?.rating && renderStars(foodData?.rating)}
+          <div className="flex items-center gap-2 sm:gap-3">
+            {averageRating > 0 && renderStars(averageRating)}
             <span className="text-muted text-xs sm:text-sm">
-              {foodData?.rating ? foodData.rating : "Not rated"} (
-              {foodData?.reviews && foodData.reviews > 0
-                ? `${foodData.reviews} reviews`
-                : "No reviews yet"}
-              )
+              {averageRating > 0 ? averageRating : "Not rated"} (
+              {totalReviews > 0 ? `${totalReviews} reviews` : "No reviews yet"})
             </span>
           </div>
         </div>
