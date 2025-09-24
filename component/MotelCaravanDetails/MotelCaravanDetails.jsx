@@ -15,7 +15,6 @@ import {
   Camera,
   CircleX,
 } from "lucide-react";
-import { BookingModal } from "../../app/components/shared/AnimatePresence";
 import { calculateDiscount } from "@/utils/calculateDiscount";
 import Link from "next/link";
 import DetailedLoader from "../loaders/DetailedLoader";
@@ -27,6 +26,7 @@ import { motion } from "framer-motion";
 import ReviewsSection from "./ReviewsSection";
 import calculateAvgRating from "@/utils/calculateAvgRating";
 import Amenities from "./Amenities";
+import { BookingModal } from "../modals/BookingModal";
 
 export default function MotelCaravanDetails({ params, isCaravan = false }) {
   const { slug } = React.use(params);

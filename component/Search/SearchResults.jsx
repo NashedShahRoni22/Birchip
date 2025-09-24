@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeft, Filter, SortAsc, RefreshCw } from "lucide-react";
-import { useState } from "react";
+import { ArrowLeft, Filter, SortAsc, RefreshCw, X } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
 import MotelCaravanCard from "../cards/MotelCaravanCard";
 import Pagination from "../Pagination/Pagination";
 
@@ -17,6 +17,8 @@ export default function SearchResults({
   const urlSearchParams = useSearchParams();
   const [sortBy, setSortBy] = useState(searchParams.sort || "price_asc");
   const [filterBy, setFilterBy] = useState(searchParams.filter || "all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12; // Match your API pagination
 
   const formatDateDisplay = (dateStr) => {
     if (!dateStr) return "";
@@ -33,7 +35,96 @@ export default function SearchResults({
     });
   };
 
-  // Handle sort/filter changes
+  // Calculate average rating for an item
+  const getAverageRating = (reviews) => {
+    if (!reviews || reviews.length === 0) return 0;
+    const total = reviews.reduce((sum, review) => sum + review.rating, 0);
+    return total / reviews.length;
+  };
+
+  // Calculate discounted price
+  const getDiscountedPrice = (item) => {
+    if (!item.discount || item.discount === 0) return item.price;
+
+    if (item.discount_type === "percentage") {
+      return item.price - (item.price * item.discount) / 100;
+    } else {
+      // Assuming flat discount
+      return item.price - item.discount;
+    }
+  };
+
+  // Frontend filtering and sorting logic
+  const filteredAndSortedData = useMemo(() => {
+    if (!data || data.length === 0) return [];
+
+    let filteredItems = [...data];
+
+    // Apply filters
+    switch (filterBy) {
+      case "available":
+        filteredItems = filteredItems.filter((item) => !item.is_booked);
+        break;
+      case "discount":
+        filteredItems = filteredItems.filter(
+          (item) => item.discount && item.discount > 0,
+        );
+        break;
+      case "high_rating":
+        filteredItems = filteredItems.filter(
+          (item) => getAverageRating(item.reviews) >= 4,
+        );
+        break;
+      case "all":
+      default:
+        // No filtering
+        break;
+    }
+
+    // Apply sorting
+    filteredItems.sort((a, b) => {
+      switch (sortBy) {
+        case "price_asc":
+          return getDiscountedPrice(a) - getDiscountedPrice(b);
+        case "price_desc":
+          return getDiscountedPrice(b) - getDiscountedPrice(a);
+        case "rating_desc":
+          return getAverageRating(b.reviews) - getAverageRating(a.reviews);
+        case "name_asc":
+          return a.title.localeCompare(b.title);
+        case "name_desc":
+          return b.title.localeCompare(a.title);
+        default:
+          return 0;
+      }
+    });
+
+    return filteredItems;
+  }, [data, filterBy, sortBy]);
+
+  // Frontend pagination
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredAndSortedData.slice(startIndex, endIndex);
+  }, [filteredAndSortedData, currentPage]);
+
+  // Create frontend pagination object
+  const frontendPagination = useMemo(() => {
+    const totalItems = filteredAndSortedData.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    return {
+      current_page: currentPage,
+      last_page: totalPages,
+      total: totalItems,
+      per_page: itemsPerPage,
+      from: totalItems > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0,
+      to: Math.min(currentPage * itemsPerPage, totalItems),
+    };
+  }, [filteredAndSortedData.length, currentPage]);
+
+  // Update URL params for sorting/filtering (optional - for URL state persistence)
   const updateSearchParams = (updates) => {
     const params = new URLSearchParams(urlSearchParams);
 
@@ -48,6 +139,7 @@ export default function SearchResults({
     // Reset to page 1 when filters change
     if ("sort" in updates || "filter" in updates) {
       params.delete("page");
+      setCurrentPage(1);
     }
 
     const newUrl = `${window.location.pathname}?${params.toString()}`;
@@ -56,19 +148,33 @@ export default function SearchResults({
 
   const handleSortChange = (newSort) => {
     setSortBy(newSort);
+    setCurrentPage(1); // Reset to first page
     updateSearchParams({ sort: newSort });
   };
 
   const handleFilterChange = (newFilter) => {
     setFilterBy(newFilter);
+    setCurrentPage(1); // Reset to first page
     updateSearchParams({ filter: newFilter });
   };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    // Scroll to top when page changes
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Reset page when data changes (e.g., after refresh)
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [data]);
 
   const sortOptions = [
     { value: "price_asc", label: "Price: Low to High" },
     { value: "price_desc", label: "Price: High to Low" },
     { value: "rating_desc", label: "Rating: High to Low" },
     { value: "name_asc", label: "Name: A to Z" },
+    { value: "name_desc", label: "Name: Z to A" },
   ];
 
   const filterOptions = [
@@ -125,15 +231,16 @@ export default function SearchResults({
                   {formatDateDisplay(searchParams.checkin)} -{" "}
                   {formatDateDisplay(searchParams.checkout)}
                 </span>
-                {pagination && (
-                  <>
-                    <span>•</span>
-                    <span>
-                      {pagination.total} result
-                      {pagination.total !== 1 ? "s" : ""} found
+                <span>•</span>
+                <span>
+                  {frontendPagination.total} result
+                  {frontendPagination.total !== 1 ? "s" : ""} found
+                  {filterBy !== "all" && (
+                    <span className="text-button ml-1">
+                      (filtered from {data?.length || 0})
                     </span>
-                  </>
-                )}
+                  )}
+                </span>
               </div>
             </div>
 
@@ -172,10 +279,27 @@ export default function SearchResults({
               </div>
             </div>
           </div>
+
+          {/* Active Filters Indicator */}
+          {filterBy !== "all" && (
+            <div className="mb-4 flex items-center gap-2">
+              <span className="text-sm text-gray-600">Active filter:</span>
+              <span className="bg-button/10 text-button rounded-full px-3 py-1 text-sm font-medium">
+                {filterOptions.find((opt) => opt.value === filterBy)?.label}
+                <button
+                  onClick={() => handleFilterChange("all")}
+                  className="hover:text-primary text-button ml-2 cursor-pointer"
+                  title="Remove filter"
+                >
+                  <X size={12} />
+                </button>
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Results */}
-        {data && data.length > 0 ? (
+        {paginatedData && paginatedData.length > 0 ? (
           <>
             {/* Show refreshing indicator */}
             {isRefreshing && (
@@ -188,7 +312,7 @@ export default function SearchResults({
             )}
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {data.map((item) => (
+              {paginatedData.map((item) => (
                 <MotelCaravanCard
                   key={item.id}
                   data={item}
@@ -198,16 +322,21 @@ export default function SearchResults({
             </div>
 
             {/* Pagination */}
-            {pagination && pagination.last_page > 1 && (
+            {frontendPagination.last_page > 1 && (
               <Pagination
-                pagination={pagination}
-                currentPage={searchParams.currentPage}
-                onPageChange={(page) =>
-                  updateSearchParams({ page: page.toString() })
-                }
+                pagination={frontendPagination}
+                currentPage={currentPage}
+                onPageChange={handlePageChange}
               />
             )}
           </>
+        ) : filteredAndSortedData.length === 0 && data && data.length > 0 ? (
+          // Show this when filters return no results but original data exists
+          <NoResultsFromFilter
+            filterBy={filterBy}
+            onClearFilter={() => handleFilterChange("all")}
+            originalCount={data.length}
+          />
         ) : (
           <NoResults
             type={searchParams.type}
@@ -221,7 +350,44 @@ export default function SearchResults({
   );
 }
 
-// No Results Component
+// No Results from Filter Component
+function NoResultsFromFilter({ filterBy, onClearFilter, originalCount }) {
+  const filterOptions = [
+    { value: "all", label: "All" },
+    { value: "available", label: "Available Only" },
+    { value: "discount", label: "On Sale" },
+    { value: "high_rating", label: "4+ Stars" },
+  ];
+
+  const currentFilterLabel =
+    filterOptions.find((opt) => opt.value === filterBy)?.label || filterBy;
+
+  return (
+    <div className="py-16 text-center">
+      <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-orange-100">
+        <Filter className="h-12 w-12 text-orange-500" />
+      </div>
+      <h2 className="mb-4 text-2xl font-bold text-gray-900">
+        No Results Match Your Filter
+      </h2>
+      <p className="mx-auto mb-8 max-w-md text-gray-600">
+        No items match the "{currentFilterLabel}" filter. We found{" "}
+        {originalCount} total results - try clearing the filter or choosing a
+        different one.
+      </p>
+      <div className="flex justify-center gap-3">
+        <button
+          onClick={onClearFilter}
+          className="rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition-colors duration-200 hover:bg-blue-700"
+        >
+          Clear Filter
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// No Results Component (when no data at all)
 function NoResults({ type, onModifySearch, onNewSearch, onRefresh }) {
   return (
     <div className="py-16 text-center">

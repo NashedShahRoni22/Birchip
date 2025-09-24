@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Salad, ShoppingCart } from "lucide-react";
-import FoodOrderModal from "../shared/FoodOrderModal";
+import FoodOrderModal from "../../modals/FoodOrderModal";
 import useGetApi from "@/hooks/useGetApi";
 import FoodCard from "@/component/cards/FoodCard";
 import useAuth from "@/hooks/useAuth";

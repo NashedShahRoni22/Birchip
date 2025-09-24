@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+
 import {
   Fuel,
   TrendingUp,
@@ -36,20 +36,6 @@ const GasStationSection = () => {
       return <Droplets className="h-5 w-5" />;
     } else {
       return <Car className="h-5 w-5" />;
-    }
-  };
-
-  // Function to get color based on fuel type
-  const getFuelColor = (title) => {
-    const lowerTitle = title.toLowerCase();
-    if (lowerTitle.includes("premium") || lowerTitle.includes("super")) {
-      return "bg-purple-500";
-    } else if (lowerTitle.includes("diesel")) {
-      return "bg-green-500";
-    } else if (lowerTitle.includes("ethanol") || lowerTitle.includes("e85")) {
-      return "bg-orange-500";
-    } else {
-      return "bg-blue-500";
     }
   };
 

@@ -17,6 +17,8 @@ import toast from "react-hot-toast";
 import { calculateDiscount } from "@/utils/calculateDiscount";
 import { useState } from "react";
 import AddReviewModal from "../modals/AddReviewModal";
+import Link from "next/link";
+import Image from "next/image";
 
 const BookingCard = ({ booking }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -70,23 +72,32 @@ const BookingCard = ({ booking }) => {
       {/* Header Section - Mobile Optimized */}
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-start gap-3">
-          <div className="flex-shrink-0 rounded-lg bg-[#EDE9DA] p-3">
-            {isMotel ? (
-              <Building2 size={20} className="text-[#603C59] sm:size-6" />
-            ) : isCaravan ? (
-              <Car size={20} className="text-[#603C59] sm:size-6" />
-            ) : (
-              <Building2 size={20} className="text-[#603C59] sm:size-6" />
-            )}
-          </div>
+          <Link
+            href={
+              isMotel
+                ? `/motels/${booking?.reference?.slug}`
+                : `/caravans/${booking?.reference?.slug}`
+            }
+            className="relative mt-1 size-9 flex-shrink-0 rounded-lg bg-[#EDE9DA] p-3"
+          >
+            <Image
+              src={booking?.reference?.thumbnail}
+              alt={booking?.reference?.title}
+              fill
+              className="rounded-lg object-cover"
+            />
+          </Link>
           <div className="min-w-0 flex-1">
-            <h3 className="text-base font-semibold text-[#2F2F2F] sm:text-lg">
-              {isMotel
-                ? "Motel Booking"
-                : isCaravan
-                  ? "Caravan Booking"
-                  : "Property Booking"}
-            </h3>
+            <Link
+              href={
+                isMotel
+                  ? `/motels/${booking?.reference?.slug}`
+                  : `/caravans/${booking?.reference?.slug}`
+              }
+              className="text-base font-semibold text-[#2F2F2F] sm:text-lg"
+            >
+              {booking?.reference?.title}
+            </Link>
 
             {/* Invoice with copy functionality - Mobile Optimized */}
             <div className="flex items-center gap-1">
@@ -103,7 +114,7 @@ const BookingCard = ({ booking }) => {
             </div>
 
             {/* Status and Payment Status - Mobile Stack */}
-            <div className="xs:flex-row xs:items-center mt-2 flex flex-col gap-2">
+            <div className="mt-2 flex flex-row gap-2">
               <span
                 className={`inline-block w-fit rounded-full px-2 py-1 text-xs capitalize ${getStatusColor(booking.status)}`}
               >

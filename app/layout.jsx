@@ -1,11 +1,10 @@
 import TanstackProvider from "@/providers/TanstackProvider";
-import Footer from "./components/shared/Footer";
-import Navbar from "./components/shared/Navbar";
-import "./globals.css";
-import { Toaster } from "react-hot-toast";
+import Footer from "../component/shared/Footer";
 import CustomToaster from "@/component/shared/CustomToaster";
 import AuthProvider from "@/providers/AuthProvider";
 import { CartProvider } from "@/providers/CartProvider";
+import "./globals.css";
+import Navbar from "@/component/shared/Navbar";
 
 export const metadata = {
   title: "Birchip",
